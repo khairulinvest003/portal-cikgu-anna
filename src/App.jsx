@@ -1401,12 +1401,12 @@ export default function App() {
             </button>
           </div>
           {/* Class selector */}
-          <div style={{padding:"0 12px 10px",display:"flex",gap:6}}>
+          <div style={{padding:"0 12px 10px",display:"flex",gap:8,overflowX:"auto",WebkitOverflowScrolling:"touch",scrollbarWidth:"none",msOverflowStyle:"none"}}>
             {KELAS_LIST.map(k=>{
               const sel=activeKelas===k;
               return (
-                <button key={k} onClick={()=>setActiveKelas(k)} style={{flex:1,padding:"7px 4px",border:`2px solid ${sel?"#fff":"rgba(255,255,255,.4)"}`,borderRadius:99,background:sel?"rgba(255,255,255,.28)":"transparent",color:sel?"#fff":"rgba(255,255,255,.65)",fontFamily:"Nunito,sans-serif",fontWeight:900,fontSize:12,cursor:"pointer",transition:"all .15s"}}>
-                  Thn {k}
+                <button key={k} onClick={()=>setActiveKelas(k)} style={{flexShrink:0,padding:"9px 20px",border:`2.5px solid ${sel?"#fff":"rgba(255,255,255,.45)"}`,borderRadius:99,background:sel?"rgba(255,255,255,.3)":"rgba(255,255,255,.08)",color:sel?"#fff":"rgba(255,255,255,.7)",fontFamily:"Nunito,sans-serif",fontWeight:900,fontSize:13,cursor:"pointer",transition:"all .15s",boxShadow:sel?"0 2px 8px rgba(0,0,0,.2)":"none",whiteSpace:"nowrap"}}>
+                  {sel?"✦ ":""}{k}
                 </button>
               );
             })}
