@@ -972,31 +972,119 @@ function SenaraiMurid({murid,saveMurid,deleteMurid}) {
 }
 
 /* ── JADUAL ── */
-function Jadual() {
-  const hari=["Monday","Tuesday","Wednesday","Thursday","Friday"];
-  const [aktif,setAktif]=useState("Friday");
+function Jadual({jadual,addJadual,updateJadual,deleteJadual}) {
+  const HARI=["Monday","Tuesday","Wednesday","Thursday","Friday"];
+  const [aktif,setAktif]=useState("Monday");
+  const [editId,setEditId]=useState(null);
+  const [showAdd,setShowAdd]=useState(false);
+  const [form,setForm]=useState({masa:"7:30",subjek:""});
+  const setF=(k,v)=>setForm(p=>({...p,[k]:v}));
+
+  const slots=[...jadual].filter(s=>s.hari===aktif).sort((a,b)=>a.urutan-b.urutan);
+
+  const openEdit=(s)=>{setEditId(s.id);setForm({masa:s.masa,subjek:s.subjek});setShowAdd(false);};
+  const openAdd=()=>{setShowAdd(true);setEditId(null);setForm({masa:"7:30",subjek:""}); };
+  const cancel=()=>{setEditId(null);setShowAdd(false);setForm({masa:"7:30",subjek:""});};
+
+  const save=async()=>{
+    if(!form.subjek.trim())return;
+    if(editId){
+      await updateJadual(editId,{masa:form.masa,subjek:form.subjek.trim()});
+    } else {
+      await addJadual({hari:aktif,urutan:slots.length,masa:form.masa,subjek:form.subjek.trim()});
+    }
+    cancel();
+  };
+
+  const hapus=async(id)=>{if(!confirm("Delete this slot?"))return;await deleteJadual(id);};
+
+  const SUBJEK_LIST=Object.keys(SUBJ_META).filter(s=>s!=="BREAK");
+
   return (
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
-      <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>📅 Weekly <span style={{color:"var(--p)"}}>Timetable</span></p>
-      <div style={{display:"flex",gap:8,overflowX:"auto",paddingBottom:4}}>
-        {hari.map(h=>(
-          <button key={h} onClick={()=>setAktif(h)} style={{whiteSpace:"nowrap",padding:"8px 16px",border:"3px solid var(--bdc)",borderRadius:14,background:aktif===h?"var(--p)":"var(--wh)",color:aktif===h?"#fff":"var(--ink)",fontSize:12,fontWeight:900,cursor:"pointer",flexShrink:0,boxShadow:aktif===h?"3px 3px 0 var(--p2)":"3px 3px 0 var(--bdc)"}}>{h}</button>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>📅 Weekly <span style={{color:"var(--p)"}}>Timetable</span></p>
+        <button onClick={openAdd} style={{background:"var(--p)",color:"#fff",border:"3px solid var(--bdc)",borderRadius:14,padding:"9px 14px",fontSize:13,fontWeight:900,cursor:"pointer",fontFamily:"Nunito,sans-serif",boxShadow:"3px 3px 0 var(--bdc)"}}>+ Add Slot</button>
+      </div>
+      <div style={{display:"flex",gap:8,overflowX:"auto",paddingBottom:4,scrollbarWidth:"none"}}>
+        {HARI.map(h=>(
+          <button key={h} onClick={()=>{setAktif(h);cancel();}} style={{whiteSpace:"nowrap",padding:"8px 16px",border:"3px solid var(--bdc)",borderRadius:14,background:aktif===h?"var(--p)":"var(--wh)",color:aktif===h?"#fff":"var(--ink)",fontSize:12,fontWeight:900,cursor:"pointer",flexShrink:0,boxShadow:aktif===h?"3px 3px 0 var(--p2)":"3px 3px 0 var(--bdc)"}}>{h}</button>
         ))}
       </div>
+
+      {/* Add form */}
+      {showAdd&&(
+        <div className="ccard ccard-blue bounce-in" style={{display:"flex",flexDirection:"column",gap:10}}>
+          <p style={{fontSize:12,fontWeight:900,color:"var(--p)",textTransform:"uppercase"}}>➕ Add Slot — {aktif}</p>
+          <div style={{display:"flex",gap:8}}>
+            <div style={{flex:1}}>
+              <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:4}}>Time</p>
+              <input value={form.masa} onChange={e=>setF("masa",e.target.value)} placeholder="7:30"/>
+            </div>
+            <div style={{flex:2}}>
+              <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:4}}>Subject</p>
+              <input value={form.subjek} onChange={e=>setF("subjek",e.target.value)} placeholder="Subject name…"/>
+            </div>
+          </div>
+          <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+            {SUBJEK_LIST.map(s=>(
+              <button key={s} onClick={()=>setF("subjek",s)} style={{padding:"5px 10px",border:"2px solid var(--bdc)",borderRadius:99,background:form.subjek===s?"var(--p)":"var(--wh)",color:form.subjek===s?"#fff":"var(--ink)",fontSize:11,fontWeight:700,cursor:"pointer"}}>{s}</button>
+            ))}
+            <button onClick={()=>setF("subjek","BREAK")} style={{padding:"5px 10px",border:"2px solid var(--bdc)",borderRadius:99,background:form.subjek==="BREAK"?"#94A3B8":"var(--wh)",color:form.subjek==="BREAK"?"#fff":"var(--ink)",fontSize:11,fontWeight:700,cursor:"pointer"}}>🍱 BREAK</button>
+          </div>
+          <div style={{display:"flex",gap:8}}>
+            <button className="cbtn cbtn-blue" style={{padding:"10px"}} onClick={save}>➕ Add</button>
+            <button className="cbtn cbtn-white" style={{width:"auto",padding:"10px 16px"}} onClick={cancel}>Cancel</button>
+          </div>
+        </div>
+      )}
+
       <div style={{display:"flex",flexDirection:"column",gap:10}}>
-        {JADUAL[aktif].map((subj,i)=>{
-          const isR=subj==="REHAT";const meta=SUBJ_META[subj]||{emoji:"📚",color:"var(--p)",bg:"var(--ps)"};
+        {slots.length===0&&<p style={{textAlign:"center",color:"var(--i3)",fontWeight:700,padding:"24px 0"}}>No slots for {aktif}. Add one above.</p>}
+        {slots.map(s=>{
+          const isR=s.subjek==="BREAK";
+          const meta=SUBJ_META[s.subjek]||{emoji:"📚",color:"var(--p)",bg:"var(--ps)"};
+          const isEdit=editId===s.id;
           return (
-            <div key={i} style={{display:"flex",alignItems:"center",gap:12,background:isR?"var(--bg)":meta.bg,border:`3px solid ${isR?"var(--pm)":"var(--bdc)"}`,borderRadius:18,padding:"12px 14px",boxShadow:isR?"none":"3px 3px 0 var(--bdc)",opacity:isR?.55:1}}>
-              <div style={{width:44,height:44,borderRadius:14,background:isR?"var(--pm)":meta.color,border:isR?"2px dashed var(--i3)":"3px solid var(--bdc)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,boxShadow:isR?"none":"2px 2px 0 var(--bdc)",flexShrink:0}}>{meta.emoji}</div>
-              <div style={{flex:1}}>
-                <p style={{fontSize:14,fontWeight:isR?600:900,color:isR?"var(--i3)":"var(--ink)",fontStyle:isR?"italic":"normal"}}>{isR?"— Break Time —":subj}</p>
-                {!isR&&<p style={{fontSize:11,color:"var(--i3)",fontWeight:600,marginTop:1}}>40 mins</p>}
-              </div>
-              <div style={{textAlign:"right"}}>
-                <p style={{fontFamily:"JetBrains Mono,monospace",fontSize:12,fontWeight:700,color:isR?"var(--i3)":meta.color}}>{MASA[i]}</p>
-                {i<6&&!isR&&<p style={{fontFamily:"JetBrains Mono,monospace",fontSize:10,color:"var(--i3)"}}>→{MASA[i+1]}</p>}
-              </div>
+            <div key={s.id}>
+              {isEdit?(
+                <div className="ccard bounce-in" style={{display:"flex",flexDirection:"column",gap:10}}>
+                  <p style={{fontSize:12,fontWeight:900,color:"var(--p)",textTransform:"uppercase"}}>✏️ Edit Slot</p>
+                  <div style={{display:"flex",gap:8}}>
+                    <div style={{flex:1}}>
+                      <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:4}}>Time</p>
+                      <input value={form.masa} onChange={e=>setF("masa",e.target.value)}/>
+                    </div>
+                    <div style={{flex:2}}>
+                      <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:4}}>Subject</p>
+                      <input value={form.subjek} onChange={e=>setF("subjek",e.target.value)}/>
+                    </div>
+                  </div>
+                  <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                    {SUBJEK_LIST.map(sub=>(
+                      <button key={sub} onClick={()=>setF("subjek",sub)} style={{padding:"5px 10px",border:"2px solid var(--bdc)",borderRadius:99,background:form.subjek===sub?"var(--p)":"var(--wh)",color:form.subjek===sub?"#fff":"var(--ink)",fontSize:11,fontWeight:700,cursor:"pointer"}}>{sub}</button>
+                    ))}
+                    <button onClick={()=>setF("subjek","BREAK")} style={{padding:"5px 10px",border:"2px solid var(--bdc)",borderRadius:99,background:form.subjek==="BREAK"?"#94A3B8":"var(--wh)",color:form.subjek==="BREAK"?"#fff":"var(--ink)",fontSize:11,fontWeight:700,cursor:"pointer"}}>🍱 BREAK</button>
+                  </div>
+                  <div style={{display:"flex",gap:8}}>
+                    <button className="cbtn cbtn-blue" style={{padding:"10px"}} onClick={save}>💾 Save</button>
+                    <button className="cbtn cbtn-white" style={{width:"auto",padding:"10px 16px"}} onClick={cancel}>Cancel</button>
+                  </div>
+                </div>
+              ):(
+                <div style={{display:"flex",alignItems:"center",gap:12,background:isR?"var(--bg)":meta.bg,border:`3px solid ${isR?"var(--pm)":"var(--bdc)"}`,borderRadius:18,padding:"12px 14px",boxShadow:isR?"none":"3px 3px 0 var(--bdc)",opacity:isR?.6:1}}>
+                  <div style={{width:44,height:44,borderRadius:14,background:isR?"var(--pm)":meta.color,border:isR?"2px dashed var(--i3)":"3px solid var(--bdc)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,boxShadow:isR?"none":"2px 2px 0 var(--bdc)",flexShrink:0}}>{meta.emoji}</div>
+                  <div style={{flex:1}}>
+                    <p style={{fontSize:14,fontWeight:isR?600:900,color:isR?"var(--i3)":"var(--ink)",fontStyle:isR?"italic":"normal"}}>{isR?"— Break Time —":s.subjek}</p>
+                    {!isR&&<p style={{fontSize:11,color:"var(--i3)",fontWeight:600,marginTop:1}}>40 mins</p>}
+                  </div>
+                  <p style={{fontFamily:"JetBrains Mono,monospace",fontSize:12,fontWeight:700,color:isR?"var(--i3)":meta.color,flexShrink:0}}>{s.masa}</p>
+                  <div style={{display:"flex",gap:6,flexShrink:0}}>
+                    <button onClick={()=>openEdit(s)} style={{width:32,height:32,borderRadius:10,border:"2px solid var(--bdc)",background:"var(--wh)",cursor:"pointer",fontSize:14,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"2px 2px 0 var(--bdc)"}}>✏️</button>
+                    <button onClick={()=>hapus(s.id)} style={{width:32,height:32,borderRadius:10,border:"2px solid var(--p)",background:"var(--ps)",cursor:"pointer",fontSize:14,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"2px 2px 0 var(--p2)"}}>🗑️</button>
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}
@@ -1243,6 +1331,7 @@ export default function App() {
   const [murid,setMurid]       = useState([]);
   const [log,setLog]           = useState([]);
   const [objektif,setObjektif] = useState([]);
+  const [jadual,setJadual]     = useState([]);
   const [loading,setLoading]   = useState(true);
   const [kh]                   = useState(INIT_KH);
   const [activeKelas,setActiveKelas] = useState("6 Adil");
@@ -1250,15 +1339,15 @@ export default function App() {
   /* ── LOAD FROM SUPABASE ── */
   const loadData = useCallback(async () => {
     setLoading(true);
-    const [{ data: mData }, { data: lData }, { data: oData }] = await Promise.all([
+    const [{ data: mData }, { data: lData }, { data: oData }, { data: jData }] = await Promise.all([
       supabase.from("murid").select("*").order("no"),
       supabase.from("log_ibu_bapa").select("*").order("created_at", { ascending: false }),
       supabase.from("objektif").select("*").order("created_at", { ascending: false }),
+      supabase.from("jadual").select("*").order("urutan"),
     ]);
     if (mData?.length) {
       setMurid(mData);
     } else {
-      /* seed default data on first run */
       const { data: seeded } = await supabase.from("murid").insert(
         INIT_MURID.map(({ id: _id, ...m }) => m)
       ).select();
@@ -1273,6 +1362,16 @@ export default function App() {
       if (seeded) setLog(seeded);
     }
     setObjektif(oData || []);
+    if (jData?.length) {
+      setJadual(jData);
+    } else {
+      const hariList = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+      const masaList = ["7:30","8:10","8:50","9:30","10:10","11:10","11:50"];
+      const rows = [];
+      hariList.forEach(h => JADUAL[h].forEach((subj,i) => rows.push({hari:h,urutan:i,masa:masaList[i],subjek:subj})));
+      const { data: seeded } = await supabase.from("jadual").insert(rows).select();
+      if (seeded) setJadual(seeded);
+    }
     setLoading(false);
   }, []);
 
@@ -1333,6 +1432,20 @@ export default function App() {
   const deleteObjektif = async (id) => {
     await supabase.from("objektif").delete().eq("id", id);
     setObjektif(p => p.filter(o => o.id !== id));
+  };
+
+  /* ── JADUAL CRUD ── */
+  const addJadual = async (fields) => {
+    const { data: row } = await supabase.from("jadual").insert(fields).select().single();
+    if (row) setJadual(p => [...p, row]);
+  };
+  const updateJadual = async (id, fields) => {
+    await supabase.from("jadual").update(fields).eq("id", id);
+    setJadual(p => p.map(s => s.id === id ? { ...s, ...fields } : s));
+  };
+  const deleteJadual = async (id) => {
+    await supabase.from("jadual").delete().eq("id", id);
+    setJadual(p => p.filter(s => s.id !== id));
   };
 
   const filteredMurid = murid.filter(m => m.kelas === activeKelas);
@@ -1426,7 +1539,7 @@ export default function App() {
           {tab==="kehadiran" && <Kehadiran murid={filteredMurid}/>}
           {tab==="merit"     && <Merit murid={filteredMurid} updateMerit={updateMerit}/>}
           {tab==="murid"     && <SenaraiMurid murid={murid} saveMurid={saveMurid} deleteMurid={deleteMurid}/>}
-          {tab==="jadual"    && <Jadual/>}
+          {tab==="jadual"    && <Jadual jadual={jadual} addJadual={addJadual} updateJadual={updateJadual} deleteJadual={deleteJadual}/>}
           {tab==="log"       && <Log log={log} addLog={addLog} updateLog={updateLog} deleteLog={deleteLog}/>}
           {tab==="laporan"   && <Laporan murid={filteredMurid}/>}
         </div>
