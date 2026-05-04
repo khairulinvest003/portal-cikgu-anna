@@ -575,13 +575,13 @@ function MuridModal({data,onSave,onClose,count,activeKelas}) {
             </div>
           )}
           <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Teacher's Note</p><textarea rows={2} value={f.catatan} onChange={e=>set("catatan",e.target.value)} placeholder="Notes…" style={{resize:"none"}}/></div>
-          <div style={{display:"flex",gap:10,paddingBottom:8}}>
+        </div>
+        <div style={{position:"sticky",bottom:0,background:"var(--wh)",borderTop:"3px solid var(--bdc)",padding:"12px 16px",display:"flex",gap:10}}>
             <button className="cbtn cbtn-blue" onClick={()=>{
               if(!f.nama||!f.wali||!f.tel){alert("Please fill in name, guardian, and phone number.");return;}
               onSave({...f,id:data?.id||Date.now(),no:data?.no||String(count+1).padStart(2,"0")});
             }}>{isEdit?"💾 Save":"➕ Add Student"}</button>
             <button className="cbtn cbtn-white" style={{width:"auto",padding:"13px 18px"}} onClick={onClose}>Cancel</button>
-          </div>
         </div>
       </div>
     </div>
@@ -1366,10 +1366,11 @@ export default function App() {
         <div className="app-main" style={{flex:1,display:"flex",flexDirection:"column",minWidth:0}}>
 
         {/* ── HEADER ── */}
-        <div style={{position:"sticky",top:0,zIndex:20,background:"var(--p)",overflow:"hidden",borderBottom:"3px solid var(--bdc)",boxShadow:"0 4px 0 var(--bdc)"}}>
+        <div style={{position:"sticky",top:0,zIndex:20,background:"var(--p)",borderBottom:"3px solid var(--bdc)",boxShadow:"0 4px 0 var(--bdc)"}}>
+          {/* Row 1 — clip decorative elements here only */}
+          <div style={{overflow:"hidden",position:"relative"}}>
           <div style={{position:"absolute",inset:0,backgroundImage:"radial-gradient(circle,rgba(255,255,255,.1) 1px,transparent 1px)",backgroundSize:"16px 16px",pointerEvents:"none"}}/>
           <div style={{position:"absolute",top:-28,right:-28,width:100,height:100,borderRadius:"50%",background:"rgba(255,255,255,.08)",border:"2px solid rgba(255,255,255,.1)",pointerEvents:"none"}}/>
-          {/* Row 1 */}
           <div style={{display:"flex",alignItems:"center",gap:10,padding:"36px 12px 8px",position:"relative"}}>
             <div style={{flexShrink:0,background:"rgba(255,255,255,.18)",border:"2.5px solid rgba(255,255,255,.45)",borderRadius:14,padding:5,boxShadow:"2px 2px 0 rgba(0,0,0,.18)"}}>
               <Logo size={38}/>
@@ -1400,8 +1401,9 @@ export default function App() {
               <span style={{fontSize:9,fontWeight:900,color:"rgba(255,255,255,.55)",background:"rgba(255,255,255,.12)",borderRadius:6,padding:"2px 6px",border:"1.5px solid rgba(255,255,255,.2)"}}>⌘K</span>
             </button>
           </div>
-          {/* Class selector */}
-          <div style={{padding:"0 12px 10px",display:"flex",gap:8,overflowX:"auto",WebkitOverflowScrolling:"touch",scrollbarWidth:"none",msOverflowStyle:"none"}}>
+          </div>{/* end overflow:hidden Row1 wrapper */}
+          {/* Class selector — outside overflow:hidden so it can scroll */}
+          <div style={{padding:"8px 12px 10px",display:"flex",gap:8,overflowX:"auto",WebkitOverflowScrolling:"touch",scrollbarWidth:"none",msOverflowStyle:"none"}}>
             {KELAS_LIST.map(k=>{
               const sel=activeKelas===k;
               return (
