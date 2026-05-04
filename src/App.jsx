@@ -65,15 +65,104 @@ select option{background:var(--wh);color:var(--ink);}
 `;
 
 /* ── DATA ── */
+const KELAS_LIST = ["6 Adil","6 Amanah","6 Arif"];
+
 const INIT_MURID = [
-  {id:1,no:"01",nama:"Ahmad Haziq bin Rosli",      delima:"2024010001",jantina:"L",ic:"140512-12-1234",wali:"Rosli bin Ahmad",     tel:"0128881234",hadir:82,absen:3, merit:92, demerit:5, catatan:""},
-  {id:2,no:"02",nama:"Nur Aisyah binti Kamal",      delima:"2024010002",jantina:"P",ic:"140701-12-5678",wali:"Kamal bin Hassan",   tel:"0137772345",hadir:85,absen:0, merit:110,demerit:0, catatan:""},
-  {id:3,no:"03",nama:"Muhammad Izzat Hakimi",       delima:"2024010003",jantina:"L",ic:"140320-12-9012",wali:"Hafiz bin Sulaiman", tel:"0194443456",hadir:78,absen:7, merit:65, demerit:15,catatan:"Attendance needs monitoring."},
-  {id:4,no:"04",nama:"Siti Nurfatihah binti Zain",  delima:"2024010004",jantina:"P",ic:"140815-12-3456",wali:"Zain bin Ibrahim",   tel:"0111114567",hadir:84,absen:1, merit:98, demerit:2, catatan:""},
-  {id:5,no:"05",nama:"Luqmanul Hakim bin Daud",     delima:"2024010005",jantina:"L",ic:"140223-12-7890",wali:"Daud bin Yusof",     tel:"0165555678",hadir:75,absen:10,merit:45, demerit:25,catatan:"Frequently absent. Contact guardian."},
-  {id:6,no:"06",nama:"Alya Damia binti Rashid",     delima:"2024010006",jantina:"P",ic:"141103-12-2345",wali:"Rashid bin Omar",    tel:"0106666789",hadir:85,absen:0, merit:125,demerit:0, catatan:"Top student candidate."},
-  {id:7,no:"07",nama:"Haikal Amsyar bin Noor",      delima:"2024010007",jantina:"L",ic:"141205-12-6789",wali:"Noor bin Azman",     tel:"0171234567",hadir:80,absen:5, merit:70, demerit:8, catatan:""},
-  {id:8,no:"08",nama:"Safiyya Zahra binti Mustafa", delima:"2024010008",jantina:"P",ic:"140410-12-3210",wali:"Mustafa bin Idris",  tel:"0189876543",hadir:85,absen:0, merit:105,demerit:0, catatan:""},
+  // === 6 ADIL ===
+  {id:1, no:"01",nama:"ABBY SHARLIEYA BINTI ARMAN",                  delima:"m-13915981@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:2, no:"02",nama:"AEIRIS NAURATUL AERISSA BINTI AWANG",           delima:"m-13915983@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:3, no:"03",nama:"AISYAH MADINA BINTI MUHAMMAD RIDZUAN",          delima:"m-13915984@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:4, no:"04",nama:"ALIFF ALI IMRAN BIN ASRUL HISHAM",              delima:"m-13916146@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:5, no:"06",nama:"MOHAMAD AMIN BIN MOHD AZMAN",                   delima:"m-13916091@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:6, no:"07",nama:"MOHAMMAD AMIR HAIKAL BIN MAHADI",               delima:"m-13916092@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:7, no:"08",nama:"MOHAMMAD HANAFIA BIN ABDULLAH",                 delima:"m-13916093@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:8, no:"09",nama:"MUHAMAD ADAM DANIAL RIZQIN BIN AZIM",           delima:"m-14126640@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:9, no:"10",nama:"MUHAMMAD ADIB MUHADAR BIN HARIS",               delima:"m-13916399@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:10,no:"11",nama:"MUHAMMAD FAIZ RAYYAN BIN MOHD FAIZAL",          delima:"m-13916129@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:11,no:"12",nama:"MUHAMMAD FIKRI BIN MOHAMMAD HASANAN",           delima:"m-13701087@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:12,no:"13",nama:"MUHAMMAD HERMAN BIN USNIN",                     delima:"m-13916130@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:13,no:"14",nama:"MUHAMMAD RAYYAN BIN ADRIAN",                    delima:"m-14071710@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:14,no:"15",nama:"MUHAMMAD SA'ID EUSOFF BIN MOHD SHAFIEE",        delima:"m-13916453@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:15,no:"16",nama:"MUHAMMAD SYAKIR BIN ADJIJI",                    delima:"m-13916156@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:16,no:"17",nama:"MUMTAZAH BINTI MOHAMMAD ILHAM @ GERLAND",       delima:"m-13916132@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:17,no:"18",nama:"MUZAFFAR BIN OSMAN",                            delima:"m-13917514@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:18,no:"19",nama:"NAZHAN BIN NABIL",                              delima:"m-13923336@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:19,no:"20",nama:"NOVIANA BINTI ABDUL MOMIN",                     delima:"m-14103541@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:20,no:"21",nama:"NUR AISYAH BINTI MOHAMMAD DARUS",               delima:"m-13923337@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:21,no:"22",nama:"NUR IFFAH AQILAH BINTI MOHAMMAD RIZWAN",        delima:"m-13985554@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:22,no:"23",nama:"NUR IMAN SAFIYYAH BINTI JULMEN",                delima:"m-13916193@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:23,no:"24",nama:"NUR IZYAN RADHIYYAH BINTI RUDIANSAH",           delima:"m-13916194@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:24,no:"25",nama:"NURUL ALIS ALISHA MAISARAH BINTI MOHD NOOR",    delima:"m-14074386@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:25,no:"26",nama:"RABIATUL BASARIAH BINTI AMIR HAJIB",            delima:"m-13916195@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:26,no:"27",nama:"ROFAZIRAH",                                      delima:"m-13923528@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:27,no:"28",nama:"SAFIYA BINTI SABRI",                            delima:"m-13916198@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  {id:28,no:"29",nama:"SHAAZZAMRISHA BIN SAARI",                       delima:"m-13916200@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Adil"},
+  // === 6 AMANAH ===
+  {id:29,no:"01",nama:"ADAM ATIQ BIN MOHAMAD YUNUS",                   delima:"m-13918609@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:30,no:"02",nama:"AHMAD AMMAR ZULWAQAR BIN NASRUN",               delima:"m-13916388@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:31,no:"03",nama:"AHMAD FATHI AMMAR BIN ABDUL FATTAH",            delima:"m-13916389@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:32,no:"04",nama:"AJMAL ABID MAKRAM BIN MASRAN",                  delima:"m-13815350@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:33,no:"05",nama:"ALBOYED SHELTON ALLBERT ALBRHAM",               delima:"m-13915985@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:34,no:"06",nama:"ANDI MOHAMAD WAFEEQ BIN MOHAMAD SADEED",        delima:"m-13916390@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:35,no:"07",nama:"ANISAH NAZIHA BINTI DATU MOHAMAD FAIZAL",       delima:"m-13916391@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:36,no:"08",nama:"AQEEL RAEFFY BIN MOHD REZELY",                  delima:"m-13916392@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:37,no:"09",nama:"ARMANSHAH BIN ASMAN",                           delima:"m-13874782@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:38,no:"10",nama:"ASRAF DANIEL BIN ABDULLAH",                     delima:"m-13917239@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:39,no:"11",nama:"AWANG FAAEQ ZUHRI BIN ABDULLAH",                delima:"m-251202630588@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:40,no:"12",nama:"HERNITA RISCA HIDLEY",                          delima:"m-13751819@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:41,no:"13",nama:"MOHAMAD WAFIDANI BIN JUMAADIL",                 delima:"m-13744700@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:42,no:"14",nama:"MUHAMMAD ADAM BIN ASHAARI",                     delima:"m-13916396@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:43,no:"15",nama:"MUHAMMAD KHAIRY KAZIM BIN JAMIL",               delima:"m-13916450@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:44,no:"16",nama:"MUHAMMAD RAIZ DANIEL BIN RAFIE",                delima:"m-13916451@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:45,no:"17",nama:"MUHAMMAD RAYQAL ARIAN BIN MOHAMMAD FIRDAUS",    delima:"m-13916452@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:46,no:"18",nama:"NUR AINA DAMIA BINTI MD ZAIDY",                 delima:"m-13916382@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:47,no:"19",nama:"NUR AISYSAFIYAH BINTI SAFHRY",                  delima:"m-13916383@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:48,no:"20",nama:"NUR ALEESYA DHANIYAH BINTI MOHD SHAH",          delima:"m-13916384@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:49,no:"21",nama:"NUR ALEESYA SOFEA BINTI SUPIAN",                delima:"m-13916385@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:50,no:"22",nama:"NUR AYU FARYSHA BINTI RUDY",                    delima:"m-13797714@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:51,no:"23",nama:"NUR IZZAH NADHILAH BINTI AB RAUP",              delima:"m-13916546@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:52,no:"24",nama:"NUR KHAIRA MAISARAH BINTI ISAMUDIN",            delima:"m-13916547@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:53,no:"25",nama:"NUR NATASHA ZAHRA BINTI MOHD.KHAIRUDDIN",       delima:"m-14113692@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:54,no:"26",nama:"NUR SURYANA BINTI ABD.SAMAN",                   delima:"m-13916549@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:55,no:"27",nama:"NURUL ADAWIYAH AQILAH BINTI ABDUL HABI",        delima:"m-13948319@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:56,no:"28",nama:"QAISARAH QAREENA BINTI MOHD FEZALY",            delima:"m-13836344@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:57,no:"29",nama:"SYAFISYAH BINTI ABDULLAH",                      delima:"m-13916613@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:58,no:"30",nama:"VIVI NURSYAH VIDONA BINTI SYED FAZRY",          delima:"m-13801842@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  {id:59,no:"31",nama:"ZUBAIR BIN SHARIFUL FADZLI",                    delima:"m-15749040@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Amanah"},
+  // === 6 ARIF ===
+  {id:60,no:"01",nama:"ADAM HAKIMI BIN MOHD FIRDAUS",                  delima:"m-13915982@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:61,no:"02",nama:"AHMAD AMMAR BIN MOHAMMAD SAPRI",                delima:"m-13775593@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:62,no:"03",nama:"AHMAD FURQAN MULTAZAM BIN AHMAD",               delima:"m-13917236@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:63,no:"04",nama:"AHMAD KHAN AQHARI BIN AL HADZ",                 delima:"m-13917237@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:64,no:"05",nama:"AHMAD UWAIS SYAMIL BIN MOHD ZAINUDDIN",         delima:"m-13889700@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:65,no:"06",nama:"AIN MEDINA BINTI OMAR",                         delima:"m-13917238@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:66,no:"07",nama:"ANNURSYADIQAH AFIFAH BINTI ABDULLAH",           delima:"m-13782099@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:67,no:"08",nama:"AWANG QUE AZNIN BIN AWANG ZANY",               delima:"m-13917241@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:68,no:"09",nama:"AYRIS QHAISARAH BINTI MOHD.YUSUP",             delima:"m-13917242@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:69,no:"10",nama:"DANIEL KHUZAIRI",                               delima:"m-13923362@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:70,no:"11",nama:"FIRDAUS BIN ABDULLAH",                          delima:"m-13923364@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:71,no:"12",nama:"HAWA SOFEA BINTI ABDULLAH",                     delima:"m-13817734@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:72,no:"13",nama:"LUKMAN ALHAKIM BIN TUSMAN",                     delima:"m-13923387@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:73,no:"14",nama:"MOHAMMAD RAYYAN ADIF BIN ROSTAM",               delima:"m-13916094@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:74,no:"15",nama:"MOHAMMAD REZMAN BIN MADUSIN",                   delima:"m-13916095@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:75,no:"16",nama:"MUHAMMAD ALI ARFA BIN MOHD RUZAIMI",            delima:"m-13917244@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:76,no:"17",nama:"MUHAMMAD AZKA ZUHAYR BIN SUZAIMIE",             delima:"m-13917511@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:77,no:"18",nama:"MUHAMMAD RAIMI FIRDAUS BIN MUHAMMAD ZULHISHAM", delima:"m-13844887@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:78,no:"19",nama:"MUHAMMAD SHAH RAMDHAN BIN RAMLEE",              delima:"m-13742030@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:79,no:"20",nama:"MUHAMMAD TAUFIQ ISMAIL BIN ABDULLAH",           delima:"m-13917512@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:80,no:"21",nama:"MUHAMMAD UZAYR BIN BURARI",                     delima:"m-13917513@moe-dl.edu.my",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:81,no:"22",nama:"NUR AMANINA BINTI HARIS",                       delima:"m-13917634@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:82,no:"23",nama:"NUR DHIA ZAHRA BINTI ABDUL WAFI",               delima:"m-13917637@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:83,no:"24",nama:"NUR ELLYSAH BINTI RIZWAN",                      delima:"m-13917638@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:84,no:"25",nama:"NUR FATEHAH ADRIANA BINTI MARAMIN",             delima:"m-13917675@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:85,no:"26",nama:"NUR HAZNIRAH HANI BINTI ABDULLAH",              delima:"m-13917829@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:86,no:"27",nama:"NUR HUMAIRAH BINTI MOHD.SAH",                   delima:"m-13946130@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:87,no:"28",nama:"NUR IRDINA PUTRY BINTI MORBA",                  delima:"m-13917831@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:88,no:"29",nama:"NUR SYAFAZALYA BINTI ABDULLAH",                 delima:"m-13917833@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:89,no:"30",nama:"NUR SYARYANA BINTI AHMAD",                      delima:"m-13917836@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:90,no:"31",nama:"SYARIFAH AYESHA BINTI JAMAL",                   delima:"m-13916615@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:91,no:"32",nama:"SYASYA ADELIA BINTI BADRI",                     delima:"m-13916617@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
+  {id:92,no:"33",nama:"WARDAH QHALIESHA BINTI AZMI",                   delima:"m-13916621@moe-dl.edu.my",jantina:"P",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:"6 Arif"},
 ];
 
 const INIT_LOG = [
@@ -107,7 +196,7 @@ const SUBJ_META = {
 };
 const MERIT_SEBAB  = ["Exam excellence","Active in co-curricular","Helping the teacher","Clean classroom","Good discipline","Others"];
 const DEMERIT_SEBAB= ["Truancy","Late to class","Noisy in class","Incomplete homework","Broke school rules","Others"];
-const INIT_KH = {1:"present",2:"present",3:"present",4:"present",5:"absent",6:"present",7:"present",8:"present"};
+const INIT_KH = {};
 
 const netMerit = m => m.merit - m.demerit;
 const muridStatus = m => {
@@ -262,7 +351,7 @@ function Drawer({active,nav,onClose,notif,dark,setDark}) {
             <div>
               <p style={{color:"rgba(255,255,255,.7)",fontSize:11,fontWeight:700}}>CLASS TEACHER</p>
               <p style={{color:"#fff",fontSize:17,fontWeight:900,fontFamily:"Fredoka,sans-serif"}}>Teacher Anna</p>
-              <p style={{color:"rgba(255,255,255,.7)",fontSize:11,fontWeight:600}}>Year 4 Bestari · SK Darau</p>
+              <p style={{color:"rgba(255,255,255,.7)",fontSize:11,fontWeight:600}}>SK Bukit Lalang, Semporna</p>
             </div>
           </div>
         </div>
@@ -344,7 +433,7 @@ function Objektif() {
         <span style={{fontSize:30}}>📅</span>
         <div>
           <p style={{fontFamily:"Fredoka,sans-serif",fontSize:18,fontWeight:700,color:"#fff"}}>{d.hari}, {d.tarikh}</p>
-          <p style={{fontSize:13,fontWeight:700,color:"rgba(255,255,255,.8)"}}>🕐 {d.masa} · SK Darau, Kota Kinabalu</p>
+          <p style={{fontSize:13,fontWeight:700,color:"rgba(255,255,255,.8)"}}>🕐 {d.masa} · SK Bukit Lalang, Semporna</p>
 
         </div>
       </div>
@@ -438,9 +527,9 @@ function Objektif() {
 }
 
 /* ── TAMBAH/EDIT MURID MODAL ── */
-function MuridModal({data,onSave,onClose,count}) {
+function MuridModal({data,onSave,onClose,count,activeKelas}) {
   const isEdit = !!data?.id;
-  const [f,setF] = useState(data||{nama:"",delima:"",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:""});
+  const [f,setF] = useState(data||{nama:"",delima:"",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:activeKelas||"6 Adil"});
   const set = (k,v) => setF(p=>({...p,[k]:v}));
   return (
     <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:400,background:"rgba(10,22,40,.65)",backdropFilter:"blur(8px)",display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
@@ -451,10 +540,20 @@ function MuridModal({data,onSave,onClose,count}) {
           <button onClick={onClose} style={{background:"var(--ps)",border:"2px solid var(--p)",borderRadius:10,width:32,height:32,cursor:"pointer",fontSize:14,color:"var(--p)",fontWeight:800,fontFamily:"Nunito,sans-serif"}}>✕</button>
         </div>
         <div style={{padding:"16px",display:"flex",flexDirection:"column",gap:12}}>
+          <div>
+            <p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Class / Kelas *</p>
+            <div style={{display:"flex",gap:6}}>
+              {KELAS_LIST.map(k=>(
+                <button key={k} onClick={()=>set("kelas",k)} style={{flex:1,padding:"9px 4px",border:`3px solid ${f.kelas===k?"var(--p)":"var(--bdc)"}`,borderRadius:12,background:f.kelas===k?"var(--p)":"var(--wh)",color:f.kelas===k?"#fff":"var(--ink)",fontFamily:"Nunito,sans-serif",fontWeight:800,fontSize:12,cursor:"pointer",boxShadow:f.kelas===k?"3px 3px 0 var(--p2)":"3px 3px 0 var(--bdc)"}}>
+                  {k}
+                </button>
+              ))}
+            </div>
+          </div>
           <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Full Name *</p><input value={f.nama} onChange={e=>set("nama",e.target.value)} placeholder="Student's full name…"/></div>
           <div>
             <p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Delima ID</p>
-            <input value={f.delima} onChange={e=>set("delima",e.target.value)} placeholder="e.g. 2024010001" style={{fontFamily:"JetBrains Mono,monospace"}}/>
+            <input value={f.delima} onChange={e=>set("delima",e.target.value)} placeholder="m-XXXXXXXX@moe-dl.edu.my" style={{fontFamily:"JetBrains Mono,monospace"}}/>
           </div>
           <div>
             <p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Gender *</p>
@@ -495,7 +594,7 @@ function MuridModal({data,onSave,onClose,count}) {
 /* ── WHATSAPP MODAL ── */
 function WAModal({murid,onClose}) {
   const [pilih,setPilih] = useState([]);
-  const [teks,setTeks]   = useState("Dear parent, this is a notice from Teacher Anna, Class Teacher Year 4 Bestari, SK Darau.");
+  const [teks,setTeks]   = useState("Dear parent, this is a notice from Teacher Anna, SK Bukit Lalang, Semporna.");
   const toggle = id => setPilih(p=>p.includes(id)?p.filter(x=>x!==id):[...p,id]);
   const openWA = m => {
     const msg = encodeURIComponent(`${teks}\n\nTo: ${m.wali}\nStudent: ${m.nama} (No.${m.no})\n\nThank you. 🙏`);
@@ -571,7 +670,7 @@ function WAModal({murid,onClose}) {
 }
 
 /* ── DASHBOARD ── */
-function Dashboard({murid,log,kh,setWA}) {
+function Dashboard({murid,log,kh,setWA,activeKelas}) {
   const hadir  = murid.filter(m=>(kh[m.id]||"hadir")==="hadir").length;
   const notif  = log.filter(l=>l.status==="belum balas").length;
   const cem    = murid.filter(m=>m.merit>=100).length;
@@ -584,7 +683,7 @@ function Dashboard({murid,log,kh,setWA}) {
         <div style={{position:"absolute",top:-20,right:-20,width:100,height:100,borderRadius:"50%",background:"rgba(255,255,255,.1)",border:"3px solid rgba(255,255,255,.15)"}}/>
         <p style={{color:"rgba(255,255,255,.8)",fontSize:12,fontWeight:700}}>📅 {d.hari}, {d.tarikh}</p>
         <p style={{fontFamily:"Fredoka,sans-serif",fontSize:24,fontWeight:700,color:"#fff",marginTop:2,lineHeight:1.2}}>{g.e} {g.t}, Teacher Anna!</p>
-        <p style={{color:"rgba(255,255,255,.8)",fontSize:12,fontWeight:600,marginTop:2,marginBottom:14}}>Year 4 Bestari · SK Darau</p>
+        <p style={{color:"rgba(255,255,255,.8)",fontSize:12,fontWeight:600,marginTop:2,marginBottom:14}}>Tahun {activeKelas} · SK Bukit Lalang, Semporna</p>
         <svg style={{display:"block",width:"100%",height:18,marginBottom:-1}} viewBox="0 0 300 18" preserveAspectRatio="none">
           <path d="M0,8 C60,0 120,18 180,8 C240,0 280,14 300,8 L300,18 L0,18 Z" fill="var(--bg)"/>
         </svg>
@@ -746,7 +845,7 @@ function Merit({murid,updateMerit}) {
 }
 
 /* ── SENARAI MURID ── */
-function SenaraiMurid({murid,saveMurid,deleteMurid}) {
+function SenaraiMurid({murid,saveMurid,deleteMurid,activeKelas}) {
   const [q,setQ]       = useState("");
   const [pilih,setPilih]= useState(null);
   const [sort,setSort] = useState("no");
@@ -765,7 +864,7 @@ function SenaraiMurid({murid,saveMurid,deleteMurid}) {
   const sel = murid.find(m=>m.id===pilih);
   return (
     <>
-      {modal&&<MuridModal data={modal==="tambah"?null:modal} onSave={save} onClose={()=>setModal(null)} count={murid.length}/>}
+      {modal&&<MuridModal data={modal==="tambah"?null:modal} onSave={save} onClose={()=>setModal(null)} count={murid.length} activeKelas={activeKelas}/>}
       <div style={{display:"flex",flexDirection:"column",gap:16}}>
         {sel?(
           <div className="fade-up" style={{display:"flex",flexDirection:"column",gap:14}}>
@@ -805,7 +904,7 @@ function SenaraiMurid({murid,saveMurid,deleteMurid}) {
             )}
             <div style={{display:"flex",gap:8}}>
               <button className="cbtn cbtn-yellow" style={{flex:2,padding:"12px"}} onClick={()=>setModal(sel)}>✏️ Edit</button>
-              <button onClick={()=>{const msg=encodeURIComponent(`Dear ${sel.wali}, this is a message from Teacher Anna, Class Teacher Year 4 Bestari SK Darau regarding ${sel.nama}.`);window.open(`https://wa.me/60${sel.tel.replace(/^0/,"")}?text=${msg}`,"_blank");}}
+              <button onClick={()=>{const msg=encodeURIComponent(`Dear ${sel.wali}, this is a message from Teacher Anna, SK Bukit Lalang, Semporna regarding ${sel.nama}.`);window.open(`https://wa.me/60${sel.tel.replace(/^0/,"")}?text=${msg}`,"_blank");}}
                 style={{flex:2,padding:"12px",background:"#25D366",border:"3px solid #1DA851",borderRadius:14,color:"#fff",fontFamily:"Nunito,sans-serif",fontWeight:900,fontSize:13,cursor:"pointer",boxShadow:"3px 3px 0 #1DA851"}}>📬 WA</button>
               <button className="cbtn" style={{flex:1,padding:"12px",background:"var(--ps)",color:"var(--p)",borderColor:"var(--p)",boxShadow:"3px 3px 0 var(--p2)"}} onClick={()=>hapus(sel.id)}>🗑️</button>
             </div>
@@ -815,7 +914,7 @@ function SenaraiMurid({murid,saveMurid,deleteMurid}) {
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
               <div>
                 <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>👥 Student <span style={{color:"var(--p)"}}>List</span></p>
-                <p style={{fontSize:12,fontWeight:700,color:"var(--i3)",marginTop:2}}>{murid.length} students · Year 4 Bestari</p>
+                <p style={{fontSize:12,fontWeight:700,color:"var(--i3)",marginTop:2}}>{murid.length} students · Tahun {activeKelas}</p>
               </div>
               <button onClick={()=>setModal("tambah")} style={{background:"var(--p)",color:"#fff",border:"3px solid var(--bdc)",borderRadius:14,padding:"10px 14px",fontSize:13,fontWeight:900,cursor:"pointer",fontFamily:"Nunito,sans-serif",boxShadow:"3px 3px 0 var(--bdc)"}}>+ Add</button>
             </div>
@@ -1070,7 +1169,7 @@ function DesktopSidebar({active,nav,notif,dark,setDark,logout,nama}) {
           <div style={{background:"rgba(255,255,255,.2)",border:"2.5px solid rgba(255,255,255,.4)",borderRadius:12,padding:6}}><Logo size={32}/></div>
           <div>
             <p style={{color:"#fff",fontSize:15,fontWeight:900,fontFamily:"Fredoka,sans-serif",lineHeight:1.1}}>Portal Cikgu Anna</p>
-            <p style={{color:"rgba(255,255,255,.7)",fontSize:10,fontWeight:600,lineHeight:1.2}}>Tahun 4 Bestari · SK Darau</p>
+            <p style={{color:"rgba(255,255,255,.7)",fontSize:10,fontWeight:600,lineHeight:1.2}}>SK Bukit Lalang, Semporna</p>
           </div>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:8,background:"rgba(255,255,255,.15)",borderRadius:10,padding:"7px 10px"}}>
@@ -1116,15 +1215,16 @@ function DesktopSidebar({active,nav,notif,dark,setDark,logout,nama}) {
 /* ── ROOT APP ── */
 export default function App() {
   const { session, login, logout, authLoading, authError } = useAuth();
-  const [tab,setTab]       = useState("dashboard");
-  const [drawer,setDrawer] = useState(false);
-  const [search,setSearch] = useState(false);
-  const [waModal,setWaModal]=useState(false);
-  const [dark,setDark]     = useState(false);
-  const [murid,setMurid]   = useState([]);
-  const [log,setLog]       = useState([]);
-  const [loading,setLoading]= useState(true);
-  const [kh]               = useState(INIT_KH);
+  const [tab,setTab]           = useState("dashboard");
+  const [drawer,setDrawer]     = useState(false);
+  const [search,setSearch]     = useState(false);
+  const [waModal,setWaModal]   = useState(false);
+  const [dark,setDark]         = useState(false);
+  const [murid,setMurid]       = useState([]);
+  const [log,setLog]           = useState([]);
+  const [loading,setLoading]   = useState(true);
+  const [kh]                   = useState(INIT_KH);
+  const [activeKelas,setActiveKelas] = useState("6 Adil");
 
   /* ── LOAD FROM SUPABASE ── */
   const loadData = useCallback(async () => {
@@ -1191,8 +1291,9 @@ export default function App() {
     setLog(p => p.map(l => l.id === id ? { ...l, ...fields } : l));
   };
 
+  const filteredMurid = murid.filter(m => m.kelas === activeKelas);
   const notif      = log.filter(l=>l.status==="belum balas").length;
-  const hadirCount = murid.filter(m=>(kh[m.id]||"hadir")==="hadir").length;
+  const hadirCount = filteredMurid.filter(m=>(kh[m.id]||"hadir")==="hadir").length;
   const g = getGreeting();
 
   if (!session) return (
@@ -1224,7 +1325,7 @@ export default function App() {
       <style>{makeCSS(dark)}</style>
       {search  && <Search murid={murid} log={log} nav={t=>{setTab(t);setSearch(false);}} onClose={()=>setSearch(false)}/>}
       {drawer  && <Drawer active={tab} nav={t=>{setTab(t);}} onClose={()=>setDrawer(false)} notif={notif} dark={dark} setDark={setDark}/>}
-      {waModal && <WAModal murid={murid} onClose={()=>setWaModal(false)}/>}
+      {waModal && <WAModal murid={filteredMurid} onClose={()=>setWaModal(false)}/>}
 
       <div className="app-wrap" style={{minHeight:"100vh",background:"var(--bg)",display:"flex",flexDirection:"column",maxWidth:430,margin:"0 auto"}}>
         <DesktopSidebar active={tab} nav={t=>{setTab(t);}} notif={notif} dark={dark} setDark={setDark} logout={logout} nama={session.nama}/>
@@ -1241,7 +1342,7 @@ export default function App() {
             </div>
             <div style={{flex:1,minWidth:0}}>
               <p style={{fontFamily:"Fredoka,sans-serif",fontSize:16,fontWeight:700,color:"#fff",lineHeight:1.1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>Teacher Anna's Portal</p>
-              <p style={{fontSize:10,fontWeight:700,color:"rgba(255,255,255,.72)",marginTop:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{g.e} {g.t} · {hadirCount}/{murid.length} present</p>
+              <p style={{fontSize:10,fontWeight:700,color:"rgba(255,255,255,.72)",marginTop:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{g.e} {g.t} · Thn {activeKelas} · {hadirCount}/{filteredMurid.length} present</p>
             </div>
             <div style={{display:"flex",gap:6,flexShrink:0,alignItems:"center"}}>
               <LiveClock/>
@@ -1258,12 +1359,23 @@ export default function App() {
             </div>
           </div>
           {/* Search row */}
-          <div style={{padding:"0 12px 10px",position:"relative"}}>
+          <div style={{padding:"0 12px 6px",position:"relative"}}>
             <button onClick={()=>setSearch(true)} style={{width:"100%",display:"flex",alignItems:"center",gap:8,background:"rgba(255,255,255,.2)",border:"2px solid rgba(255,255,255,.38)",borderRadius:12,padding:"9px 12px",cursor:"pointer",textAlign:"left",boxShadow:"2px 2px 0 rgba(0,0,0,.12)"}}>
               <span style={{fontSize:14}}>🔍</span>
               <span style={{fontSize:12,color:"rgba(255,255,255,.8)",fontFamily:"Nunito,sans-serif",fontWeight:700,flex:1}}>Search student, Delima ID, guardian, message…</span>
               <span style={{fontSize:9,fontWeight:900,color:"rgba(255,255,255,.55)",background:"rgba(255,255,255,.12)",borderRadius:6,padding:"2px 6px",border:"1.5px solid rgba(255,255,255,.2)"}}>⌘K</span>
             </button>
+          </div>
+          {/* Class selector */}
+          <div style={{padding:"0 12px 10px",display:"flex",gap:6}}>
+            {KELAS_LIST.map(k=>{
+              const sel=activeKelas===k;
+              return (
+                <button key={k} onClick={()=>setActiveKelas(k)} style={{flex:1,padding:"7px 4px",border:`2px solid ${sel?"#fff":"rgba(255,255,255,.4)"}`,borderRadius:99,background:sel?"rgba(255,255,255,.28)":"transparent",color:sel?"#fff":"rgba(255,255,255,.65)",fontFamily:"Nunito,sans-serif",fontWeight:900,fontSize:12,cursor:"pointer",transition:"all .15s"}}>
+                  Thn {k}
+                </button>
+              );
+            })}
           </div>
           {/* Wavy */}
           <svg style={{display:"block",width:"100%",height:14,marginBottom:-1}} viewBox="0 0 430 14" preserveAspectRatio="none">
@@ -1274,14 +1386,14 @@ export default function App() {
 
         {/* ── CONTENT ── */}
         <div style={{flex:1,padding:"14px 14px 40px",overflowY:"auto"}} key={tab} className="fade-up">
-          {tab==="dashboard" && <Dashboard murid={murid} log={log} kh={kh} setWA={setWaModal}/>}
+          {tab==="dashboard" && <Dashboard murid={filteredMurid} log={log} kh={kh} setWA={setWaModal} activeKelas={activeKelas}/>}
           {tab==="objektif"  && <Objektif/>}
-          {tab==="kehadiran" && <Kehadiran murid={murid}/>}
-          {tab==="merit"     && <Merit murid={murid} updateMerit={updateMerit}/>}
-          {tab==="murid"     && <SenaraiMurid murid={murid} saveMurid={saveMurid} deleteMurid={deleteMurid}/>}
+          {tab==="kehadiran" && <Kehadiran murid={filteredMurid}/>}
+          {tab==="merit"     && <Merit murid={filteredMurid} updateMerit={updateMerit}/>}
+          {tab==="murid"     && <SenaraiMurid murid={filteredMurid} saveMurid={saveMurid} deleteMurid={deleteMurid} activeKelas={activeKelas}/>}
           {tab==="jadual"    && <Jadual/>}
           {tab==="log"       && <Log log={log} addLog={addLog} updateLog={updateLog}/>}
-          {tab==="laporan"   && <Laporan murid={murid}/>}
+          {tab==="laporan"   && <Laporan murid={filteredMurid}/>}
         </div>
 
         {/* ── BOTTOM NAV ── */}
