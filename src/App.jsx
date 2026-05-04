@@ -68,62 +68,68 @@ select option{background:var(--wh);color:var(--ink);}
 const INIT_MURID = [
   {id:1,no:"01",nama:"Ahmad Haziq bin Rosli",      delima:"2024010001",jantina:"L",ic:"140512-12-1234",wali:"Rosli bin Ahmad",     tel:"0128881234",hadir:82,absen:3, merit:92, demerit:5, catatan:""},
   {id:2,no:"02",nama:"Nur Aisyah binti Kamal",      delima:"2024010002",jantina:"P",ic:"140701-12-5678",wali:"Kamal bin Hassan",   tel:"0137772345",hadir:85,absen:0, merit:110,demerit:0, catatan:""},
-  {id:3,no:"03",nama:"Muhammad Izzat Hakimi",       delima:"2024010003",jantina:"L",ic:"140320-12-9012",wali:"Hafiz bin Sulaiman", tel:"0194443456",hadir:78,absen:7, merit:65, demerit:15,catatan:"Perlu pemantauan kehadiran."},
+  {id:3,no:"03",nama:"Muhammad Izzat Hakimi",       delima:"2024010003",jantina:"L",ic:"140320-12-9012",wali:"Hafiz bin Sulaiman", tel:"0194443456",hadir:78,absen:7, merit:65, demerit:15,catatan:"Attendance needs monitoring."},
   {id:4,no:"04",nama:"Siti Nurfatihah binti Zain",  delima:"2024010004",jantina:"P",ic:"140815-12-3456",wali:"Zain bin Ibrahim",   tel:"0111114567",hadir:84,absen:1, merit:98, demerit:2, catatan:""},
-  {id:5,no:"05",nama:"Luqmanul Hakim bin Daud",     delima:"2024010005",jantina:"L",ic:"140223-12-7890",wali:"Daud bin Yusof",     tel:"0165555678",hadir:75,absen:10,merit:45, demerit:25,catatan:"Sering ponteng. Hubungi wali."},
-  {id:6,no:"06",nama:"Alya Damia binti Rashid",     delima:"2024010006",jantina:"P",ic:"141103-12-2345",wali:"Rashid bin Omar",    tel:"0106666789",hadir:85,absen:0, merit:125,demerit:0, catatan:"Calon murid terbaik."},
+  {id:5,no:"05",nama:"Luqmanul Hakim bin Daud",     delima:"2024010005",jantina:"L",ic:"140223-12-7890",wali:"Daud bin Yusof",     tel:"0165555678",hadir:75,absen:10,merit:45, demerit:25,catatan:"Frequently absent. Contact guardian."},
+  {id:6,no:"06",nama:"Alya Damia binti Rashid",     delima:"2024010006",jantina:"P",ic:"141103-12-2345",wali:"Rashid bin Omar",    tel:"0106666789",hadir:85,absen:0, merit:125,demerit:0, catatan:"Top student candidate."},
   {id:7,no:"07",nama:"Haikal Amsyar bin Noor",      delima:"2024010007",jantina:"L",ic:"141205-12-6789",wali:"Noor bin Azman",     tel:"0171234567",hadir:80,absen:5, merit:70, demerit:8, catatan:""},
   {id:8,no:"08",nama:"Safiyya Zahra binti Mustafa", delima:"2024010008",jantina:"P",ic:"140410-12-3210",wali:"Mustafa bin Idris",  tel:"0189876543",hadir:85,absen:0, merit:105,demerit:0, catatan:""},
 ];
 
 const INIT_LOG = [
-  {id:1,murid:"Ahmad Haziq",   wali:"Rosli bin Ahmad", tel:"0128881234",jenis:"pertanyaan",mesej:"Boleh tahu jadual peperiksaan bulan Jun?",          tarikh:"28 Apr",status:"belum balas",balasan:""},
-  {id:2,murid:"Nur Aisyah",    wali:"Kamal bin Hassan",tel:"0137772345",jenis:"makluman",  mesej:"Aisyah akan ponteng 2 hari kerana kenduri keluarga.",tarikh:"27 Apr",status:"diterima",   balasan:""},
-  {id:3,murid:"Luqmanul Hakim",wali:"Daud bin Yusof",  tel:"0165555678",jenis:"aduan",     mesej:"Anak saya kata ada masalah dengan rakan sekelas.",   tarikh:"26 Apr",status:"dibalas",   balasan:"Terima kasih. Saya akan pantau dan hubungi semula."},
-  {id:4,murid:"Alya Damia",    wali:"Rashid bin Omar", tel:"0106666789",jenis:"makluman",  mesej:"Alya ada latihan sukan petang Isnin ini.",           tarikh:"25 Apr",status:"diterima",   balasan:""},
+  {id:1,murid:"Ahmad Haziq",   wali:"Rosli bin Ahmad", tel:"0128881234",jenis:"enquiry",  mesej:"Could you share the exam schedule for June?",              tarikh:"28 Apr",status:"unanswered",balasan:""},
+  {id:2,murid:"Nur Aisyah",    wali:"Kamal bin Hassan",tel:"0137772345",jenis:"notice",   mesej:"Aisyah will be absent for 2 days due to a family event.",   tarikh:"27 Apr",status:"received",   balasan:""},
+  {id:3,murid:"Luqmanul Hakim",wali:"Daud bin Yusof",  tel:"0165555678",jenis:"complaint",mesej:"My child mentioned having an issue with a classmate.",       tarikh:"26 Apr",status:"replied",    balasan:"Thank you. I will monitor the situation and follow up."},
+  {id:4,murid:"Alya Damia",    wali:"Rashid bin Omar", tel:"0106666789",jenis:"notice",   mesej:"Alya has sports training this Monday afternoon.",            tarikh:"25 Apr",status:"received",   balasan:""},
 ];
 
 const JADUAL = {
-  Isnin: ["BM","Matematik","Sains","REHAT","Pend. Islam","Bhs. Inggeris","ERT"],
-  Selasa:["Matematik","BM","Bhs. Inggeris","REHAT","Sains","Sejarah","PJ"],
-  Rabu:  ["Sains","Bhs. Inggeris","BM","REHAT","Matematik","Pend. Islam","Muzik"],
-  Khamis:["Pend. Islam","Sains","Matematik","REHAT","BM","Bhs. Inggeris","Moral"],
-  Jumaat:["PJ","BM","Sains","REHAT","Matematik","Bhs. Inggeris","Kokurikulum"],
+  Monday:    ["Malay","Maths","Science","BREAK","Islamic Studies","English","Home Ec"],
+  Tuesday:   ["Maths","Malay","English","BREAK","Science","History","PE"],
+  Wednesday: ["Science","English","Malay","BREAK","Maths","Islamic Studies","Music"],
+  Thursday:  ["Islamic Studies","Science","Maths","BREAK","Malay","English","Moral Ed"],
+  Friday:    ["PE","Malay","Science","BREAK","Maths","English","Co-Curricular"],
 };
 const MASA = ["7:30","8:10","8:50","9:30","10:10","11:10","11:50"];
 const SUBJ_META = {
-  "BM":{emoji:"📖",color:"#1A56DB",bg:"#EFF6FF"},"Matematik":{emoji:"🔢",color:"#FF8C00",bg:"#FFF4E0"},
-  "Sains":{emoji:"🔬",color:"#06B77A",bg:"#E6FAF3"},"Bhs. Inggeris":{emoji:"🌍",color:"#8B5CF6",bg:"#F5F3FF"},
-  "Pend. Islam":{emoji:"☪️",color:"#9333EA",bg:"#F5F3FF"},"Sejarah":{emoji:"📜",color:"#B45309",bg:"#FFF8ED"},
-  "PJ":{emoji:"⚽",color:"#0891B2",bg:"#ECFEFF"},"ERT":{emoji:"🧵",color:"#EC4899",bg:"#FDF2F8"},
-  "Muzik":{emoji:"🎵",color:"#6366F1",bg:"#EEF2FF"},"Moral":{emoji:"🌱",color:"#CA8A04",bg:"#FEFCE8"},
-  "Kokurikulum":{emoji:"🏅",color:"#16A34A",bg:"#F0FDF4"},"REHAT":{emoji:"🍱",color:"#94A3B8",bg:"#F8FAFC"},
+  "Malay":          {emoji:"📖",color:"#1A56DB",bg:"#EFF6FF"},
+  "Maths":          {emoji:"🔢",color:"#FF8C00",bg:"#FFF4E0"},
+  "Science":        {emoji:"🔬",color:"#06B77A",bg:"#E6FAF3"},
+  "English":        {emoji:"🌍",color:"#8B5CF6",bg:"#F5F3FF"},
+  "Islamic Studies":{emoji:"☪️",color:"#9333EA",bg:"#F5F3FF"},
+  "History":        {emoji:"📜",color:"#B45309",bg:"#FFF8ED"},
+  "PE":             {emoji:"⚽",color:"#0891B2",bg:"#ECFEFF"},
+  "Home Ec":        {emoji:"🧵",color:"#EC4899",bg:"#FDF2F8"},
+  "Music":          {emoji:"🎵",color:"#6366F1",bg:"#EEF2FF"},
+  "Moral Ed":       {emoji:"🌱",color:"#CA8A04",bg:"#FEFCE8"},
+  "Co-Curricular":  {emoji:"🏅",color:"#16A34A",bg:"#F0FDF4"},
+  "BREAK":          {emoji:"🍱",color:"#94A3B8",bg:"#F8FAFC"},
 };
-const MERIT_SEBAB  = ["Cemerlang peperiksaan","Aktif kokurikulum","Membantu guru","Kelas bersih","Disiplin baik","Lain-lain"];
-const DEMERIT_SEBAB= ["Ponteng","Lewat","Bising dalam kelas","Tidak siap kerja rumah","Melanggar peraturan","Lain-lain"];
-const INIT_KH = {1:"hadir",2:"hadir",3:"hadir",4:"hadir",5:"tidak hadir",6:"hadir",7:"hadir",8:"hadir"};
+const MERIT_SEBAB  = ["Exam excellence","Active in co-curricular","Helping the teacher","Clean classroom","Good discipline","Others"];
+const DEMERIT_SEBAB= ["Truancy","Late to class","Noisy in class","Incomplete homework","Broke school rules","Others"];
+const INIT_KH = {1:"present",2:"present",3:"present",4:"present",5:"absent",6:"present",7:"present",8:"present"};
 
 const netMerit = m => m.merit - m.demerit;
 const muridStatus = m => {
-  if (netMerit(m) >= 100) return {label:"⭐ Cemerlang",color:"var(--g)",  bg:"var(--gs)",bc:"var(--g)"};
-  if (m.absen >= 7 || m.demerit >= 15) return {label:"🚨 Pantau",color:"var(--p)",bg:"var(--ps)",bc:"var(--p)"};
-  return {label:"👍 Baik",color:"#B45309",bg:"var(--ys)",bc:"#B45309"};
+  if (netMerit(m) >= 100) return {label:"⭐ Excellent",color:"var(--g)",  bg:"var(--gs)",bc:"var(--g)"};
+  if (m.absen >= 7 || m.demerit >= 15) return {label:"🚨 Monitor",color:"var(--p)",bg:"var(--ps)",bc:"var(--p)"};
+  return {label:"👍 Good",color:"#B45309",bg:"var(--ys)",bc:"#B45309"};
 };
 const getGreeting = () => {
   const h = new Date().getHours();
-  if (h < 12) return {t:"Selamat Pagi",   e:"🌤️"};
-  if (h < 15) return {t:"Selamat Tengah Hari",e:"☀️"};
-  if (h < 19) return {t:"Selamat Petang", e:"🌇"};
-  return      {t:"Selamat Malam",  e:"🌙"};
+  if (h < 12) return {t:"Good Morning",   e:"🌤️"};
+  if (h < 15) return {t:"Good Afternoon", e:"☀️"};
+  if (h < 19) return {t:"Good Evening",   e:"🌇"};
+  return      {t:"Good Night",            e:"🌙"};
 };
 const getDateInfo = () => {
-  const days   = ["Ahad","Isnin","Selasa","Rabu","Khamis","Jumaat","Sabtu"];
-  const months = ["Jan","Feb","Mac","Apr","Mei","Jun","Jul","Ogos","Sep","Okt","Nov","Dis"];
+  const days   = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   const d = new Date();
   return {
     hari:   days[d.getDay()],
     tarikh: `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`,
-    masa:   d.toLocaleTimeString("ms-MY",{hour:"2-digit",minute:"2-digit"}),
+    masa:   d.toLocaleTimeString("en-MY",{hour:"2-digit",minute:"2-digit"}),
   };
 };
 
@@ -206,12 +212,12 @@ function Search({murid,log,nav,onClose}) {
       <div className="bounce-in" onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:420,background:"var(--wh)",border:"3px solid var(--bdc)",borderRadius:24,boxShadow:"6px 6px 0 var(--bdc)",overflow:"hidden"}}>
         <div style={{display:"flex",alignItems:"center",gap:10,padding:"14px 16px",borderBottom:"3px solid var(--bdc)",background:"var(--ps)"}}>
           <span style={{fontSize:20}}>🔍</span>
-          <input ref={ref} value={q} onChange={e=>setQ(e.target.value)} placeholder="Cari murid, ID Delima, wali, mesej…" style={{border:"none",boxShadow:"none",padding:0,background:"transparent",fontSize:15,fontWeight:700,flex:1,borderRadius:0,transform:"none"}}/>
+          <input ref={ref} value={q} onChange={e=>setQ(e.target.value)} placeholder="Search student, Delima ID, guardian, message…" style={{border:"none",boxShadow:"none",padding:0,background:"transparent",fontSize:15,fontWeight:700,flex:1,borderRadius:0,transform:"none"}}/>
           <button onClick={onClose} style={{background:"var(--p)",color:"#fff",border:"none",borderRadius:10,padding:"5px 12px",fontSize:12,fontWeight:800,cursor:"pointer",fontFamily:"Nunito,sans-serif"}}>✕</button>
         </div>
         <div style={{maxHeight:340,overflowY:"auto"}}>
-          {q.length<2 && <div style={{padding:"32px 16px",textAlign:"center"}}><div style={{fontSize:36,marginBottom:8}}>✨</div><p style={{fontFamily:"Fredoka,sans-serif",fontSize:17,color:"var(--p)",fontWeight:600}}>Taip untuk mencari…</p><p style={{fontSize:12,color:"var(--i3)",marginTop:4,fontWeight:600}}>Nama murid, ID Delima, wali, atau mesej</p></div>}
-          {q.length>=2 && res.length===0 && <div style={{padding:"28px 16px",textAlign:"center",color:"var(--i3)",fontWeight:700}}>😔 Tiada hasil untuk "{q}"</div>}
+          {q.length<2 && <div style={{padding:"32px 16px",textAlign:"center"}}><div style={{fontSize:36,marginBottom:8}}>✨</div><p style={{fontFamily:"Fredoka,sans-serif",fontSize:17,color:"var(--p)",fontWeight:600}}>Type to search…</p><p style={{fontSize:12,color:"var(--i3)",marginTop:4,fontWeight:600}}>Student name, Delima ID, guardian, or message</p></div>}
+          {q.length>=2 && res.length===0 && <div style={{padding:"28px 16px",textAlign:"center",color:"var(--i3)",fontWeight:700}}>😔 No results for "{q}"</div>}
           {res.map((r,i)=>(
             <button key={i} onClick={()=>{nav(r.type==="murid"?"murid":"log");onClose();}} style={{width:"100%",display:"flex",alignItems:"center",gap:12,padding:"12px 16px",background:"none",border:"none",borderBottom:"2px solid var(--pm)",cursor:"pointer",textAlign:"left"}}>
               <span style={{fontSize:22,background:r.type==="murid"?"var(--ps)":"var(--bs)",border:"2px solid var(--bdc)",borderRadius:12,width:38,height:38,display:"flex",alignItems:"center",justifyContent:"center"}}>{r.type==="murid"?"👤":"📩"}</span>
@@ -219,7 +225,7 @@ function Search({murid,log,nav,onClose}) {
                 <p style={{fontSize:13,fontWeight:800,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",color:"var(--ink)"}}>{r.label}</p>
                 <p style={{fontSize:11,color:"var(--i3)",fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r.sub}</p>
               </div>
-              <span style={{fontSize:10,fontWeight:800,color:"var(--p)",background:"var(--ps)",border:"2px solid var(--p)",borderRadius:99,padding:"2px 8px"}}>{r.type==="murid"?"MURID":"LOG"}</span>
+              <span style={{fontSize:10,fontWeight:800,color:"var(--p)",background:"var(--ps)",border:"2px solid var(--p)",borderRadius:99,padding:"2px 8px"}}>{r.type==="murid"?"STUDENT":"LOG"}</span>
             </button>
           ))}
         </div>
@@ -230,14 +236,14 @@ function Search({murid,log,nav,onClose}) {
 
 /* ── MENU ── */
 const MENU = [
-  {id:"dashboard", emoji:"🏠",label:"Dashboard",      sub:"Ringkasan harian"},
-  {id:"objektif",  emoji:"🎯",label:"Objektif P&P",   sub:"Lesson Objective"},
-  {id:"kehadiran", emoji:"📋",label:"Kehadiran",      sub:"Rekod hadir murid"},
-  {id:"merit",     emoji:"🏆",label:"Merit & Demerit",sub:"Sistem ganjaran"},
-  {id:"murid",     emoji:"👥",label:"Senarai Murid",  sub:"Profil & maklumat"},
-  {id:"jadual",    emoji:"📅",label:"Jadual Waktu",   sub:"P&P mingguan"},
-  {id:"log",       emoji:"📩",label:"Log Ibu Bapa",   sub:"Mesej & makluman"},
-  {id:"laporan",   emoji:"📊",label:"Laporan & PDF",  sub:"Export & statistik"},
+  {id:"dashboard", emoji:"🏠",label:"Dashboard",       sub:"Daily overview"},
+  {id:"objektif",  emoji:"🎯",label:"Lesson Objectives",sub:"Lesson objectives"},
+  {id:"kehadiran", emoji:"📋",label:"Attendance",       sub:"Daily student records"},
+  {id:"merit",     emoji:"🏆",label:"Merit & Demerit",  sub:"Reward system"},
+  {id:"murid",     emoji:"👥",label:"Student List",     sub:"Profiles & details"},
+  {id:"jadual",    emoji:"📅",label:"Timetable",        sub:"Weekly schedule"},
+  {id:"log",       emoji:"📩",label:"Parent Log",       sub:"Messages & notices"},
+  {id:"laporan",   emoji:"📊",label:"Reports & PDF",    sub:"Export & statistics"},
 ];
 
 /* ── DRAWER ── */
@@ -254,9 +260,9 @@ function Drawer({active,nav,onClose,notif,dark,setDark}) {
           <div style={{display:"flex",alignItems:"center",gap:12}}>
             <div style={{width:48,height:48,borderRadius:"50%",background:"rgba(255,255,255,.25)",border:"3px solid rgba(255,255,255,.5)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:24}}>👩‍🏫</div>
             <div>
-              <p style={{color:"rgba(255,255,255,.7)",fontSize:11,fontWeight:700}}>GURU KELAS</p>
-              <p style={{color:"#fff",fontSize:17,fontWeight:900,fontFamily:"Fredoka,sans-serif"}}>Cikgu Anna</p>
-              <p style={{color:"rgba(255,255,255,.7)",fontSize:11,fontWeight:600}}>Tahun 4 Bestari · SK Darau</p>
+              <p style={{color:"rgba(255,255,255,.7)",fontSize:11,fontWeight:700}}>CLASS TEACHER</p>
+              <p style={{color:"#fff",fontSize:17,fontWeight:900,fontFamily:"Fredoka,sans-serif"}}>Teacher Anna</p>
+              <p style={{color:"rgba(255,255,255,.7)",fontSize:11,fontWeight:600}}>Year 4 Bestari · SK Darau</p>
             </div>
           </div>
         </div>
@@ -279,14 +285,14 @@ function Drawer({active,nav,onClose,notif,dark,setDark}) {
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
             <div style={{display:"flex",alignItems:"center",gap:8}}>
               <span style={{fontSize:18}}>{dark?"🌙":"☀️"}</span>
-              <p style={{fontSize:13,fontWeight:800,color:"var(--ink)"}}>Mod {dark?"Gelap":"Cerah"}</p>
+              <p style={{fontSize:13,fontWeight:800,color:"var(--ink)"}}>{dark?"Dark":"Light"} Mode</p>
             </div>
             <button onClick={()=>setDark(!dark)} style={{width:50,height:28,borderRadius:99,border:"3px solid var(--bdc)",background:dark?"var(--p)":"var(--i3)",cursor:"pointer",position:"relative",boxShadow:"2px 2px 0 var(--bdc)",transition:"background .2s"}}>
               <div style={{position:"absolute",top:3,left:dark?24:3,width:18,height:18,borderRadius:"50%",background:"#fff",border:"2px solid var(--bdc)",transition:"left .2s"}}/>
             </button>
           </div>
-          <p style={{fontSize:11,fontWeight:700,color:"var(--i2)",fontStyle:"italic"}}>✏️ "Mendidik itu memberi cahaya"</p>
-          <p style={{fontSize:10,color:"var(--i3)",marginTop:2,fontWeight:600}}>Portal Cikgu Anna v1.0 · 2026</p>
+          <p style={{fontSize:11,fontWeight:700,color:"var(--i2)",fontStyle:"italic"}}>✏️ "Education is the kindling of a flame"</p>
+          <p style={{fontSize:10,color:"var(--i3)",marginTop:2,fontWeight:600}}>Teacher Anna's Portal v1.0 · 2026</p>
         </div>
       </div>
     </>
@@ -297,8 +303,8 @@ function Drawer({active,nav,onClose,notif,dark,setDark}) {
 function Objektif() {
   const d = getDateInfo();
   const [entries, setEntries] = useState([
-    {id:1,tarikh:"3 Mei 2026",hari:"Ahad",masa:"8:00 AM",subjek:"Matematik",tajuk:"Pecahan Perpuluhan",objektif:"Murid dapat menukar pecahan kepada nombor perpuluhan dengan tepat.",bbm:"Buku teks ms. 45, lembaran kerja"},
-    {id:2,tarikh:"2 Mei 2026",hari:"Sabtu",masa:"9:00 AM",subjek:"BM",tajuk:"Karangan Deskriptif",objektif:"Murid dapat menulis karangan deskriptif tentang kawasan sekolah sekurang-kurangnya 80 patah perkataan.",bbm:"Gambar sekolah, kamus"},
+    {id:1,tarikh:"3 May 2026",hari:"Sunday",masa:"8:00 AM",subjek:"Maths",tajuk:"Decimal Fractions",objektif:"Students can convert fractions to decimal numbers accurately.",bbm:"Textbook p.45, worksheet"},
+    {id:2,tarikh:"2 May 2026",hari:"Saturday",masa:"9:00 AM",subjek:"English",tajuk:"Descriptive Writing",objektif:"Students can write a descriptive essay about the school grounds of at least 80 words.",bbm:"School photos, dictionary"},
   ]);
   const [form, setForm] = useState({tarikh:d.tarikh,hari:d.hari,masa:d.masa,subjek:"",tajuk:"",objektif:"",bbm:""});
   const [tunjuk, setTunjuk] = useState(false);
@@ -324,12 +330,12 @@ function Objektif() {
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
         <div>
-          <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>🎯 Objektif <span style={{color:"var(--p)"}}>P&P</span></p>
-          <p style={{fontSize:12,fontWeight:700,color:"var(--i3)",marginTop:2}}>Lesson Objective harian</p>
+          <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>🎯 Lesson <span style={{color:"var(--p)"}}>Objectives</span></p>
+          <p style={{fontSize:12,fontWeight:700,color:"var(--i3)",marginTop:2}}>Daily lesson objectives</p>
         </div>
         <button onClick={()=>{setTunjuk(!tunjuk);setEditId(null);setForm({tarikh:d.tarikh,hari:d.hari,masa:d.masa,subjek:"",tajuk:"",objektif:"",bbm:""});}}
           style={{background:"var(--p)",color:"#fff",border:"3px solid var(--bdc)",borderRadius:14,padding:"10px 14px",fontSize:13,fontWeight:900,cursor:"pointer",fontFamily:"Nunito,sans-serif",boxShadow:"3px 3px 0 var(--bdc)"}}>
-          {tunjuk?"✕ Tutup":"+ Baru"}
+          {tunjuk?"✕ Close":"+ New"}
         </button>
       </div>
 
@@ -339,6 +345,7 @@ function Objektif() {
         <div>
           <p style={{fontFamily:"Fredoka,sans-serif",fontSize:18,fontWeight:700,color:"#fff"}}>{d.hari}, {d.tarikh}</p>
           <p style={{fontSize:13,fontWeight:700,color:"rgba(255,255,255,.8)"}}>🕐 {d.masa} · SK Darau, Kota Kinabalu</p>
+
         </div>
       </div>
 
@@ -346,50 +353,50 @@ function Objektif() {
       {tunjuk && (
         <div className="ccard ccard-blue bounce-in">
           <p style={{fontSize:12,fontWeight:900,color:"var(--p)",marginBottom:12,textTransform:"uppercase"}}>
-            {editId?"✏️ Edit Objektif":"📝 Rekod Objektif Baru"}
+            {editId?"✏️ Edit Objective":"📝 New Lesson Objective"}
           </p>
           <div style={{display:"flex",flexDirection:"column",gap:10}}>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
               <div>
-                <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:5}}>Hari</p>
+                <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:5}}>Day</p>
                 <select value={form.hari} onChange={e=>set("hari",e.target.value)}>
-                  {["Isnin","Selasa","Rabu","Khamis","Jumaat"].map(h=><option key={h}>{h}</option>)}
+                  {["Monday","Tuesday","Wednesday","Thursday","Friday"].map(h=><option key={h}>{h}</option>)}
                 </select>
               </div>
               <div>
-                <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:5}}>Tarikh</p>
+                <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:5}}>Date</p>
                 <input value={form.tarikh} onChange={e=>set("tarikh",e.target.value)} placeholder="1 Jan 2026"/>
               </div>
               <div>
-                <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:5}}>Masa</p>
+                <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:5}}>Time</p>
                 <input value={form.masa} onChange={e=>set("masa",e.target.value)} placeholder="8:00 AM"/>
               </div>
             </div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
               <div>
-                <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:5}}>Subjek *</p>
+                <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:5}}>Subject *</p>
                 <select value={form.subjek} onChange={e=>set("subjek",e.target.value)}>
-                  <option value="">-- Pilih --</option>
-                  {["BM","Matematik","Sains","Bhs. Inggeris","Pend. Islam","Sejarah","PJ","ERT","Muzik","Moral","Kokurikulum"].map(s=><option key={s}>{s}</option>)}
+                  <option value="">-- Select --</option>
+                  {["Malay","Maths","Science","English","Islamic Studies","History","PE","Home Ec","Music","Moral Ed","Co-Curricular"].map(s=><option key={s}>{s}</option>)}
                 </select>
               </div>
               <div>
-                <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:5}}>Tajuk Pelajaran</p>
-                <input value={form.tajuk} onChange={e=>set("tajuk",e.target.value)} placeholder="Tajuk…"/>
+                <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:5}}>Lesson Topic</p>
+                <input value={form.tajuk} onChange={e=>set("tajuk",e.target.value)} placeholder="Topic…"/>
               </div>
             </div>
             <div>
-              <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:5}}>Objektif Pembelajaran *</p>
-              <p style={{fontSize:10,color:"var(--i3)",fontWeight:600,marginBottom:6}}>Pada akhir pelajaran, murid dapat…</p>
-              <textarea rows={3} value={form.objektif} onChange={e=>set("objektif",e.target.value)} placeholder="Murid dapat…" style={{resize:"none"}}/>
+              <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:5}}>Learning Objective *</p>
+              <p style={{fontSize:10,color:"var(--i3)",fontWeight:600,marginBottom:6}}>By the end of the lesson, students can…</p>
+              <textarea rows={3} value={form.objektif} onChange={e=>set("objektif",e.target.value)} placeholder="Students can…" style={{resize:"none"}}/>
             </div>
             <div>
-              <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:5}}>BBM / Bahan Bantu Mengajar</p>
-              <input value={form.bbm} onChange={e=>set("bbm",e.target.value)} placeholder="Buku teks, kad imbasan, projektor…"/>
+              <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:5}}>Teaching Aids / Resources</p>
+              <input value={form.bbm} onChange={e=>set("bbm",e.target.value)} placeholder="Textbook, flashcards, projector…"/>
             </div>
             <div style={{display:"flex",gap:8}}>
-              <button className="cbtn cbtn-blue" onClick={simpan}>{editId?"💾 Kemaskini":"✅ Simpan Objektif"}</button>
-              <button className="cbtn cbtn-white" style={{width:"auto",padding:"13px 18px"}} onClick={()=>{setTunjuk(false);setEditId(null);}}>Batal</button>
+              <button className="cbtn cbtn-blue" onClick={simpan}>{editId?"💾 Update":"✅ Save Objective"}</button>
+              <button className="cbtn cbtn-white" style={{width:"auto",padding:"13px 18px"}} onClick={()=>{setTunjuk(false);setEditId(null);}}>Cancel</button>
             </div>
           </div>
         </div>
@@ -397,7 +404,7 @@ function Objektif() {
 
       {/* List */}
       <div style={{display:"flex",flexDirection:"column",gap:12}}>
-        {entries.length===0 && <div style={{textAlign:"center",padding:"32px 0",color:"var(--i3)",fontWeight:700}}>📭 Tiada objektif lagi. Tambah baru!</div>}
+        {entries.length===0 && <div style={{textAlign:"center",padding:"32px 0",color:"var(--i3)",fontWeight:700}}>📭 No objectives yet. Add one!</div>}
         {entries.map(e=>{
           const meta = SUBJ_META[e.subjek]||{emoji:"📚",color:"var(--p)",bg:"var(--ps)"};
           return (
@@ -410,17 +417,17 @@ function Objektif() {
                 </div>
               </div>
               <div style={{padding:"12px 14px"}}>
-                <p style={{fontSize:11,fontWeight:900,color:"var(--i2)",textTransform:"uppercase",letterSpacing:".4px",marginBottom:4}}>Objektif Pembelajaran</p>
+                <p style={{fontSize:11,fontWeight:900,color:"var(--i2)",textTransform:"uppercase",letterSpacing:".4px",marginBottom:4}}>Learning Objective</p>
                 <p style={{fontSize:13,fontWeight:600,color:"var(--ink)",lineHeight:1.6,marginBottom:e.bbm?10:0}}>{e.objektif}</p>
                 {e.bbm && (
                   <div style={{background:"var(--ys)",border:"2px solid #C09010",borderRadius:10,padding:"6px 10px"}}>
-                    <p style={{fontSize:11,fontWeight:800,color:"#B45309"}}>📎 BBM: <span style={{fontWeight:600,color:"var(--ink)"}}>{e.bbm}</span></p>
+                    <p style={{fontSize:11,fontWeight:800,color:"#B45309"}}>📎 Teaching Aids: <span style={{fontWeight:600,color:"var(--ink)"}}>{e.bbm}</span></p>
                   </div>
                 )}
               </div>
               <div style={{display:"flex",gap:8,padding:"0 14px 12px"}}>
                 <button onClick={()=>startEdit(e)} style={{flex:1,padding:"8px",background:"var(--ys)",border:"2px solid #9A7008",borderRadius:10,color:"#B45309",fontFamily:"Nunito,sans-serif",fontWeight:800,fontSize:12,cursor:"pointer"}}>✏️ Edit</button>
-                <button onClick={()=>padam(e.id)}  style={{flex:1,padding:"8px",background:"var(--ps)",border:"2px solid var(--p)",borderRadius:10,color:"var(--p)",fontFamily:"Nunito,sans-serif",fontWeight:800,fontSize:12,cursor:"pointer"}}>🗑️ Padam</button>
+                <button onClick={()=>padam(e.id)}  style={{flex:1,padding:"8px",background:"var(--ps)",border:"2px solid var(--p)",borderRadius:10,color:"var(--p)",fontFamily:"Nunito,sans-serif",fontWeight:800,fontSize:12,cursor:"pointer"}}>🗑️ Delete</button>
               </div>
             </div>
           );
@@ -440,44 +447,44 @@ function MuridModal({data,onSave,onClose,count}) {
       <div className="slide-up" onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:430,background:"var(--wh)",border:"3px solid var(--bdc)",borderRadius:"24px 24px 0 0",boxShadow:"0 -6px 0 var(--bdc)",maxHeight:"90vh",overflowY:"auto"}}>
         <div style={{padding:"12px 16px 0",display:"flex",justifyContent:"center"}}><div style={{width:40,height:5,borderRadius:99,background:"var(--pm)"}}/></div>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 16px 8px",borderBottom:"3px solid var(--bdc)"}}>
-          <p style={{fontFamily:"Fredoka,sans-serif",fontSize:18,fontWeight:700,color:"var(--ink)"}}>{isEdit?"✏️ Edit Murid":"➕ Tambah Murid Baru"}</p>
+          <p style={{fontFamily:"Fredoka,sans-serif",fontSize:18,fontWeight:700,color:"var(--ink)"}}>{isEdit?"✏️ Edit Student":"➕ Add New Student"}</p>
           <button onClick={onClose} style={{background:"var(--ps)",border:"2px solid var(--p)",borderRadius:10,width:32,height:32,cursor:"pointer",fontSize:14,color:"var(--p)",fontWeight:800,fontFamily:"Nunito,sans-serif"}}>✕</button>
         </div>
         <div style={{padding:"16px",display:"flex",flexDirection:"column",gap:12}}>
-          <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Nama Penuh *</p><input value={f.nama} onChange={e=>set("nama",e.target.value)} placeholder="Nama penuh murid…"/></div>
+          <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Full Name *</p><input value={f.nama} onChange={e=>set("nama",e.target.value)} placeholder="Student's full name…"/></div>
           <div>
-            <p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>ID Delima</p>
-            <input value={f.delima} onChange={e=>set("delima",e.target.value)} placeholder="Contoh: 2024010001" style={{fontFamily:"JetBrains Mono,monospace"}}/>
+            <p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Delima ID</p>
+            <input value={f.delima} onChange={e=>set("delima",e.target.value)} placeholder="e.g. 2024010001" style={{fontFamily:"JetBrains Mono,monospace"}}/>
           </div>
           <div>
-            <p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Jantina *</p>
+            <p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Gender *</p>
             <div style={{display:"flex",gap:8}}>
               {["L","P"].map(j=>(
                 <button key={j} onClick={()=>set("jantina",j)} style={{flex:1,padding:"10px",border:`3px solid ${f.jantina===j?"var(--p)":"var(--bdc)"}`,borderRadius:14,background:f.jantina===j?"var(--p)":"var(--wh)",color:f.jantina===j?"#fff":"var(--ink)",fontFamily:"Nunito,sans-serif",fontWeight:800,fontSize:14,cursor:"pointer",boxShadow:f.jantina===j?"3px 3px 0 var(--p2)":"3px 3px 0 var(--bdc)"}}>
-                  {j==="L"?"👦 Lelaki":"👧 Perempuan"}
+                  {j==="L"?"👦 Male":"👧 Female"}
                 </button>
               ))}
             </div>
           </div>
-          <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>No. IC</p><input value={f.ic} onChange={e=>set("ic",e.target.value)} placeholder="XXXXXX-XX-XXXX"/></div>
+          <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>IC No.</p><input value={f.ic} onChange={e=>set("ic",e.target.value)} placeholder="XXXXXX-XX-XXXX"/></div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-            <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Nama Wali *</p><input value={f.wali} onChange={e=>set("wali",e.target.value)} placeholder="Nama wali…"/></div>
-            <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Tel Wali *</p><input value={f.tel} onChange={e=>set("tel",e.target.value)} placeholder="01XXXXXXXX"/></div>
+            <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Guardian Name *</p><input value={f.wali} onChange={e=>set("wali",e.target.value)} placeholder="Guardian name…"/></div>
+            <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Guardian Tel *</p><input value={f.tel} onChange={e=>set("tel",e.target.value)} placeholder="01XXXXXXXX"/></div>
           </div>
           {isEdit && (
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-              {[["hadir","Hari Hadir"],["absen","Hari Absen"],["merit","Merit"],["demerit","Demerit"]].map(([k,l])=>(
+              {[["hadir","Days Present"],["absen","Days Absent"],["merit","Merit"],["demerit","Demerit"]].map(([k,l])=>(
                 <div key={k}><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>{l}</p><input type="number" value={f[k]} onChange={e=>set(k,+e.target.value)} min="0"/></div>
               ))}
             </div>
           )}
-          <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Catatan Guru</p><textarea rows={2} value={f.catatan} onChange={e=>set("catatan",e.target.value)} placeholder="Catatan…" style={{resize:"none"}}/></div>
+          <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Teacher's Note</p><textarea rows={2} value={f.catatan} onChange={e=>set("catatan",e.target.value)} placeholder="Notes…" style={{resize:"none"}}/></div>
           <div style={{display:"flex",gap:10,paddingBottom:8}}>
             <button className="cbtn cbtn-blue" onClick={()=>{
-              if(!f.nama||!f.wali||!f.tel){alert("Sila isi nama, wali dan tel.");return;}
+              if(!f.nama||!f.wali||!f.tel){alert("Please fill in name, guardian, and phone number.");return;}
               onSave({...f,id:data?.id||Date.now(),no:data?.no||String(count+1).padStart(2,"0")});
-            }}>{isEdit?"💾 Simpan":"➕ Tambah Murid"}</button>
-            <button className="cbtn cbtn-white" style={{width:"auto",padding:"13px 18px"}} onClick={onClose}>Batal</button>
+            }}>{isEdit?"💾 Save":"➕ Add Student"}</button>
+            <button className="cbtn cbtn-white" style={{width:"auto",padding:"13px 18px"}} onClick={onClose}>Cancel</button>
           </div>
         </div>
       </div>
@@ -488,40 +495,40 @@ function MuridModal({data,onSave,onClose,count}) {
 /* ── WHATSAPP MODAL ── */
 function WAModal({murid,onClose}) {
   const [pilih,setPilih] = useState([]);
-  const [teks,setTeks]   = useState("Assalamualaikum. Makluman daripada Cikgu Anna, Guru Kelas Tahun 4 Bestari, SK Darau.");
+  const [teks,setTeks]   = useState("Dear parent, this is a notice from Teacher Anna, Class Teacher Year 4 Bestari, SK Darau.");
   const toggle = id => setPilih(p=>p.includes(id)?p.filter(x=>x!==id):[...p,id]);
   const openWA = m => {
-    const msg = encodeURIComponent(`${teks}\n\nKepada: ${m.wali}\nMurid: ${m.nama} (No.${m.no})\n\nTerima kasih. 🙏`);
+    const msg = encodeURIComponent(`${teks}\n\nTo: ${m.wali}\nStudent: ${m.nama} (No.${m.no})\n\nThank you. 🙏`);
     window.open(`https://wa.me/60${m.tel.replace(/^0/,"")}?text=${msg}`,"_blank");
   };
   const templates = [
-    ["Peringatan kehadiran","Kehadiran anak anda memerlukan perhatian. Sila pastikan kehadiran yang konsisten ke sekolah."],
-    ["Amaran demerit","Anak anda telah menerima demerit. Sila bincang bersama anak tentang tingkah laku di sekolah."],
-    ["Jemputan PIBG","Jemputan mesyuarat PIBG pada Sabtu ini jam 9 pagi. Kehadiran ibu bapa amat dialu-alukan."],
-    ["Peperiksaan akan datang","Peperiksaan akan berlangsung minggu hadapan. Sila pastikan anak anda bersedia."],
+    ["Attendance reminder","Your child's attendance needs attention. Please ensure consistent school attendance."],
+    ["Demerit warning","Your child has received demerit points. Please discuss school behaviour with your child."],
+    ["PIBG invitation","You are invited to the PIBG meeting this Saturday at 9am. Your presence is most welcome."],
+    ["Upcoming exam","The exam will take place next week. Please ensure your child is prepared."],
   ];
   return (
     <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:400,background:"rgba(10,22,40,.65)",backdropFilter:"blur(8px)",display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
       <div className="slide-up" onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:430,background:"var(--wh)",border:"3px solid var(--bdc)",borderRadius:"24px 24px 0 0",boxShadow:"0 -6px 0 var(--bdc)",maxHeight:"90vh",overflowY:"auto"}}>
         <div style={{padding:"12px 16px 0",display:"flex",justifyContent:"center"}}><div style={{width:40,height:5,borderRadius:99,background:"var(--pm)"}}/></div>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 16px 8px",borderBottom:"3px solid var(--bdc)"}}>
-          <p style={{fontFamily:"Fredoka,sans-serif",fontSize:18,fontWeight:700,color:"var(--ink)"}}>📬 Notifikasi WhatsApp</p>
+          <p style={{fontFamily:"Fredoka,sans-serif",fontSize:18,fontWeight:700,color:"var(--ink)"}}>📬 WhatsApp Notification</p>
           <button onClick={onClose} style={{background:"var(--ps)",border:"2px solid var(--p)",borderRadius:10,width:32,height:32,cursor:"pointer",fontSize:14,color:"var(--p)",fontWeight:800,fontFamily:"Nunito,sans-serif"}}>✕</button>
         </div>
         <div style={{padding:"16px",display:"flex",flexDirection:"column",gap:14}}>
-          <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>📝 Teks Mesej</p><textarea rows={3} value={teks} onChange={e=>setTeks(e.target.value)} style={{resize:"none",fontSize:13}}/></div>
+          <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>📝 Message Text</p><textarea rows={3} value={teks} onChange={e=>setTeks(e.target.value)} style={{resize:"none",fontSize:13}}/></div>
           <div>
-            <p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:8}}>Template cepat:</p>
+            <p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:8}}>Quick templates:</p>
             <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
               {templates.map(([l,t])=><button key={l} onClick={()=>setTeks(t)} style={{padding:"6px 12px",border:"2px solid var(--bdc)",borderRadius:99,background:"var(--bg)",color:"var(--ink)",fontSize:11,fontWeight:700,cursor:"pointer",boxShadow:"2px 2px 0 var(--bdc)"}}>{l}</button>)}
             </div>
           </div>
           <div>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
-              <p style={{fontSize:12,fontWeight:800,color:"var(--i2)"}}>Pilih penerima:</p>
+              <p style={{fontSize:12,fontWeight:800,color:"var(--i2)"}}>Select recipients:</p>
               <div style={{display:"flex",gap:6}}>
-                <button onClick={()=>setPilih(murid.filter(m=>m.absen>=5).map(m=>m.id))} style={{fontSize:11,fontWeight:800,color:"var(--p)",background:"var(--ps)",border:"2px solid var(--p)",borderRadius:99,padding:"4px 10px",cursor:"pointer",fontFamily:"Nunito,sans-serif"}}>Absen ≥5</button>
-                <button onClick={()=>setPilih(murid.map(m=>m.id))} style={{fontSize:11,fontWeight:800,color:"var(--g)",background:"var(--gs)",border:"2px solid var(--g)",borderRadius:99,padding:"4px 10px",cursor:"pointer",fontFamily:"Nunito,sans-serif"}}>Semua</button>
+                <button onClick={()=>setPilih(murid.filter(m=>m.absen>=5).map(m=>m.id))} style={{fontSize:11,fontWeight:800,color:"var(--p)",background:"var(--ps)",border:"2px solid var(--p)",borderRadius:99,padding:"4px 10px",cursor:"pointer",fontFamily:"Nunito,sans-serif"}}>Absent ≥5</button>
+                <button onClick={()=>setPilih(murid.map(m=>m.id))} style={{fontSize:11,fontWeight:800,color:"var(--g)",background:"var(--gs)",border:"2px solid var(--g)",borderRadius:99,padding:"4px 10px",cursor:"pointer",fontFamily:"Nunito,sans-serif"}}>All</button>
               </div>
             </div>
             <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:220,overflowY:"auto"}}>
@@ -544,13 +551,13 @@ function WAModal({murid,onClose}) {
           </div>
           {pilih.length>0&&(
             <div className="ccard-green ccard">
-              <p style={{fontSize:12,fontWeight:900,color:"var(--g)",marginBottom:10}}>🤳 Hantar kepada {pilih.length} wali:</p>
+              <p style={{fontSize:12,fontWeight:900,color:"var(--g)",marginBottom:10}}>🤳 Send to {pilih.length} guardian(s):</p>
               <div style={{display:"flex",flexDirection:"column",gap:8}}>
                 {murid.filter(m=>pilih.includes(m.id)).map(m=>(
                   <button key={m.id} onClick={()=>openWA(m)} style={{display:"flex",alignItems:"center",gap:10,padding:"11px 14px",background:"#25D366",border:"3px solid #1DA851",borderRadius:14,cursor:"pointer",boxShadow:"3px 3px 0 #1DA851"}}>
                     <span style={{fontSize:20}}>📬</span>
                     <div style={{flex:1,textAlign:"left"}}><p style={{fontSize:13,fontWeight:900,color:"#fff"}}>{m.wali.split(" ").slice(0,2).join(" ")}</p><p style={{fontSize:10,color:"rgba(255,255,255,.8)",fontWeight:600}}>{m.nama.split(" ")[0]} · {m.tel}</p></div>
-                    <span style={{fontSize:11,fontWeight:900,color:"#fff"}}>Buka WA →</span>
+                    <span style={{fontSize:11,fontWeight:900,color:"#fff"}}>Open WA →</span>
                   </button>
                 ))}
               </div>
@@ -576,24 +583,24 @@ function Dashboard({murid,log,kh,setWA}) {
       <div style={{background:"var(--p)",border:"3px solid var(--bdc)",borderRadius:24,boxShadow:"5px 5px 0 var(--bdc)",padding:"18px 18px 0",overflow:"hidden",position:"relative"}}>
         <div style={{position:"absolute",top:-20,right:-20,width:100,height:100,borderRadius:"50%",background:"rgba(255,255,255,.1)",border:"3px solid rgba(255,255,255,.15)"}}/>
         <p style={{color:"rgba(255,255,255,.8)",fontSize:12,fontWeight:700}}>📅 {d.hari}, {d.tarikh}</p>
-        <p style={{fontFamily:"Fredoka,sans-serif",fontSize:24,fontWeight:700,color:"#fff",marginTop:2,lineHeight:1.2}}>{g.e} {g.t}, Cikgu Anna!</p>
-        <p style={{color:"rgba(255,255,255,.8)",fontSize:12,fontWeight:600,marginTop:2,marginBottom:14}}>Tahun 4 Bestari · SK Darau</p>
+        <p style={{fontFamily:"Fredoka,sans-serif",fontSize:24,fontWeight:700,color:"#fff",marginTop:2,lineHeight:1.2}}>{g.e} {g.t}, Teacher Anna!</p>
+        <p style={{color:"rgba(255,255,255,.8)",fontSize:12,fontWeight:600,marginTop:2,marginBottom:14}}>Year 4 Bestari · SK Darau</p>
         <svg style={{display:"block",width:"100%",height:18,marginBottom:-1}} viewBox="0 0 300 18" preserveAspectRatio="none">
           <path d="M0,8 C60,0 120,18 180,8 C240,0 280,14 300,8 L300,18 L0,18 Z" fill="var(--bg)"/>
         </svg>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
-        <Blob icon="👥" val={murid.length} label="Jumlah Murid"       bg="var(--wh)"  color="var(--ink)"/>
-        <Blob icon="✅" val={hadir}         label={`Hadir · ${murid.length-hadir} absen`} bg="var(--gs)" color="var(--g)"  border="var(--g)"/>
-        <Blob icon="🏆" val={cem}           label="Murid Cemerlang"   bg="var(--ys)"  color="#B45309"    border="#B45309"/>
-        <Blob icon="📩" val={notif}         label="Mesej Belum Balas" bg="var(--ps)"  color="var(--p)"   border="var(--p)"/>
+        <Blob icon="👥" val={murid.length} label="Total Students"       bg="var(--wh)"  color="var(--ink)"/>
+        <Blob icon="✅" val={hadir}         label={`Present · ${murid.length-hadir} absent`} bg="var(--gs)" color="var(--g)"  border="var(--g)"/>
+        <Blob icon="🏆" val={cem}           label="Excellent Students"  bg="var(--ys)"  color="#B45309"    border="#B45309"/>
+        <Blob icon="📩" val={notif}         label="Unanswered Messages" bg="var(--ps)"  color="var(--p)"   border="var(--p)"/>
       </div>
-      <button className="cbtn" onClick={()=>setWA(true)} style={{background:"#25D366",border:"3px solid #1DA851",color:"#fff",boxShadow:"4px 4px 0 #1DA851"}}>📬 Hantar Notifikasi WhatsApp Wali</button>
+      <button className="cbtn" onClick={()=>setWA(true)} style={{background:"#25D366",border:"3px solid #1DA851",color:"#fff",boxShadow:"4px 4px 0 #1DA851"}}>📬 Send WhatsApp Notification to Guardians</button>
       {/* Ranking */}
       <div className="ccard" style={{padding:0,overflow:"hidden"}}>
         <div style={{background:"var(--y)",padding:"10px 16px",borderBottom:"3px solid var(--bdc)",display:"flex",gap:8,alignItems:"center"}}>
           <span style={{fontSize:18}}>🏆</span>
-          <p style={{fontFamily:"Fredoka,sans-serif",fontSize:15,fontWeight:700,color:"var(--ink)"}}>Ranking Merit Kelas</p>
+          <p style={{fontFamily:"Fredoka,sans-serif",fontSize:15,fontWeight:700,color:"var(--ink)"}}>Class Merit Ranking</p>
         </div>
         {[...murid].sort((a,b)=>netMerit(b)-netMerit(a)).slice(0,5).map((m,i)=>{
           const medals=["🥇","🥈","🥉","4️⃣","5️⃣"];
@@ -613,11 +620,11 @@ function Dashboard({murid,log,kh,setWA}) {
       </div>
       {pantau.length>0&&(
         <div className="ccard ccard-blue">
-          <p style={{fontSize:13,fontWeight:900,color:"var(--p)",marginBottom:12}}>🚨 MURID PERLU PERHATIAN</p>
+          <p style={{fontSize:13,fontWeight:900,color:"var(--p)",marginBottom:12}}>🚨 STUDENTS NEEDING ATTENTION</p>
           {pantau.map(m=>(
             <div key={m.id} style={{display:"flex",alignItems:"center",gap:10,marginBottom:8}}>
               <Ava nama={m.nama} jantina={m.jantina} size={36}/>
-              <div><p style={{fontSize:13,fontWeight:800,color:"var(--ink)"}}>{m.nama.split(" ").slice(0,2).join(" ")}</p><p style={{fontSize:11,color:"var(--p)",fontWeight:700}}>Absen {m.absen} hari · Demerit {m.demerit}</p></div>
+              <div><p style={{fontSize:13,fontWeight:800,color:"var(--ink)"}}>{m.nama.split(" ").slice(0,2).join(" ")}</p><p style={{fontSize:11,color:"var(--p)",fontWeight:700}}>Absent {m.absen} days · Demerit {m.demerit}</p></div>
             </div>
           ))}
         </div>
@@ -631,20 +638,20 @@ function Kehadiran({murid}) {
   const [kh,setKh]     = useState({...INIT_KH});
   const [q,setQ]       = useState("");
   const [saved,setSaved]= useState(false);
-  const cycle = id => setKh(p=>({...p,[id]:p[id]==="hadir"?"tidak hadir":p[id]==="tidak hadir"?"mc":"hadir"}));
+  const cycle = id => setKh(p=>({...p,[id]:p[id]==="present"?"absent":p[id]==="absent"?"mc":"present"}));
   const si = s => ({
-    hadir:        {label:"✅ Hadir",       bg:"var(--gs)",color:"var(--g)",bc:"var(--g)"},
-    "tidak hadir":{label:"❌ Tidak Hadir", bg:"var(--ps)",color:"var(--p)",bc:"var(--p)"},
-    mc:           {label:"🏥 MC/Cuti",     bg:"var(--ys)",color:"#B45309",bc:"#B45309"},
-  }[s]||{label:"✅ Hadir",bg:"var(--gs)",color:"var(--g)",bc:"var(--g)"});
+    present:{label:"✅ Present", bg:"var(--gs)",color:"var(--g)",bc:"var(--g)"},
+    absent: {label:"❌ Absent",  bg:"var(--ps)",color:"var(--p)",bc:"var(--p)"},
+    mc:     {label:"🏥 MC/Leave",bg:"var(--ys)",color:"#B45309",bc:"#B45309"},
+  }[s]||{label:"✅ Present",bg:"var(--gs)",color:"var(--g)",bc:"var(--g)"});
   const filtered = murid.filter(m=>m.nama.toLowerCase().includes(q.toLowerCase())||m.no.includes(q));
-  const c={hadir:0,"tidak hadir":0,mc:0};
-  murid.forEach(m=>{const s=kh[m.id]||"hadir";c[s]=(c[s]||0)+1;});
+  const c={present:0,absent:0,mc:0};
+  murid.forEach(m=>{const s=kh[m.id]||"present";c[s]=(c[s]||0)+1;});
   return (
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
-      <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>📋 Kehadiran <span style={{color:"var(--p)"}}>Harian</span></p>
+      <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>📋 Daily <span style={{color:"var(--p)"}}>Attendance</span></p>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
-        {[{k:"hadir",icon:"✅",label:"Hadir",color:"var(--g)",bg:"var(--gs)",bc:"var(--g)"},{k:"tidak hadir",icon:"❌",label:"Absen",color:"var(--p)",bg:"var(--ps)",bc:"var(--p)"},{k:"mc",icon:"🏥",label:"MC",color:"#B45309",bg:"var(--ys)",bc:"#B45309"}].map(ct=>(
+        {[{k:"present",icon:"✅",label:"Present",color:"var(--g)",bg:"var(--gs)",bc:"var(--g)"},{k:"absent",icon:"❌",label:"Absent",color:"var(--p)",bg:"var(--ps)",bc:"var(--p)"},{k:"mc",icon:"🏥",label:"MC",color:"#B45309",bg:"var(--ys)",bc:"#B45309"}].map(ct=>(
           <div key={ct.k} style={{background:ct.bg,border:`3px solid ${ct.bc}`,borderRadius:18,boxShadow:`3px 3px 0 ${ct.bc}`,padding:"12px 8px",textAlign:"center"}}>
             <p style={{fontSize:20}}>{ct.icon}</p>
             <p style={{fontFamily:"JetBrains Mono,monospace",fontSize:22,fontWeight:700,color:ct.color}}>{c[ct.k]||0}</p>
@@ -652,7 +659,7 @@ function Kehadiran({murid}) {
           </div>
         ))}
       </div>
-      <input placeholder="🔍 Cari nama atau nombor…" value={q} onChange={e=>setQ(e.target.value)}/>
+      <input placeholder="🔍 Search name or number…" value={q} onChange={e=>setQ(e.target.value)}/>
       <div style={{display:"flex",flexDirection:"column",gap:10}}>
         {filtered.map(m=>{
           const s=kh[m.id]||"hadir";const info=si(s);
@@ -661,7 +668,7 @@ function Kehadiran({murid}) {
               <Ava nama={m.nama} jantina={m.jantina} size={42}/>
               <div style={{flex:1,minWidth:0}}>
                 <p style={{fontSize:13,fontWeight:800,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",color:"var(--ink)"}}>{m.nama}</p>
-                <p style={{fontSize:11,color:"var(--i3)",fontWeight:600,marginTop:1}}>No.{m.no} · Tap untuk tukar</p>
+                <p style={{fontSize:11,color:"var(--i3)",fontWeight:600,marginTop:1}}>No.{m.no} · Tap to change</p>
               </div>
               <span className="cpill" style={{background:info.bg,color:info.color,borderColor:info.bc,fontSize:10}}>{info.label}</span>
             </button>
@@ -669,7 +676,7 @@ function Kehadiran({murid}) {
         })}
       </div>
       <button className={`cbtn ${saved?"cbtn-green":"cbtn-blue"}`} onClick={()=>{setSaved(true);setTimeout(()=>setSaved(false),2200);}}>
-        {saved?"✅ Berjaya Disimpan!":"💾 Simpan Kehadiran"}
+        {saved?"✅ Saved!":"💾 Save Attendance"}
       </button>
     </div>
   );
@@ -691,13 +698,13 @@ function Merit({murid,updateMerit}) {
   const filtered=[...murid].filter(m=>m.nama.toLowerCase().includes(q.toLowerCase())||m.no.includes(q)).sort((a,b)=>netMerit(b)-netMerit(a));
   return (
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
-      <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>🏆 Sistem <span style={{color:"var(--p)"}}>Merit</span></p>
+      <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>🏆 Merit <span style={{color:"var(--p)"}}>System</span></p>
       <div style={{display:"flex",background:"var(--bg)",border:"3px solid var(--bdc)",borderRadius:18,padding:4,boxShadow:"3px 3px 0 var(--bdc)"}}>
         {[["merit","✅ Merit","var(--g)","#04855A"],["demerit","⚠️ Demerit","var(--p)","var(--p2)"]].map(([t,l,bg,sh])=>(
           <button key={t} onClick={()=>setMode(t)} style={{flex:1,padding:"10px",border:mode===t?"3px solid var(--bdc)":"3px solid transparent",borderRadius:14,cursor:"pointer",fontFamily:"Nunito,sans-serif",fontSize:13,fontWeight:900,background:mode===t?bg:"transparent",color:mode===t?"#fff":"var(--i2)",boxShadow:mode===t?`2px 2px 0 ${sh}`:"none",transition:"all .18s"}}>{l}</button>
         ))}
       </div>
-      <input placeholder="🔍 Cari murid…" value={q} onChange={e=>setQ(e.target.value)}/>
+      <input placeholder="🔍 Search student…" value={q} onChange={e=>setQ(e.target.value)}/>
       <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:240,overflowY:"auto"}}>
         {filtered.map(m=>{
           const st=muridStatus(m);const sel=pilih===m.id;
@@ -718,10 +725,10 @@ function Merit({murid,updateMerit}) {
       </div>
       {pilih&&(
         <div className={`ccard ${mode==="merit"?"ccard-green":"ccard-blue"} bounce-in`}>
-          <p style={{fontSize:11,fontWeight:900,color:mode==="merit"?"var(--g)":"var(--p)",textTransform:"uppercase",letterSpacing:".6px",marginBottom:4}}>{mode==="merit"?"✅ Merit":"⚠️ Demerit"} untuk:</p>
+          <p style={{fontSize:11,fontWeight:900,color:mode==="merit"?"var(--g)":"var(--p)",textTransform:"uppercase",letterSpacing:".6px",marginBottom:4}}>{mode==="merit"?"✅ Merit":"⚠️ Demerit"} for:</p>
           <p style={{fontSize:15,fontWeight:900,marginBottom:12,color:"var(--ink)"}}>{murid.find(m=>m.id===pilih)?.nama}</p>
           <select value={sebab} onChange={e=>setSebab(e.target.value)} style={{marginBottom:12}}>
-            <option value="">-- Pilih sebab --</option>
+            <option value="">-- Select reason --</option>
             {(mode==="merit"?MERIT_SEBAB:DEMERIT_SEBAB).map(s=><option key={s}>{s}</option>)}
           </select>
           <div style={{display:"flex",gap:8,marginBottom:14}}>
@@ -730,7 +737,7 @@ function Merit({murid,updateMerit}) {
             ))}
           </div>
           <button className={`cbtn ${ok?"cbtn-green":mode==="merit"?"cbtn-green":"cbtn-blue"}`} onClick={submit}>
-            {ok?"🎉 Berjaya!":`Rekod +${markah} ${mode==="merit"?"Merit":"Demerit"}`}
+            {ok?"🎉 Done!":`Record +${markah} ${mode==="merit"?"Merit":"Demerit"}`}
           </button>
         </div>
       )}
@@ -748,7 +755,7 @@ function SenaraiMurid({murid,saveMurid,deleteMurid}) {
     await saveMurid(data);
     setModal(null);setPilih(null);
   };
-  const hapus = async id=>{if(!confirm("Padam murid ini?"))return;await deleteMurid(id);setPilih(null);};
+  const hapus = async id=>{if(!confirm("Delete this student?"))return;await deleteMurid(id);setPilih(null);};
   const filtered=[...murid].filter(m=>
     m.nama.toLowerCase().includes(q.toLowerCase())||
     m.wali.toLowerCase().includes(q.toLowerCase())||
@@ -762,13 +769,13 @@ function SenaraiMurid({murid,saveMurid,deleteMurid}) {
       <div style={{display:"flex",flexDirection:"column",gap:16}}>
         {sel?(
           <div className="fade-up" style={{display:"flex",flexDirection:"column",gap:14}}>
-            <button onClick={()=>setPilih(null)} style={{background:"none",border:"none",cursor:"pointer",color:"var(--p)",fontWeight:900,fontSize:13,textAlign:"left"}}>← Kembali</button>
+            <button onClick={()=>setPilih(null)} style={{background:"none",border:"none",cursor:"pointer",color:"var(--p)",fontWeight:900,fontSize:13,textAlign:"left"}}>← Back</button>
             <div className="ccard" style={{textAlign:"center",padding:"24px 20px"}}>
               <Ava nama={sel.nama} jantina={sel.jantina} size={76}/>
               <p style={{fontFamily:"Fredoka,sans-serif",fontSize:20,fontWeight:700,marginTop:12,color:"var(--ink)"}}>{sel.nama}</p>
               <div style={{display:"flex",justifyContent:"center",gap:6,marginTop:6,flexWrap:"wrap"}}>
                 <span className="cpill" style={{color:"var(--i2)",borderColor:"var(--bdc)",background:"var(--bg)"}}>No.{sel.no}</span>
-                <span className="cpill" style={{color:"var(--i2)",borderColor:"var(--bdc)",background:"var(--bg)"}}>{sel.jantina==="L"?"👦 Lelaki":"👧 Perempuan"}</span>
+                <span className="cpill" style={{color:"var(--i2)",borderColor:"var(--bdc)",background:"var(--bg)"}}>{sel.jantina==="L"?"👦 Male":"👧 Female"}</span>
                 {(()=>{const st=muridStatus(sel);return <span className="cpill" style={{color:st.color,borderColor:st.bc||st.color,background:st.bg}}>{st.label}</span>;})()}
               </div>
             </div>
@@ -776,8 +783,8 @@ function SenaraiMurid({murid,saveMurid,deleteMurid}) {
               {[
                 {l:"No. IC",     v:sel.ic||"-",           m:true},
                 {l:"ID Delima",  v:sel.delima||"-",        m:true},
-                {l:"Wali",       v:sel.wali.split(" ").slice(0,3).join(" ")},
-                {l:"Tel Wali",   v:sel.tel,                m:true},
+                {l:"Guardian",     v:sel.wali.split(" ").slice(0,3).join(" ")},
+                {l:"Guardian Tel", v:sel.tel,              m:true},
               ].map(f=>(
                 <div key={f.l} className="ccard" style={{padding:"10px 12px"}}>
                   <p style={{fontSize:10,fontWeight:800,color:"var(--i3)",textTransform:"uppercase",letterSpacing:".4px"}}>{f.l}</p>
@@ -786,19 +793,19 @@ function SenaraiMurid({murid,saveMurid,deleteMurid}) {
               ))}
             </div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
-              <Blob icon="📗" val={sel.hadir}    label="Hari Hadir" bg="var(--gs)" color="var(--g)"  border="var(--g)"/>
-              <Blob icon="📕" val={sel.absen}    label="Hari Absen" bg="var(--ps)" color="var(--p)"  border="var(--p)"/>
-              <Blob icon="🏅" val={netMerit(sel)} label="Net Merit"  bg="var(--ys)" color="#B45309"   border="#B45309"/>
+              <Blob icon="📗" val={sel.hadir}    label="Days Present" bg="var(--gs)" color="var(--g)"  border="var(--g)"/>
+              <Blob icon="📕" val={sel.absen}    label="Days Absent"  bg="var(--ps)" color="var(--p)"  border="var(--p)"/>
+              <Blob icon="🏅" val={netMerit(sel)} label="Net Merit"   bg="var(--ys)" color="#B45309"   border="#B45309"/>
             </div>
             {sel.catatan&&(
               <div className="ccard ccard-yellow">
-                <p style={{fontSize:11,fontWeight:900,color:"#B45309",marginBottom:4}}>📝 Catatan</p>
+                <p style={{fontSize:11,fontWeight:900,color:"#B45309",marginBottom:4}}>📝 Note</p>
                 <p style={{fontSize:13,fontStyle:"italic",fontWeight:600,color:"var(--ink)"}}>{sel.catatan}</p>
               </div>
             )}
             <div style={{display:"flex",gap:8}}>
               <button className="cbtn cbtn-yellow" style={{flex:2,padding:"12px"}} onClick={()=>setModal(sel)}>✏️ Edit</button>
-              <button onClick={()=>{const msg=encodeURIComponent(`Assalamualaikum ${sel.wali}, makluman daripada Cikgu Anna, Guru Kelas Thn 4 Bestari SK Darau berkaitan ${sel.nama}.`);window.open(`https://wa.me/60${sel.tel.replace(/^0/,"")}?text=${msg}`,"_blank");}}
+              <button onClick={()=>{const msg=encodeURIComponent(`Dear ${sel.wali}, this is a message from Teacher Anna, Class Teacher Year 4 Bestari SK Darau regarding ${sel.nama}.`);window.open(`https://wa.me/60${sel.tel.replace(/^0/,"")}?text=${msg}`,"_blank");}}
                 style={{flex:2,padding:"12px",background:"#25D366",border:"3px solid #1DA851",borderRadius:14,color:"#fff",fontFamily:"Nunito,sans-serif",fontWeight:900,fontSize:13,cursor:"pointer",boxShadow:"3px 3px 0 #1DA851"}}>📬 WA</button>
               <button className="cbtn" style={{flex:1,padding:"12px",background:"var(--ps)",color:"var(--p)",borderColor:"var(--p)",boxShadow:"3px 3px 0 var(--p2)"}} onClick={()=>hapus(sel.id)}>🗑️</button>
             </div>
@@ -807,14 +814,14 @@ function SenaraiMurid({murid,saveMurid,deleteMurid}) {
           <>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
               <div>
-                <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>👥 Senarai <span style={{color:"var(--p)"}}>Murid</span></p>
-                <p style={{fontSize:12,fontWeight:700,color:"var(--i3)",marginTop:2}}>{murid.length} murid · Tahun 4 Bestari</p>
+                <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>👥 Student <span style={{color:"var(--p)"}}>List</span></p>
+                <p style={{fontSize:12,fontWeight:700,color:"var(--i3)",marginTop:2}}>{murid.length} students · Year 4 Bestari</p>
               </div>
-              <button onClick={()=>setModal("tambah")} style={{background:"var(--p)",color:"#fff",border:"3px solid var(--bdc)",borderRadius:14,padding:"10px 14px",fontSize:13,fontWeight:900,cursor:"pointer",fontFamily:"Nunito,sans-serif",boxShadow:"3px 3px 0 var(--bdc)"}}>+ Tambah</button>
+              <button onClick={()=>setModal("tambah")} style={{background:"var(--p)",color:"#fff",border:"3px solid var(--bdc)",borderRadius:14,padding:"10px 14px",fontSize:13,fontWeight:900,cursor:"pointer",fontFamily:"Nunito,sans-serif",boxShadow:"3px 3px 0 var(--bdc)"}}>+ Add</button>
             </div>
-            <input placeholder="🔍 Cari nama, ID Delima, wali…" value={q} onChange={e=>setQ(e.target.value)}/>
+            <input placeholder="🔍 Search name, Delima ID, guardian…" value={q} onChange={e=>setQ(e.target.value)}/>
             <div style={{display:"flex",gap:6}}>
-              {[["no","# No"],["merit","Merit"],["hadir","Hadir"]].map(([k,l])=>(
+              {[["no","# No"],["merit","Merit"],["hadir","Present"]].map(([k,l])=>(
                 <button key={k} onClick={()=>setSort(k)} style={{padding:"7px 14px",borderRadius:99,border:`3px solid ${sort===k?"var(--p)":"var(--bdc)"}`,background:sort===k?"var(--p)":"var(--wh)",color:sort===k?"#fff":"var(--ink)",fontSize:11,fontWeight:900,cursor:"pointer",boxShadow:`2px 2px 0 ${sort===k?"var(--p2)":"var(--bdc)"}`}}>{l}</button>
               ))}
             </div>
@@ -833,7 +840,7 @@ function SenaraiMurid({murid,saveMurid,deleteMurid}) {
                     </div>
                     <div style={{textAlign:"right"}}>
                       <span className="cpill" style={{color:st.color,borderColor:st.bc||st.color,background:st.bg,fontSize:10}}>{st.label}</span>
-                      <p style={{fontFamily:"JetBrains Mono,monospace",fontSize:11,color:"var(--i3)",marginTop:4}}>{netMerit(m)} merit</p>
+                      <p style={{fontFamily:"JetBrains Mono,monospace",fontSize:11,color:"var(--i3)",marginTop:4}}>{netMerit(m)} pts</p>
                     </div>
                   </button>
                 );
@@ -848,11 +855,11 @@ function SenaraiMurid({murid,saveMurid,deleteMurid}) {
 
 /* ── JADUAL ── */
 function Jadual() {
-  const hari=["Isnin","Selasa","Rabu","Khamis","Jumaat"];
-  const [aktif,setAktif]=useState("Jumaat");
+  const hari=["Monday","Tuesday","Wednesday","Thursday","Friday"];
+  const [aktif,setAktif]=useState("Friday");
   return (
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
-      <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>📅 Jadual <span style={{color:"var(--p)"}}>Waktu</span></p>
+      <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>📅 Weekly <span style={{color:"var(--p)"}}>Timetable</span></p>
       <div style={{display:"flex",gap:8,overflowX:"auto",paddingBottom:4}}>
         {hari.map(h=>(
           <button key={h} onClick={()=>setAktif(h)} style={{whiteSpace:"nowrap",padding:"8px 16px",border:"3px solid var(--bdc)",borderRadius:14,background:aktif===h?"var(--p)":"var(--wh)",color:aktif===h?"#fff":"var(--ink)",fontSize:12,fontWeight:900,cursor:"pointer",flexShrink:0,boxShadow:aktif===h?"3px 3px 0 var(--p2)":"3px 3px 0 var(--bdc)"}}>{h}</button>
@@ -865,8 +872,8 @@ function Jadual() {
             <div key={i} style={{display:"flex",alignItems:"center",gap:12,background:isR?"var(--bg)":meta.bg,border:`3px solid ${isR?"var(--pm)":"var(--bdc)"}`,borderRadius:18,padding:"12px 14px",boxShadow:isR?"none":"3px 3px 0 var(--bdc)",opacity:isR?.55:1}}>
               <div style={{width:44,height:44,borderRadius:14,background:isR?"var(--pm)":meta.color,border:isR?"2px dashed var(--i3)":"3px solid var(--bdc)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,boxShadow:isR?"none":"2px 2px 0 var(--bdc)",flexShrink:0}}>{meta.emoji}</div>
               <div style={{flex:1}}>
-                <p style={{fontSize:14,fontWeight:isR?600:900,color:isR?"var(--i3)":"var(--ink)",fontStyle:isR?"italic":"normal"}}>{isR?"— Waktu Rehat —":subj}</p>
-                {!isR&&<p style={{fontSize:11,color:"var(--i3)",fontWeight:600,marginTop:1}}>40 minit</p>}
+                <p style={{fontSize:14,fontWeight:isR?600:900,color:isR?"var(--i3)":"var(--ink)",fontStyle:isR?"italic":"normal"}}>{isR?"— Break Time —":subj}</p>
+                {!isR&&<p style={{fontSize:11,color:"var(--i3)",fontWeight:600,marginTop:1}}>40 mins</p>}
               </div>
               <div style={{textAlign:"right"}}>
                 <p style={{fontFamily:"JetBrains Mono,monospace",fontSize:12,fontWeight:700,color:isR?"var(--i3)":meta.color}}>{MASA[i]}</p>
@@ -882,41 +889,41 @@ function Jadual() {
 
 /* ── LOG IBU BAPA ── */
 function Log({log,addLog,updateLog}) {
-  const [filter,setFilter]=useState("semua");
+  const [filter,setFilter]=useState("all");
   const [balas,setBalas]  =useState(null);
   const [teks,setTeks]    =useState("");
   const [baru,setBaru]    =useState(false);
   const [form,setForm]    =useState({murid:"",wali:"",tel:"",jenis:"makluman",mesej:""});
-  const jW={pertanyaan:{bg:"var(--bs)",c:"var(--b)"},makluman:{bg:"var(--gs)",c:"var(--g)"},aduan:{bg:"var(--ps)",c:"var(--p)"}};
-  const sW={"belum balas":{bg:"var(--ps)",c:"var(--p)"},diterima:{bg:"var(--gs)",c:"var(--g)"},dibalas:{bg:"var(--bs)",c:"var(--b)"}};
-  const shown=filter==="semua"?log:log.filter(l=>l.status===filter||l.jenis===filter);
+  const jW={enquiry:{bg:"var(--bs)",c:"var(--b)"},notice:{bg:"var(--gs)",c:"var(--g)"},complaint:{bg:"var(--ps)",c:"var(--p)"}};
+  const sW={unanswered:{bg:"var(--ps)",c:"var(--p)"},received:{bg:"var(--gs)",c:"var(--g)"},replied:{bg:"var(--bs)",c:"var(--b)"}};
+  const shown=filter==="all"?log:log.filter(l=>l.status===filter||l.jenis===filter);
   return (
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
         <div>
-          <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>📩 Log <span style={{color:"var(--p)"}}>Ibu Bapa</span></p>
-          <p style={{fontSize:12,fontWeight:700,color:"var(--i3)",marginTop:2}}>Komunikasi & makluman wali</p>
+          <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>📩 Parent <span style={{color:"var(--p)"}}>Log</span></p>
+          <p style={{fontSize:12,fontWeight:700,color:"var(--i3)",marginTop:2}}>Communication & guardian notices</p>
         </div>
-        <button onClick={()=>setBaru(true)} style={{background:"var(--p)",color:"#fff",border:"3px solid var(--bdc)",borderRadius:14,padding:"9px 14px",fontSize:13,fontWeight:900,cursor:"pointer",fontFamily:"Nunito,sans-serif",boxShadow:"3px 3px 0 var(--bdc)"}}>+ Baru</button>
+        <button onClick={()=>setBaru(true)} style={{background:"var(--p)",color:"#fff",border:"3px solid var(--bdc)",borderRadius:14,padding:"9px 14px",fontSize:13,fontWeight:900,cursor:"pointer",fontFamily:"Nunito,sans-serif",boxShadow:"3px 3px 0 var(--bdc)"}}>+ New</button>
       </div>
       {baru&&(
         <div className="ccard ccard-blue bounce-in">
-          <p style={{fontSize:12,fontWeight:900,color:"var(--p)",marginBottom:12,textTransform:"uppercase"}}>📢 Makluman Baru</p>
+          <p style={{fontSize:12,fontWeight:900,color:"var(--p)",marginBottom:12,textTransform:"uppercase"}}>📢 New Notice</p>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
-            <input placeholder="Nama murid" value={form.murid} onChange={e=>setForm(p=>({...p,murid:e.target.value}))}/>
-            <input placeholder="Nama wali"  value={form.wali}  onChange={e=>setForm(p=>({...p,wali:e.target.value}))}/>
-            <input placeholder="Tel wali (01XXXXXXXX)" value={form.tel} onChange={e=>setForm(p=>({...p,tel:e.target.value}))}/>
-            <select value={form.jenis} onChange={e=>setForm(p=>({...p,jenis:e.target.value}))}><option value="makluman">Makluman</option><option value="pertanyaan">Pertanyaan</option><option value="aduan">Aduan</option></select>
-            <textarea rows={3} placeholder="Isi mesej…" value={form.mesej} onChange={e=>setForm(p=>({...p,mesej:e.target.value}))} style={{resize:"none"}}/>
+            <input placeholder="Student name" value={form.murid} onChange={e=>setForm(p=>({...p,murid:e.target.value}))}/>
+            <input placeholder="Guardian name" value={form.wali} onChange={e=>setForm(p=>({...p,wali:e.target.value}))}/>
+            <input placeholder="Guardian tel (01XXXXXXXX)" value={form.tel} onChange={e=>setForm(p=>({...p,tel:e.target.value}))}/>
+            <select value={form.jenis} onChange={e=>setForm(p=>({...p,jenis:e.target.value}))}><option value="notice">Notice</option><option value="enquiry">Enquiry</option><option value="complaint">Complaint</option></select>
+            <textarea rows={3} placeholder="Message content…" value={form.mesej} onChange={e=>setForm(p=>({...p,mesej:e.target.value}))} style={{resize:"none"}}/>
             <div style={{display:"flex",gap:8}}>
-              <button className="cbtn cbtn-blue" style={{padding:"11px"}} onClick={async()=>{if(!form.murid||!form.mesej)return;const d=getDateInfo();await addLog({...form,tarikh:`${d.tarikh}`,status:"diterima",balasan:""});setBaru(false);setForm({murid:"",wali:"",tel:"",jenis:"makluman",mesej:""});}}>Hantar</button>
-              <button className="cbtn cbtn-white" style={{padding:"11px"}} onClick={()=>setBaru(false)}>Batal</button>
+              <button className="cbtn cbtn-blue" style={{padding:"11px"}} onClick={async()=>{if(!form.murid||!form.mesej)return;const d=getDateInfo();await addLog({...form,tarikh:`${d.tarikh}`,status:"received",balasan:""});setBaru(false);setForm({murid:"",wali:"",tel:"",jenis:"notice",mesej:""});}}>Send</button>
+              <button className="cbtn cbtn-white" style={{padding:"11px"}} onClick={()=>setBaru(false)}>Cancel</button>
             </div>
           </div>
         </div>
       )}
       <div style={{display:"flex",gap:6,overflowX:"auto",paddingBottom:4}}>
-        {["semua","belum balas","diterima","dibalas","aduan"].map(f=>(
+        {["all","unanswered","received","replied","complaint"].map(f=>(
           <button key={f} onClick={()=>setFilter(f)} style={{whiteSpace:"nowrap",padding:"7px 12px",border:"3px solid var(--bdc)",borderRadius:99,background:filter===f?"var(--p)":"var(--wh)",color:filter===f?"#fff":"var(--ink)",fontSize:11,fontWeight:900,cursor:"pointer",flexShrink:0,boxShadow:filter===f?"2px 2px 0 var(--p2)":"2px 2px 0 var(--bdc)",textTransform:"capitalize"}}>{f}</button>
         ))}
       </div>
@@ -936,23 +943,23 @@ function Log({log,addLog,updateLog}) {
               </div>
               {l.balasan&&(
                 <div style={{background:"var(--bs)",border:"2px solid var(--b)",borderRadius:12,padding:"8px 12px",marginBottom:8}}>
-                  <p style={{fontSize:11,fontWeight:800,color:"var(--b)"}}>📬 Balasan:</p>
+                  <p style={{fontSize:11,fontWeight:800,color:"var(--b)"}}>📬 Reply:</p>
                   <p style={{fontSize:12,fontWeight:600,color:"var(--ink)",marginTop:2}}>{l.balasan}</p>
                 </div>
               )}
               <div style={{display:"flex",alignItems:"center",gap:8}}>
                 {l.status==="belum balas"&&(balas===l.id?(
                   <div style={{flex:1,display:"flex",flexDirection:"column",gap:6}}>
-                    <textarea rows={2} placeholder="Tulis balasan…" value={teks} onChange={e=>setTeks(e.target.value)} style={{resize:"none",fontSize:13}}/>
+                    <textarea rows={2} placeholder="Write reply…" value={teks} onChange={e=>setTeks(e.target.value)} style={{resize:"none",fontSize:13}}/>
                     <div style={{display:"flex",gap:6}}>
-                      <button className="cbtn cbtn-blue" style={{padding:"9px"}} onClick={async()=>{await updateLog(l.id,{status:"dibalas",balasan:teks});setBalas(null);setTeks("");}}>Hantar</button>
-                      <button className="cbtn cbtn-white" style={{padding:"9px"}} onClick={()=>setBalas(null)}>Batal</button>
+                      <button className="cbtn cbtn-blue" style={{padding:"9px"}} onClick={async()=>{await updateLog(l.id,{status:"replied",balasan:teks});setBalas(null);setTeks("");}}>Send</button>
+                      <button className="cbtn cbtn-white" style={{padding:"9px"}} onClick={()=>setBalas(null)}>Cancel</button>
                     </div>
                   </div>
                 ):(
-                  <button onClick={()=>setBalas(l.id)} style={{background:"none",border:"none",color:"var(--p)",fontSize:13,fontWeight:900,cursor:"pointer",fontFamily:"Nunito,sans-serif",padding:0}}>📬 Balas →</button>
+                  <button onClick={()=>setBalas(l.id)} style={{background:"none",border:"none",color:"var(--p)",fontSize:13,fontWeight:900,cursor:"pointer",fontFamily:"Nunito,sans-serif",padding:0}}>📬 Reply →</button>
                 ))}
-                {l.tel&&<button onClick={()=>window.open(`https://wa.me/60${l.tel.replace(/^0/,"")}?text=${encodeURIComponent(`Assalamualaikum ${l.wali}, berkaitan mesej anda.`)}`,"_blank")} style={{marginLeft:"auto",background:"#25D366",border:"2px solid #1DA851",borderRadius:10,padding:"7px 12px",color:"#fff",fontSize:11,fontWeight:900,cursor:"pointer",fontFamily:"Nunito,sans-serif"}}>📬 WA</button>}
+                {l.tel&&<button onClick={()=>window.open(`https://wa.me/60${l.tel.replace(/^0/,"")}?text=${encodeURIComponent(`Dear ${l.wali}, regarding your message.`)}`,"_blank")} style={{marginLeft:"auto",background:"#25D366",border:"2px solid #1DA851",borderRadius:10,padding:"7px 12px",color:"#fff",fontSize:11,fontWeight:900,cursor:"pointer",fontFamily:"Nunito,sans-serif"}}>📬 WA</button>}
               </div>
             </div>
           );
@@ -973,20 +980,20 @@ function Laporan({murid}) {
   return (
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-        <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>📊 Laporan <span style={{color:"var(--p)"}}>Kelas</span></p>
+        <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>📊 Class <span style={{color:"var(--p)"}}>Report</span></p>
         <button onClick={()=>window.print()} style={{background:"var(--p)",color:"#fff",border:"3px solid var(--bdc)",borderRadius:14,padding:"10px 14px",fontSize:13,fontWeight:900,cursor:"pointer",fontFamily:"Nunito,sans-serif",boxShadow:"3px 3px 0 var(--bdc)"}}>🖨️ PDF</button>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
-        <Blob icon="📗" val={`${avgH}`} label="Purata Hadir"  bg="var(--gs)" color="var(--g)"  border="var(--g)"/>
-        <Blob icon="🏅" val={avgM}       label="Purata Merit"  bg="var(--ys)" color="#B45309"    border="#B45309"/>
-        <Blob icon="⭐" val={cem}         label="Cemerlang"     bg="var(--ps)" color="var(--p)"   border="var(--p)"/>
-        <Blob icon="⚠️" val={pantau}      label="Perlu Pantau"  bg="var(--bs)" color="var(--b)"   border="var(--b)"/>
+        <Blob icon="📗" val={`${avgH}`} label="Avg Attendance" bg="var(--gs)" color="var(--g)"  border="var(--g)"/>
+        <Blob icon="🏅" val={avgM}       label="Avg Merit"      bg="var(--ys)" color="#B45309"    border="#B45309"/>
+        <Blob icon="⭐" val={cem}         label="Excellent"      bg="var(--ps)" color="var(--p)"   border="var(--p)"/>
+        <Blob icon="⚠️" val={pantau}      label="Needs Monitor"  bg="var(--bs)" color="var(--b)"   border="var(--b)"/>
       </div>
       {/* Rekod lengkap dengan Delima ID */}
       <div className="ccard" style={{padding:0,overflow:"hidden"}}>
         <div style={{background:"var(--p)",padding:"10px 16px",borderBottom:"3px solid var(--bdc)",display:"flex",gap:8,alignItems:"center"}}>
           <span style={{fontSize:16}}>📋</span>
-          <p style={{fontFamily:"Fredoka,sans-serif",fontSize:15,fontWeight:700,color:"#fff"}}>Rekod Lengkap Murid</p>
+          <p style={{fontFamily:"Fredoka,sans-serif",fontSize:15,fontWeight:700,color:"#fff"}}>Full Student Records</p>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"24px 1fr 56px 38px 38px 44px 50px",gap:3,padding:"8px 10px",background:"var(--ys)",borderBottom:"2px solid var(--bdc)"}}>
           {["#","Nama","Delima","H","A","Merit","Demerit"].map(h=>(
@@ -1015,7 +1022,7 @@ function Laporan({murid}) {
       <div className="ccard" style={{padding:0,overflow:"hidden"}}>
         <div style={{background:"var(--p)",padding:"10px 16px",borderBottom:"3px solid var(--bdc)",display:"flex",gap:8,alignItems:"center"}}>
           <span style={{fontSize:16}}>📈</span>
-          <p style={{fontFamily:"Fredoka,sans-serif",fontSize:15,fontWeight:700,color:"#fff"}}>Net Merit Per Murid</p>
+          <p style={{fontFamily:"Fredoka,sans-serif",fontSize:15,fontWeight:700,color:"#fff"}}>Net Merit Per Student</p>
         </div>
         <div style={{padding:"14px 16px",display:"flex",flexDirection:"column",gap:10}}>
           {[...murid].sort((a,b)=>netMerit(b)-netMerit(a)).map(m=>{
@@ -1038,7 +1045,7 @@ function Laporan({murid}) {
       {top&&(
         <div style={{background:"var(--p)",border:"3px solid var(--bdc)",borderRadius:22,boxShadow:"5px 5px 0 var(--bdc)",padding:"18px",position:"relative",overflow:"hidden"}}>
           <div style={{position:"absolute",top:-16,right:-16,width:80,height:80,borderRadius:"50%",background:"rgba(255,255,255,.12)",border:"3px solid rgba(255,255,255,.2)"}}/>
-          <p style={{fontSize:11,fontWeight:900,color:"rgba(255,255,255,.8)",textTransform:"uppercase",letterSpacing:".6px",marginBottom:8}}>🏆 MURID TERBAIK KELAS</p>
+          <p style={{fontSize:11,fontWeight:900,color:"rgba(255,255,255,.8)",textTransform:"uppercase",letterSpacing:".6px",marginBottom:8}}>🏆 TOP STUDENT OF THE CLASS</p>
           <div style={{display:"flex",alignItems:"center",gap:14}}>
             <Ava nama={top.nama} jantina={top.jantina} size={56}/>
             <div>
@@ -1048,7 +1055,7 @@ function Laporan({murid}) {
           </div>
         </div>
       )}
-      <button onClick={()=>window.print()} className="cbtn cbtn-blue" style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>🖨️ Export Laporan sebagai PDF</button>
+      <button onClick={()=>window.print()} className="cbtn cbtn-blue" style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>🖨️ Export Report as PDF</button>
     </div>
   );
 }
@@ -1069,8 +1076,8 @@ function DesktopSidebar({active,nav,notif,dark,setDark,logout,nama}) {
         <div style={{display:"flex",alignItems:"center",gap:8,background:"rgba(255,255,255,.15)",borderRadius:10,padding:"7px 10px"}}>
           <span style={{fontSize:20}}>👩‍🏫</span>
           <div>
-            <p style={{color:"rgba(255,255,255,.65)",fontSize:9,fontWeight:800,textTransform:"uppercase",letterSpacing:".5px"}}>Guru Kelas</p>
-            <p style={{color:"#fff",fontSize:13,fontWeight:900,fontFamily:"Fredoka,sans-serif"}}>{nama||"Cikgu Anna"}</p>
+            <p style={{color:"rgba(255,255,255,.65)",fontSize:9,fontWeight:800,textTransform:"uppercase",letterSpacing:".5px"}}>Class Teacher</p>
+            <p style={{color:"#fff",fontSize:13,fontWeight:900,fontFamily:"Fredoka,sans-serif"}}>{nama||"Teacher Anna"}</p>
           </div>
         </div>
       </div>
@@ -1093,14 +1100,14 @@ function DesktopSidebar({active,nav,notif,dark,setDark,logout,nama}) {
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
           <div style={{display:"flex",alignItems:"center",gap:6}}>
             <span style={{fontSize:16}}>{dark?"🌙":"☀️"}</span>
-            <p style={{fontSize:12,fontWeight:800,color:"var(--ink)"}}>Mod {dark?"Gelap":"Cerah"}</p>
+            <p style={{fontSize:12,fontWeight:800,color:"var(--ink)"}}>{dark?"Dark":"Light"} Mode</p>
           </div>
           <button onClick={()=>setDark(!dark)} style={{width:46,height:26,borderRadius:99,border:"3px solid var(--bdc)",background:dark?"var(--p)":"var(--i3)",cursor:"pointer",position:"relative",boxShadow:"2px 2px 0 var(--bdc)",transition:"background .2s"}}>
             <div style={{position:"absolute",top:3,left:dark?21:3,width:16,height:16,borderRadius:"50%",background:"#fff",border:"2px solid var(--bdc)",transition:"left .2s"}}/>
           </button>
         </div>
-        <button onClick={logout} style={{width:"100%",padding:"8px",border:"3px solid var(--bdc)",borderRadius:12,background:"var(--wh)",color:"var(--ink)",fontFamily:"Nunito,sans-serif",fontWeight:800,fontSize:12,cursor:"pointer",boxShadow:"2px 2px 0 var(--bdc)"}}>🚪 Log Keluar</button>
-        <p style={{fontSize:9,color:"var(--i3)",marginTop:6,fontWeight:600,textAlign:"center"}}>Portal Cikgu Anna v1.0 · 2026</p>
+        <button onClick={logout} style={{width:"100%",padding:"8px",border:"3px solid var(--bdc)",borderRadius:12,background:"var(--wh)",color:"var(--ink)",fontFamily:"Nunito,sans-serif",fontWeight:800,fontSize:12,cursor:"pointer",boxShadow:"2px 2px 0 var(--bdc)"}}>🚪 Log Out</button>
+        <p style={{fontSize:9,color:"var(--i3)",marginTop:6,fontWeight:600,textAlign:"center"}}>Teacher Anna's Portal v1.0 · 2026</p>
       </div>
     </aside>
   );
@@ -1207,7 +1214,7 @@ export default function App() {
       <style>{makeCSS(dark)}</style>
       <div style={{minHeight:"100vh",background:"var(--bg)",display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:16}}>
         <Logo size={56}/>
-        <p style={{fontFamily:"Fredoka,sans-serif",fontSize:18,color:"var(--p)",fontWeight:700}}>Memuatkan Portal Cikgu Anna…</p>
+        <p style={{fontFamily:"Fredoka,sans-serif",fontSize:18,color:"var(--p)",fontWeight:700}}>Loading Teacher Anna's Portal…</p>
       </div>
     </>
   );
@@ -1233,8 +1240,8 @@ export default function App() {
               <Logo size={38}/>
             </div>
             <div style={{flex:1,minWidth:0}}>
-              <p style={{fontFamily:"Fredoka,sans-serif",fontSize:16,fontWeight:700,color:"#fff",lineHeight:1.1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>Portal Cikgu Anna</p>
-              <p style={{fontSize:10,fontWeight:700,color:"rgba(255,255,255,.72)",marginTop:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{g.e} {g.t} · {hadirCount}/{murid.length} hadir</p>
+              <p style={{fontFamily:"Fredoka,sans-serif",fontSize:16,fontWeight:700,color:"#fff",lineHeight:1.1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>Teacher Anna's Portal</p>
+              <p style={{fontSize:10,fontWeight:700,color:"rgba(255,255,255,.72)",marginTop:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{g.e} {g.t} · {hadirCount}/{murid.length} present</p>
             </div>
             <div style={{display:"flex",gap:6,flexShrink:0,alignItems:"center"}}>
               <LiveClock/>
@@ -1254,7 +1261,7 @@ export default function App() {
           <div style={{padding:"0 12px 10px",position:"relative"}}>
             <button onClick={()=>setSearch(true)} style={{width:"100%",display:"flex",alignItems:"center",gap:8,background:"rgba(255,255,255,.2)",border:"2px solid rgba(255,255,255,.38)",borderRadius:12,padding:"9px 12px",cursor:"pointer",textAlign:"left",boxShadow:"2px 2px 0 rgba(0,0,0,.12)"}}>
               <span style={{fontSize:14}}>🔍</span>
-              <span style={{fontSize:12,color:"rgba(255,255,255,.8)",fontFamily:"Nunito,sans-serif",fontWeight:700,flex:1}}>Cari murid, ID Delima, wali, mesej…</span>
+              <span style={{fontSize:12,color:"rgba(255,255,255,.8)",fontFamily:"Nunito,sans-serif",fontWeight:700,flex:1}}>Search student, Delima ID, guardian, message…</span>
               <span style={{fontSize:9,fontWeight:900,color:"rgba(255,255,255,.55)",background:"rgba(255,255,255,.12)",borderRadius:6,padding:"2px 6px",border:"1.5px solid rgba(255,255,255,.2)"}}>⌘K</span>
             </button>
           </div>
@@ -1281,10 +1288,10 @@ export default function App() {
         <div className="bottom-nav" style={{position:"sticky",bottom:0,background:"var(--wh)",borderTop:"3px solid var(--bdc)",boxShadow:"0 -3px 0 var(--bdc)",display:"flex",zIndex:20}}>
           {[
             {id:"dashboard", emoji:"🏠",label:"Home"},
-            {id:"objektif",  emoji:"🎯",label:"Objektif"},
-            {id:"kehadiran", emoji:"📋",label:"Hadir"},
-            {id:"murid",     emoji:"👥",label:"Murid"},
-            {id:"laporan",   emoji:"📊",label:"Laporan"},
+            {id:"objektif",  emoji:"🎯",label:"Objectives"},
+            {id:"kehadiran", emoji:"📋",label:"Attendance"},
+            {id:"murid",     emoji:"👥",label:"Students"},
+            {id:"laporan",   emoji:"📊",label:"Reports"},
           ].map(item=>{
             const sel=tab===item.id;
             return (

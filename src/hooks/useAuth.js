@@ -35,7 +35,7 @@ export function useAuth() {
       .single();
 
     if (error || !data) {
-      setAuthError("Login gagal. Semak nombor murid dan nombor telefon wali.");
+      setAuthError("Login failed. Check the student number and guardian's phone number.");
       setAuthLoading(false);
       return false;
     }

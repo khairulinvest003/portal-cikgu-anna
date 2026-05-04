@@ -35,7 +35,6 @@ export default function LoginPage({ login, authLoading, authError }) {
       display: "flex", alignItems: "center", justifyContent: "center", padding: "20px",
       fontFamily: "'Nunito','Fredoka',sans-serif",
     }}>
-      {/* Background decoration */}
       <div style={{ position: "fixed", inset: 0, backgroundImage: "radial-gradient(circle,rgba(255,255,255,.08) 1px,transparent 1px)", backgroundSize: "24px 24px", pointerEvents: "none" }}/>
       <div style={{ position: "fixed", top: -60, right: -60, width: 240, height: 240, borderRadius: "50%", background: "rgba(255,255,255,.06)", pointerEvents: "none" }}/>
       <div style={{ position: "fixed", bottom: -80, left: -80, width: 300, height: 300, borderRadius: "50%", background: "rgba(255,255,255,.04)", pointerEvents: "none" }}/>
@@ -53,13 +52,13 @@ export default function LoginPage({ login, authLoading, authError }) {
               <Logo size={48}/>
             </div>
           </div>
-          <p style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 24, fontWeight: 700, color: "#fff", margin: 0 }}>Portal Cikgu Anna</p>
-          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, marginTop: 4 }}>Tahun 4 Bestari · SK Darau, Kota Kinabalu</p>
+          <p style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 24, fontWeight: 700, color: "#fff", margin: 0 }}>Teacher Anna's Portal</p>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, marginTop: 4 }}>Year 4 Bestari · SK Darau, Kota Kinabalu</p>
         </div>
 
         {/* Tab switcher */}
         <div style={{ display: "flex", background: "#F0F7FF", borderBottom: "3px solid #0F172A" }}>
-          {[["admin","👩‍🏫 Guru / Admin"],["parent","👨‍👩‍👧 Ibu Bapa"]].map(([t, l]) => (
+          {[["admin","👩‍🏫 Teacher / Admin"],["parent","👨‍👩‍👧 Parent"]].map(([t, l]) => (
             <button key={t} onClick={() => { setTab(t); setUser(""); setPass(""); }} style={{
               flex: 1, padding: "13px 8px", border: "none",
               borderBottom: `3px solid ${tab === t ? "#1A56DB" : "transparent"}`,
@@ -77,13 +76,13 @@ export default function LoginPage({ login, authLoading, authError }) {
           {tab === "admin" ? (
             <>
               <div>
-                <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 6, textTransform: "uppercase", letterSpacing: ".4px" }}>Nama Pengguna</p>
+                <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 6, textTransform: "uppercase", letterSpacing: ".4px" }}>Username</p>
                 <input value={user} onChange={e => setUser(e.target.value)} placeholder="teacheranna"
                   style={{ width: "100%", padding: "12px 14px", border: "3px solid #0F172A", borderRadius: 14, fontFamily: "'Nunito',sans-serif", fontSize: 14, fontWeight: 600, outline: "none", boxShadow: "2px 2px 0 #0F172A", background: "#fff", color: "#0F172A" }}
                   autoComplete="username"/>
               </div>
               <div>
-                <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 6, textTransform: "uppercase", letterSpacing: ".4px" }}>Kata Laluan</p>
+                <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 6, textTransform: "uppercase", letterSpacing: ".4px" }}>Password</p>
                 <div style={{ position: "relative" }}>
                   <input value={pass} onChange={e => setPass(e.target.value)} placeholder="••••••••"
                     type={show ? "text" : "password"}
@@ -96,21 +95,21 @@ export default function LoginPage({ login, authLoading, authError }) {
           ) : (
             <>
               <div style={{ background: "#EFF6FF", border: "2px solid #BFDBFE", borderRadius: 12, padding: "10px 14px" }}>
-                <p style={{ fontSize: 12, fontWeight: 700, color: "#1E40AF", margin: 0 }}>📋 Cara log masuk:</p>
+                <p style={{ fontSize: 12, fontWeight: 700, color: "#1E40AF", margin: 0 }}>📋 How to log in:</p>
                 <p style={{ fontSize: 11, color: "#475569", fontWeight: 600, marginTop: 4, lineHeight: 1.6, margin: "4px 0 0" }}>
-                  • <b>Nombor Murid:</b> No. murid anak (cth: 01, 02)<br/>
-                  • <b>Kata Laluan:</b> No. telefon wali (cth: 0128881234)
+                  • <b>Student Number:</b> Child's student number (e.g. 01, 02)<br/>
+                  • <b>Password:</b> Guardian's phone number (e.g. 0128881234)
                 </p>
               </div>
               <div>
-                <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 6, textTransform: "uppercase", letterSpacing: ".4px" }}>Nombor Murid</p>
-                <input value={user} onChange={e => setUser(e.target.value)} placeholder="Contoh: 01"
+                <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 6, textTransform: "uppercase", letterSpacing: ".4px" }}>Student Number</p>
+                <input value={user} onChange={e => setUser(e.target.value)} placeholder="e.g. 01"
                   style={{ width: "100%", padding: "12px 14px", border: "3px solid #0F172A", borderRadius: 14, fontFamily: "'JetBrains Mono',monospace", fontSize: 16, fontWeight: 700, outline: "none", boxShadow: "2px 2px 0 #0F172A", background: "#fff", color: "#0F172A" }}/>
               </div>
               <div>
-                <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 6, textTransform: "uppercase", letterSpacing: ".4px" }}>No. Telefon Wali</p>
+                <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 6, textTransform: "uppercase", letterSpacing: ".4px" }}>Guardian's Phone No.</p>
                 <div style={{ position: "relative" }}>
-                  <input value={pass} onChange={e => setPass(e.target.value)} placeholder="Contoh: 0128881234"
+                  <input value={pass} onChange={e => setPass(e.target.value)} placeholder="e.g. 0128881234"
                     type={show ? "text" : "password"}
                     style={{ width: "100%", padding: "12px 44px 12px 14px", border: "3px solid #0F172A", borderRadius: 14, fontFamily: "'JetBrains Mono',monospace", fontSize: 14, fontWeight: 700, outline: "none", boxShadow: "2px 2px 0 #0F172A", background: "#fff", color: "#0F172A" }}/>
                   <button type="button" onClick={() => setShow(p => !p)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: 16 }}>{show ? "🙈" : "👁️"}</button>
@@ -133,11 +132,11 @@ export default function LoginPage({ login, authLoading, authError }) {
             boxShadow: authLoading || !user || !pass ? "none" : "4px 4px 0 #0F172A",
             transition: "all .15s", letterSpacing: ".3px",
           }}>
-            {authLoading ? "⏳ Mengesahkan…" : "🔐 Log Masuk"}
+            {authLoading ? "⏳ Verifying…" : "🔐 Log In"}
           </button>
 
           <p style={{ textAlign: "center", fontSize: 11, color: "#94A3B8", fontWeight: 600, margin: 0 }}>
-            Portal Cikgu Anna v1.0 · 2026
+            Teacher Anna's Portal v1.0 · 2026
           </p>
         </form>
       </div>
