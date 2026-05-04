@@ -347,7 +347,7 @@ function Drawer({active,nav,onClose,notif,dark,setDark}) {
           </svg>
           <button onClick={onClose} style={{position:"absolute",top:14,right:14,background:"rgba(255,255,255,.25)",border:"2px solid rgba(255,255,255,.4)",borderRadius:10,width:34,height:34,cursor:"pointer",fontSize:15,color:"#fff",fontWeight:800,fontFamily:"Nunito,sans-serif"}}>✕</button>
           <div style={{display:"flex",alignItems:"center",gap:12}}>
-            <div style={{width:48,height:48,borderRadius:"50%",background:"rgba(255,255,255,.25)",border:"3px solid rgba(255,255,255,.5)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:24}}>👩‍🏫</div>
+            <img src="/cikgu-anna.jpg" style={{width:48,height:48,borderRadius:"50%",objectFit:"cover",objectPosition:"top",border:"3px solid rgba(255,255,255,.6)",flexShrink:0}} alt="Cikgu Anna"/>
             <div>
               <p style={{color:"rgba(255,255,255,.7)",fontSize:11,fontWeight:700}}>CLASS TEACHER</p>
               <p style={{color:"#fff",fontSize:17,fontWeight:900,fontFamily:"Fredoka,sans-serif"}}>Teacher Anna</p>
@@ -677,7 +677,7 @@ function Dashboard({murid,log,kh,setWA,activeKelas}) {
   return (
     <div style={{display:"flex",flexDirection:"column",gap:18}}>
       <div style={{background:"var(--p)",border:"3px solid var(--bdc)",borderRadius:24,boxShadow:"5px 5px 0 var(--bdc)",padding:"18px 18px 0",overflow:"hidden",position:"relative"}}>
-        <div style={{position:"absolute",top:-20,right:-20,width:100,height:100,borderRadius:"50%",background:"rgba(255,255,255,.1)",border:"3px solid rgba(255,255,255,.15)"}}/>
+        <img src="/cikgu-anna.jpg" style={{position:"absolute",top:-10,right:-8,width:110,height:110,borderRadius:"50%",objectFit:"cover",objectPosition:"top",border:"3px solid rgba(255,255,255,.3)",opacity:.9,pointerEvents:"none"}} alt="Cikgu Anna"/>
         <p style={{color:"rgba(255,255,255,.8)",fontSize:12,fontWeight:700}}>📅 {d.hari}, {d.tarikh}</p>
         <p style={{fontFamily:"Fredoka,sans-serif",fontSize:24,fontWeight:700,color:"#fff",marginTop:2,lineHeight:1.2}}>{g.e} {g.t}, Teacher Anna!</p>
         <p style={{color:"rgba(255,255,255,.8)",fontSize:12,fontWeight:600,marginTop:2,marginBottom:14}}>Tahun {activeKelas} · SK Bukit Lalang, Semporna</p>
@@ -1183,7 +1183,7 @@ function DesktopSidebar({active,nav,notif,dark,setDark,logout,nama}) {
           </div>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:8,background:"rgba(255,255,255,.15)",borderRadius:10,padding:"7px 10px"}}>
-          <span style={{fontSize:20}}>👩‍🏫</span>
+          <img src="/cikgu-anna.jpg" style={{width:34,height:34,borderRadius:"50%",objectFit:"cover",objectPosition:"top",border:"2px solid rgba(255,255,255,.5)",flexShrink:0}} alt="Cikgu Anna"/>
           <div>
             <p style={{color:"rgba(255,255,255,.65)",fontSize:9,fontWeight:800,textTransform:"uppercase",letterSpacing:".5px"}}>Class Teacher</p>
             <p style={{color:"#fff",fontSize:13,fontWeight:900,fontFamily:"Fredoka,sans-serif"}}>{nama||"Teacher Anna"}</p>
