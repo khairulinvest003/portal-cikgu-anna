@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'pwa-maskable.svg'],
+      includeAssets: ['icon-192.png', 'icon-512.png', 'icon-apple.png'],
       manifest: {
         name: 'Portal Cikgu Anna',
         short_name: 'Cikgu Anna',
@@ -20,16 +20,27 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: 'favicon.svg',
-            sizes: 'any',
-            type: 'image/svg+xml',
+            src: 'icon-192.png',
+            sizes: '192x192',
+            type: 'image/png',
             purpose: 'any',
           },
           {
-            src: 'pwa-maskable.svg',
-            sizes: 'any',
-            type: 'image/svg+xml',
+            src: 'icon-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            src: 'icon-512.png',
+            sizes: '512x512',
+            type: 'image/png',
             purpose: 'maskable',
+          },
+          {
+            src: 'icon-apple.png',
+            sizes: '180x180',
+            type: 'image/png',
           },
         ],
       },
