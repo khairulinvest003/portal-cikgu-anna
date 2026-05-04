@@ -854,17 +854,19 @@ function Merit({murid,updateMerit}) {
 }
 
 /* ── SENARAI MURID ── */
-function SenaraiMurid({murid,saveMurid,deleteMurid,activeKelas}) {
-  const [q,setQ]       = useState("");
-  const [pilih,setPilih]= useState(null);
-  const [sort,setSort] = useState("no");
-  const [modal,setModal]= useState(null);
+function SenaraiMurid({murid,saveMurid,deleteMurid}) {
+  const [q,setQ]         = useState("");
+  const [pilih,setPilih] = useState(null);
+  const [sort,setSort]   = useState("no");
+  const [modal,setModal] = useState(null);
+  const [activeKelas,setActiveKelas] = useState("6 Adil");
   const save = async data => {
     await saveMurid(data);
-    setModal(null);setPilih(null);
+    setModal(null);setPilih(null);setActiveKelas(data.kelas||activeKelas);
   };
   const hapus = async id=>{if(!confirm("Delete this student?"))return;await deleteMurid(id);setPilih(null);};
-  const filtered=[...murid].filter(m=>
+  const kelasMurid = murid.filter(m=>m.kelas===activeKelas);
+  const filtered=[...kelasMurid].filter(m=>
     m.nama.toLowerCase().includes(q.toLowerCase())||
     m.wali.toLowerCase().includes(q.toLowerCase())||
     m.no.includes(q)||
@@ -921,12 +923,20 @@ function SenaraiMurid({murid,saveMurid,deleteMurid,activeKelas}) {
         ):(
           <>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-              <div>
-                <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>👥 Student <span style={{color:"var(--p)"}}>List</span></p>
-                <p style={{fontSize:12,fontWeight:700,color:"var(--i3)",marginTop:2}}>{murid.length} students · Tahun {activeKelas}</p>
-              </div>
+              <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>👥 Student <span style={{color:"var(--p)"}}>List</span></p>
               <button onClick={()=>setModal("tambah")} style={{background:"var(--p)",color:"#fff",border:"3px solid var(--bdc)",borderRadius:14,padding:"10px 14px",fontSize:13,fontWeight:900,cursor:"pointer",fontFamily:"Nunito,sans-serif",boxShadow:"3px 3px 0 var(--bdc)"}}>+ Add</button>
             </div>
+            <div style={{display:"flex",gap:8,overflowX:"auto",WebkitOverflowScrolling:"touch",scrollbarWidth:"none"}}>
+              {KELAS_LIST.map(k=>{
+                const sel=activeKelas===k;
+                return (
+                  <button key={k} onClick={()=>{setActiveKelas(k);setPilih(null);setQ("");}} style={{flexShrink:0,padding:"8px 18px",border:`3px solid ${sel?"var(--p)":"var(--bdc)"}`,borderRadius:99,background:sel?"var(--p)":"var(--wh)",color:sel?"#fff":"var(--ink)",fontFamily:"Nunito,sans-serif",fontWeight:900,fontSize:12,cursor:"pointer",boxShadow:`2px 2px 0 ${sel?"var(--p2)":"var(--bdc)"}`,whiteSpace:"nowrap"}}>
+                    {sel?"✦ ":""}{k} <span style={{opacity:.7,fontSize:10}}>({murid.filter(m=>m.kelas===k).length})</span>
+                  </button>
+                );
+              })}
+            </div>
+            <p style={{fontSize:12,fontWeight:700,color:"var(--i3)"}}>{filtered.length} students</p>
             <input placeholder="🔍 Search name, Delima ID, guardian…" value={q} onChange={e=>setQ(e.target.value)}/>
             <div style={{display:"flex",gap:6}}>
               {[["no","# No"],["merit","Merit"],["hadir","Present"]].map(([k,l])=>(
@@ -1377,7 +1387,7 @@ export default function App() {
             </div>
             <div style={{flex:1,minWidth:0}}>
               <p style={{fontFamily:"Fredoka,sans-serif",fontSize:16,fontWeight:700,color:"#fff",lineHeight:1.1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>Teacher Anna's Portal</p>
-              <p style={{fontSize:10,fontWeight:700,color:"rgba(255,255,255,.72)",marginTop:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{g.e} {g.t} · Thn {activeKelas} · {hadirCount}/{filteredMurid.length} present</p>
+              <p style={{fontSize:10,fontWeight:700,color:"rgba(255,255,255,.72)",marginTop:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{g.e} {g.t} · SK Bukit Lalang, Semporna</p>
             </div>
             <div style={{display:"flex",gap:6,flexShrink:0,alignItems:"center"}}>
               <LiveClock/>
@@ -1402,17 +1412,6 @@ export default function App() {
             </button>
           </div>
           </div>{/* end overflow:hidden Row1 wrapper */}
-          {/* Class selector — outside overflow:hidden so it can scroll */}
-          <div style={{padding:"8px 12px 10px",display:"flex",gap:8,overflowX:"auto",WebkitOverflowScrolling:"touch",scrollbarWidth:"none",msOverflowStyle:"none"}}>
-            {KELAS_LIST.map(k=>{
-              const sel=activeKelas===k;
-              return (
-                <button key={k} onClick={()=>setActiveKelas(k)} style={{flexShrink:0,padding:"9px 20px",border:`2.5px solid ${sel?"#fff":"rgba(255,255,255,.45)"}`,borderRadius:99,background:sel?"rgba(255,255,255,.3)":"rgba(255,255,255,.08)",color:sel?"#fff":"rgba(255,255,255,.7)",fontFamily:"Nunito,sans-serif",fontWeight:900,fontSize:13,cursor:"pointer",transition:"all .15s",boxShadow:sel?"0 2px 8px rgba(0,0,0,.2)":"none",whiteSpace:"nowrap"}}>
-                  {sel?"✦ ":""}{k}
-                </button>
-              );
-            })}
-          </div>
           {/* Wavy */}
           <svg style={{display:"block",width:"100%",height:14,marginBottom:-1}} viewBox="0 0 430 14" preserveAspectRatio="none">
             <path d="M0,2 C80,14 160,0 215,8 C270,16 350,2 430,7 L430,14 L0,14 Z" fill="var(--bg)"/>
@@ -1426,7 +1425,7 @@ export default function App() {
           {tab==="objektif"  && <Objektif objektif={objektif} addObjektif={addObjektif} updateObjektif={updateObjektif} deleteObjektif={deleteObjektif}/>}
           {tab==="kehadiran" && <Kehadiran murid={filteredMurid}/>}
           {tab==="merit"     && <Merit murid={filteredMurid} updateMerit={updateMerit}/>}
-          {tab==="murid"     && <SenaraiMurid murid={filteredMurid} saveMurid={saveMurid} deleteMurid={deleteMurid} activeKelas={activeKelas}/>}
+          {tab==="murid"     && <SenaraiMurid murid={murid} saveMurid={saveMurid} deleteMurid={deleteMurid}/>}
           {tab==="jadual"    && <Jadual/>}
           {tab==="log"       && <Log log={log} addLog={addLog} updateLog={updateLog} deleteLog={deleteLog}/>}
           {tab==="laporan"   && <Laporan murid={filteredMurid}/>}
