@@ -1386,11 +1386,13 @@ export default function App() {
   const saveMurid = async (data) => {
     const { id, created_at: _c, ...fields } = data;
     if (id && murid.find(m => m.id === id)) {
-      await supabase.from("murid").update(fields).eq("id", id);
-      setMurid(p => p.map(m => m.id === id ? { ...m, ...fields } : m));
+      const { error } = await supabase.from("murid").update(fields).eq("id", id);
+      if (!error) setMurid(p => p.map(m => m.id === id ? { ...m, ...fields } : m));
     } else {
-      const { data: row } = await supabase.from("murid").insert(fields).select().single();
-      if (row) setMurid(p => [...p, row]);
+      const { error } = await supabase.from("murid").insert(fields);
+      if (error) { alert("Gagal tambah murid: " + error.message); return; }
+      const { data: all } = await supabase.from("murid").select("*").order("no");
+      if (all) setMurid(all);
     }
   };
 
