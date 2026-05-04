@@ -389,31 +389,28 @@ function Drawer({active,nav,onClose,notif,dark,setDark}) {
 }
 
 /* ── OBJEKTIF P&P ── */
-function Objektif() {
+function Objektif({objektif:entries, addObjektif, updateObjektif, deleteObjektif}) {
   const d = getDateInfo();
-  const [entries, setEntries] = useState([
-    {id:1,tarikh:"3 May 2026",hari:"Sunday",masa:"8:00 AM",subjek:"Maths",tajuk:"Decimal Fractions",objektif:"Students can convert fractions to decimal numbers accurately.",bbm:"Textbook p.45, worksheet"},
-    {id:2,tarikh:"2 May 2026",hari:"Saturday",masa:"9:00 AM",subjek:"English",tajuk:"Descriptive Writing",objektif:"Students can write a descriptive essay about the school grounds of at least 80 words.",bbm:"School photos, dictionary"},
-  ]);
   const [form, setForm] = useState({tarikh:d.tarikh,hari:d.hari,masa:d.masa,subjek:"",tajuk:"",objektif:"",bbm:""});
   const [tunjuk, setTunjuk] = useState(false);
   const [editId, setEditId] = useState(null);
   const set = (k,v) => setForm(p=>({...p,[k]:v}));
 
-  const simpan = () => {
+  const simpan = async () => {
     if (!form.subjek || !form.objektif) return;
+    const {id:_id, created_at:_c, ...fields} = form;
     if (editId) {
-      setEntries(p=>p.map(e=>e.id===editId?{...form,id:editId}:e));
+      await updateObjektif(editId, fields);
       setEditId(null);
     } else {
-      setEntries(p=>[{...form,id:Date.now()},...p]);
+      await addObjektif(fields);
     }
     setForm({tarikh:d.tarikh,hari:d.hari,masa:d.masa,subjek:"",tajuk:"",objektif:"",bbm:""});
     setTunjuk(false);
   };
 
   const startEdit = e => { setForm({...e}); setEditId(e.id); setTunjuk(true); };
-  const padam     = id => setEntries(p=>p.filter(e=>e.id!==id));
+  const padam     = async id => { if(!confirm("Delete this objective?")) return; await deleteObjektif(id); };
 
   return (
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
@@ -734,9 +731,17 @@ function Dashboard({murid,log,kh,setWA,activeKelas}) {
 
 /* ── KEHADIRAN ── */
 function Kehadiran({murid}) {
-  const [kh,setKh]     = useState({...INIT_KH});
+  const [kh,setKh]     = useState({});
   const [q,setQ]       = useState("");
   const [saved,setSaved]= useState(false);
+  const todayStr = (() => { const d=new Date(); return `${d.getDate()} ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()]} ${d.getFullYear()}`; })();
+
+  useEffect(()=>{
+    supabase.from("kehadiran").select("*").eq("tarikh",todayStr).then(({data})=>{
+      if(data?.length){ const m={}; data.forEach(r=>{m[r.murid_id]=r.status;}); setKh(m); }
+    });
+  },[todayStr]);
+
   const cycle = id => setKh(p=>({...p,[id]:p[id]==="present"?"absent":p[id]==="absent"?"mc":"present"}));
   const si = s => ({
     present:{label:"✅ Present", bg:"var(--gs)",color:"var(--g)",bc:"var(--g)"},
@@ -774,7 +779,11 @@ function Kehadiran({murid}) {
           );
         })}
       </div>
-      <button className={`cbtn ${saved?"cbtn-green":"cbtn-blue"}`} onClick={()=>{setSaved(true);setTimeout(()=>setSaved(false),2200);}}>
+      <button className={`cbtn ${saved?"cbtn-green":"cbtn-blue"}`} onClick={async()=>{
+        const rows = murid.map(m=>({murid_id:m.id, tarikh:todayStr, status:kh[m.id]||"present"}));
+        await supabase.from("kehadiran").upsert(rows,{onConflict:"murid_id,tarikh"});
+        setSaved(true); setTimeout(()=>setSaved(false),2200);
+      }}>
         {saved?"✅ Saved!":"💾 Save Attendance"}
       </button>
     </div>
@@ -987,7 +996,7 @@ function Jadual() {
 }
 
 /* ── LOG IBU BAPA ── */
-function Log({log,addLog,updateLog}) {
+function Log({log,addLog,updateLog,deleteLog}) {
   const [filter,setFilter]=useState("all");
   const [balas,setBalas]  =useState(null);
   const [teks,setTeks]    =useState("");
@@ -1059,6 +1068,7 @@ function Log({log,addLog,updateLog}) {
                   <button onClick={()=>setBalas(l.id)} style={{background:"none",border:"none",color:"var(--p)",fontSize:13,fontWeight:900,cursor:"pointer",fontFamily:"Nunito,sans-serif",padding:0}}>📬 Reply →</button>
                 ))}
                 {l.tel&&<button onClick={()=>window.open(`https://wa.me/60${l.tel.replace(/^0/,"")}?text=${encodeURIComponent(`Dear ${l.wali}, regarding your message.`)}`,"_blank")} style={{marginLeft:"auto",background:"#25D366",border:"2px solid #1DA851",borderRadius:10,padding:"7px 12px",color:"#fff",fontSize:11,fontWeight:900,cursor:"pointer",fontFamily:"Nunito,sans-serif"}}>📬 WA</button>}
+                <button onClick={()=>{if(!confirm("Delete this log?"))return;deleteLog(l.id);}} style={{marginLeft:l.tel?"4px":"auto",background:"var(--ps)",border:"2px solid var(--p)",borderRadius:10,padding:"7px 10px",color:"var(--p)",fontSize:13,fontWeight:900,cursor:"pointer",fontFamily:"Nunito,sans-serif"}}>🗑️</button>
               </div>
             </div>
           );
@@ -1222,6 +1232,7 @@ export default function App() {
   const [dark,setDark]         = useState(false);
   const [murid,setMurid]       = useState([]);
   const [log,setLog]           = useState([]);
+  const [objektif,setObjektif] = useState([]);
   const [loading,setLoading]   = useState(true);
   const [kh]                   = useState(INIT_KH);
   const [activeKelas,setActiveKelas] = useState("6 Adil");
@@ -1229,9 +1240,10 @@ export default function App() {
   /* ── LOAD FROM SUPABASE ── */
   const loadData = useCallback(async () => {
     setLoading(true);
-    const [{ data: mData }, { data: lData }] = await Promise.all([
+    const [{ data: mData }, { data: lData }, { data: oData }] = await Promise.all([
       supabase.from("murid").select("*").order("no"),
       supabase.from("log_ibu_bapa").select("*").order("created_at", { ascending: false }),
+      supabase.from("objektif").select("*").order("created_at", { ascending: false }),
     ]);
     if (mData?.length) {
       setMurid(mData);
@@ -1250,6 +1262,7 @@ export default function App() {
       ).select();
       if (seeded) setLog(seeded);
     }
+    setObjektif(oData || []);
     setLoading(false);
   }, []);
 
@@ -1289,6 +1302,27 @@ export default function App() {
   const updateLog = async (id, fields) => {
     await supabase.from("log_ibu_bapa").update(fields).eq("id", id);
     setLog(p => p.map(l => l.id === id ? { ...l, ...fields } : l));
+  };
+
+  const deleteLog = async (id) => {
+    await supabase.from("log_ibu_bapa").delete().eq("id", id);
+    setLog(p => p.filter(l => l.id !== id));
+  };
+
+  /* ── OBJEKTIF CRUD ── */
+  const addObjektif = async (fields) => {
+    const { data: row } = await supabase.from("objektif").insert(fields).select().single();
+    if (row) setObjektif(p => [row, ...p]);
+  };
+
+  const updateObjektif = async (id, fields) => {
+    await supabase.from("objektif").update(fields).eq("id", id);
+    setObjektif(p => p.map(o => o.id === id ? { ...o, ...fields } : o));
+  };
+
+  const deleteObjektif = async (id) => {
+    await supabase.from("objektif").delete().eq("id", id);
+    setObjektif(p => p.filter(o => o.id !== id));
   };
 
   const filteredMurid = murid.filter(m => m.kelas === activeKelas);
@@ -1387,12 +1421,12 @@ export default function App() {
         {/* ── CONTENT ── */}
         <div style={{flex:1,padding:"14px 14px 40px",overflowY:"auto"}} key={tab} className="fade-up">
           {tab==="dashboard" && <Dashboard murid={filteredMurid} log={log} kh={kh} setWA={setWaModal} activeKelas={activeKelas}/>}
-          {tab==="objektif"  && <Objektif/>}
+          {tab==="objektif"  && <Objektif objektif={objektif} addObjektif={addObjektif} updateObjektif={updateObjektif} deleteObjektif={deleteObjektif}/>}
           {tab==="kehadiran" && <Kehadiran murid={filteredMurid}/>}
           {tab==="merit"     && <Merit murid={filteredMurid} updateMerit={updateMerit}/>}
           {tab==="murid"     && <SenaraiMurid murid={filteredMurid} saveMurid={saveMurid} deleteMurid={deleteMurid} activeKelas={activeKelas}/>}
           {tab==="jadual"    && <Jadual/>}
-          {tab==="log"       && <Log log={log} addLog={addLog} updateLog={updateLog}/>}
+          {tab==="log"       && <Log log={log} addLog={addLog} updateLog={updateLog} deleteLog={deleteLog}/>}
           {tab==="laporan"   && <Laporan murid={filteredMurid}/>}
         </div>
 
