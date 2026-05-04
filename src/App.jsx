@@ -1,5 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { supabase } from "./supabase";
+import { useAuth } from "./hooks/useAuth";
+import LoginPage from "./components/LoginPage";
+import ParentPortal from "./components/ParentPortal";
 
 const makeCSS = (dark) => `
 @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,600;1,700&family=Fredoka:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
@@ -49,6 +52,16 @@ select option{background:var(--wh);color:var(--ink);}
 ::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-thumb{background:var(--pm);border-radius:99px;}
 @media print{.no-print{display:none!important;}body{background:#fff!important;color:#000!important;}.ccard{box-shadow:none!important;border:1px solid #ccc!important;}}
+@media(min-width:768px){
+  .app-wrap{flex-direction:row!important;max-width:none!important;margin:0!important;}
+  .app-sidebar{display:flex!important;width:260px;min-height:100vh;flex-shrink:0;flex-direction:column;background:var(--wh);border-right:3px solid var(--bdc);position:sticky;top:0;height:100vh;overflow-y:auto;}
+  .app-main{flex:1;display:flex;flex-direction:column;min-width:0;max-width:700px;}
+  .bottom-nav{display:none!important;}
+  .hdr-hamburger{display:none!important;}
+}
+@media(max-width:767px){
+  .app-sidebar{display:none!important;}
+}
 `;
 
 /* ── DATA ── */
@@ -1040,8 +1053,62 @@ function Laporan({murid}) {
   );
 }
 
+/* ── DESKTOP SIDEBAR ── */
+function DesktopSidebar({active,nav,notif,dark,setDark,logout,nama}) {
+  return (
+    <aside className="app-sidebar" style={{display:"none"}}>
+      <div style={{background:"var(--p)",padding:"28px 20px 20px",borderBottom:"3px solid var(--bdc)",position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:-20,right:-20,width:80,height:80,borderRadius:"50%",background:"rgba(255,255,255,.1)",pointerEvents:"none"}}/>
+        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
+          <div style={{background:"rgba(255,255,255,.2)",border:"2.5px solid rgba(255,255,255,.4)",borderRadius:12,padding:6}}><Logo size={32}/></div>
+          <div>
+            <p style={{color:"#fff",fontSize:15,fontWeight:900,fontFamily:"Fredoka,sans-serif",lineHeight:1.1}}>Portal Cikgu Anna</p>
+            <p style={{color:"rgba(255,255,255,.7)",fontSize:10,fontWeight:600,lineHeight:1.2}}>Tahun 4 Bestari · SK Darau</p>
+          </div>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:8,background:"rgba(255,255,255,.15)",borderRadius:10,padding:"7px 10px"}}>
+          <span style={{fontSize:20}}>👩‍🏫</span>
+          <div>
+            <p style={{color:"rgba(255,255,255,.65)",fontSize:9,fontWeight:800,textTransform:"uppercase",letterSpacing:".5px"}}>Guru Kelas</p>
+            <p style={{color:"#fff",fontSize:13,fontWeight:900,fontFamily:"Fredoka,sans-serif"}}>{nama||"Cikgu Anna"}</p>
+          </div>
+        </div>
+      </div>
+      <div style={{flex:1,overflowY:"auto",padding:"12px 0 8px"}}>
+        {MENU.map(m=>{
+          const sel=active===m.id;
+          return (
+            <button key={m.id} onClick={()=>nav(m.id)} style={{width:"100%",display:"flex",alignItems:"center",gap:12,padding:"10px 16px",background:sel?"var(--ps)":"none",border:"none",borderLeft:`4px solid ${sel?"var(--p)":"transparent"}`,cursor:"pointer",textAlign:"left",transition:"all .12s"}}>
+              <div style={{width:38,height:38,borderRadius:12,background:sel?"var(--p)":"var(--bg)",border:`2.5px solid ${sel?"var(--p)":"var(--bdc)"}`,boxShadow:sel?"2px 2px 0 var(--p2)":"2px 2px 0 var(--bdc)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>{m.emoji}</div>
+              <div style={{flex:1,minWidth:0}}>
+                <p style={{fontSize:13,fontWeight:900,color:sel?"var(--p)":"var(--ink)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{m.label}</p>
+                <p style={{fontSize:10,color:"var(--i3)",fontWeight:600,marginTop:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{m.sub}</p>
+              </div>
+              {m.id==="log"&&notif>0&&<span style={{background:"var(--p)",color:"#fff",fontSize:11,fontWeight:900,borderRadius:99,minWidth:22,height:22,display:"flex",alignItems:"center",justifyContent:"center",border:"2px solid var(--bdc)",padding:"0 4px"}}>{notif}</span>}
+            </button>
+          );
+        })}
+      </div>
+      <div style={{padding:"12px 16px",borderTop:"3px solid var(--bdc)",background:"var(--ys)"}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
+          <div style={{display:"flex",alignItems:"center",gap:6}}>
+            <span style={{fontSize:16}}>{dark?"🌙":"☀️"}</span>
+            <p style={{fontSize:12,fontWeight:800,color:"var(--ink)"}}>Mod {dark?"Gelap":"Cerah"}</p>
+          </div>
+          <button onClick={()=>setDark(!dark)} style={{width:46,height:26,borderRadius:99,border:"3px solid var(--bdc)",background:dark?"var(--p)":"var(--i3)",cursor:"pointer",position:"relative",boxShadow:"2px 2px 0 var(--bdc)",transition:"background .2s"}}>
+            <div style={{position:"absolute",top:3,left:dark?21:3,width:16,height:16,borderRadius:"50%",background:"#fff",border:"2px solid var(--bdc)",transition:"left .2s"}}/>
+          </button>
+        </div>
+        <button onClick={logout} style={{width:"100%",padding:"8px",border:"3px solid var(--bdc)",borderRadius:12,background:"var(--wh)",color:"var(--ink)",fontFamily:"Nunito,sans-serif",fontWeight:800,fontSize:12,cursor:"pointer",boxShadow:"2px 2px 0 var(--bdc)"}}>🚪 Log Keluar</button>
+        <p style={{fontSize:9,color:"var(--i3)",marginTop:6,fontWeight:600,textAlign:"center"}}>Portal Cikgu Anna v1.0 · 2026</p>
+      </div>
+    </aside>
+  );
+}
+
 /* ── ROOT APP ── */
 export default function App() {
+  const { session, login, logout, authLoading, authError } = useAuth();
   const [tab,setTab]       = useState("dashboard");
   const [drawer,setDrawer] = useState(false);
   const [search,setSearch] = useState(false);
@@ -1121,6 +1188,20 @@ export default function App() {
   const hadirCount = murid.filter(m=>(kh[m.id]||"hadir")==="hadir").length;
   const g = getGreeting();
 
+  if (!session) return (
+    <>
+      <style>{makeCSS(false)}</style>
+      <LoginPage login={login} authLoading={authLoading} authError={authError}/>
+    </>
+  );
+
+  if (session.role === "parent") return (
+    <>
+      <style>{makeCSS(dark)}</style>
+      <ParentPortal studentId={session.studentId} waliName={session.wali||session.nama} onLogout={logout}/>
+    </>
+  );
+
   if (loading) return (
     <>
       <style>{makeCSS(dark)}</style>
@@ -1138,7 +1219,9 @@ export default function App() {
       {drawer  && <Drawer active={tab} nav={t=>{setTab(t);}} onClose={()=>setDrawer(false)} notif={notif} dark={dark} setDark={setDark}/>}
       {waModal && <WAModal murid={murid} onClose={()=>setWaModal(false)}/>}
 
-      <div style={{minHeight:"100vh",background:"var(--bg)",display:"flex",flexDirection:"column",maxWidth:430,margin:"0 auto"}}>
+      <div className="app-wrap" style={{minHeight:"100vh",background:"var(--bg)",display:"flex",flexDirection:"column",maxWidth:430,margin:"0 auto"}}>
+        <DesktopSidebar active={tab} nav={t=>{setTab(t);}} notif={notif} dark={dark} setDark={setDark} logout={logout} nama={session.nama}/>
+        <div className="app-main" style={{flex:1,display:"flex",flexDirection:"column",minWidth:0}}>
 
         {/* ── HEADER ── */}
         <div style={{position:"sticky",top:0,zIndex:20,background:"var(--p)",overflow:"hidden",borderBottom:"3px solid var(--bdc)",boxShadow:"0 4px 0 var(--bdc)"}}>
@@ -1161,7 +1244,8 @@ export default function App() {
                   📩<span style={{position:"absolute",top:2,right:2,width:15,height:15,background:"var(--y)",color:"var(--ink)",fontSize:8,fontWeight:900,borderRadius:99,display:"flex",alignItems:"center",justifyContent:"center",border:"2px solid var(--bdc)"}}>{notif}</span>
                 </button>
               )}
-              <button onClick={()=>setDrawer(true)} style={{background:"rgba(255,255,255,.2)",border:"2px solid rgba(255,255,255,.4)",borderRadius:11,width:34,height:34,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:4}}>
+              <button onClick={logout} title="Log Keluar" style={{background:"rgba(255,255,255,.2)",border:"2px solid rgba(255,255,255,.4)",borderRadius:11,width:34,height:34,cursor:"pointer",fontSize:15,display:"flex",alignItems:"center",justifyContent:"center"}}>🚪</button>
+              <button className="hdr-hamburger" onClick={()=>setDrawer(true)} style={{background:"rgba(255,255,255,.2)",border:"2px solid rgba(255,255,255,.4)",borderRadius:11,width:34,height:34,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:4}}>
                 {[0,1,2].map(i=><span key={i} style={{display:"block",width:14,height:2,background:"#fff",borderRadius:99}}/>)}
               </button>
             </div>
@@ -1194,7 +1278,7 @@ export default function App() {
         </div>
 
         {/* ── BOTTOM NAV ── */}
-        <div style={{position:"sticky",bottom:0,background:"var(--wh)",borderTop:"3px solid var(--bdc)",boxShadow:"0 -3px 0 var(--bdc)",display:"flex",zIndex:20}}>
+        <div className="bottom-nav" style={{position:"sticky",bottom:0,background:"var(--wh)",borderTop:"3px solid var(--bdc)",boxShadow:"0 -3px 0 var(--bdc)",display:"flex",zIndex:20}}>
           {[
             {id:"dashboard", emoji:"🏠",label:"Home"},
             {id:"objektif",  emoji:"🎯",label:"Objektif"},
@@ -1211,6 +1295,7 @@ export default function App() {
             );
           })}
         </div>
+        </div>{/* end app-main */}
       </div>
     </>
   );
