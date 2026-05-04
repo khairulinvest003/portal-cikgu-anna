@@ -530,13 +530,17 @@ function MuridModal({data,onSave,onClose,count,activeKelas}) {
   const set = (k,v) => setF(p=>({...p,[k]:v}));
   return (
     <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:400,background:"rgba(10,22,40,.65)",backdropFilter:"blur(8px)",display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
-      <div className="slide-up" onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:430,background:"var(--wh)",border:"3px solid var(--bdc)",borderRadius:"24px 24px 0 0",boxShadow:"0 -6px 0 var(--bdc)",maxHeight:"90vh",overflowY:"auto"}}>
-        <div style={{padding:"12px 16px 0",display:"flex",justifyContent:"center"}}><div style={{width:40,height:5,borderRadius:99,background:"var(--pm)"}}/></div>
-        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 16px 8px",borderBottom:"3px solid var(--bdc)"}}>
-          <p style={{fontFamily:"Fredoka,sans-serif",fontSize:18,fontWeight:700,color:"var(--ink)"}}>{isEdit?"✏️ Edit Student":"➕ Add New Student"}</p>
-          <button onClick={onClose} style={{background:"var(--ps)",border:"2px solid var(--p)",borderRadius:10,width:32,height:32,cursor:"pointer",fontSize:14,color:"var(--p)",fontWeight:800,fontFamily:"Nunito,sans-serif"}}>✕</button>
+      <div className="slide-up" onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:430,background:"var(--wh)",border:"3px solid var(--bdc)",borderRadius:"24px 24px 0 0",boxShadow:"0 -6px 0 var(--bdc)",maxHeight:"90vh",display:"flex",flexDirection:"column"}}>
+        {/* Header — fixed */}
+        <div style={{flexShrink:0}}>
+          <div style={{padding:"12px 16px 0",display:"flex",justifyContent:"center"}}><div style={{width:40,height:5,borderRadius:99,background:"var(--pm)"}}/></div>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 16px 8px",borderBottom:"3px solid var(--bdc)"}}>
+            <p style={{fontFamily:"Fredoka,sans-serif",fontSize:18,fontWeight:700,color:"var(--ink)"}}>{isEdit?"✏️ Edit Student":"➕ Add New Student"}</p>
+            <button onClick={onClose} style={{background:"var(--ps)",border:"2px solid var(--p)",borderRadius:10,width:32,height:32,cursor:"pointer",fontSize:14,color:"var(--p)",fontWeight:800,fontFamily:"Nunito,sans-serif"}}>✕</button>
+          </div>
         </div>
-        <div style={{padding:"16px",display:"flex",flexDirection:"column",gap:12}}>
+        {/* Scrollable content */}
+        <div style={{flex:1,overflowY:"auto",padding:"16px",display:"flex",flexDirection:"column",gap:12}}>
           <div>
             <p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Class / Kelas *</p>
             <div style={{display:"flex",gap:6}}>
@@ -576,12 +580,13 @@ function MuridModal({data,onSave,onClose,count,activeKelas}) {
           )}
           <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Teacher's Note</p><textarea rows={2} value={f.catatan} onChange={e=>set("catatan",e.target.value)} placeholder="Notes…" style={{resize:"none"}}/></div>
         </div>
-        <div style={{position:"sticky",bottom:0,background:"var(--wh)",borderTop:"3px solid var(--bdc)",padding:"12px 16px",display:"flex",gap:10}}>
-            <button className="cbtn cbtn-blue" onClick={()=>{
-              if(!f.nama||!f.wali||!f.tel){alert("Please fill in name, guardian, and phone number.");return;}
-              onSave({...f,id:data?.id||Date.now(),no:data?.no||String(count+1).padStart(2,"0")});
-            }}>{isEdit?"💾 Save":"➕ Add Student"}</button>
-            <button className="cbtn cbtn-white" style={{width:"auto",padding:"13px 18px"}} onClick={onClose}>Cancel</button>
+        {/* Buttons — always visible at bottom */}
+        <div style={{flexShrink:0,borderTop:"3px solid var(--bdc)",padding:"12px 16px",display:"flex",gap:10,background:"var(--wh)"}}>
+          <button className="cbtn cbtn-blue" onClick={()=>{
+            if(!f.nama||!f.wali||!f.tel){alert("Please fill in name, guardian, and phone number.");return;}
+            onSave({...f,id:data?.id||Date.now(),no:data?.no||String(count+1).padStart(2,"0")});
+          }}>{isEdit?"💾 Save":"➕ Add Student"}</button>
+          <button className="cbtn cbtn-white" style={{width:"auto",padding:"13px 18px"}} onClick={onClose}>Cancel</button>
         </div>
       </div>
     </div>
@@ -1362,9 +1367,9 @@ export default function App() {
       if (seeded) setLog(seeded);
     }
     setObjektif(oData || []);
-    if (jData?.length) {
+    if (Array.isArray(jData) && jData.length > 0) {
       setJadual(jData);
-    } else {
+    } else if (Array.isArray(jData)) {
       const hariList = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
       const masaList = ["7:30","8:10","8:50","9:30","10:10","11:10","11:50"];
       const rows = [];
