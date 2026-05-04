@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { supabase } from "./supabase";
 
 const makeCSS = (dark) => `
 @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,600;1,700&family=Fredoka:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
@@ -662,16 +663,16 @@ function Kehadiran({murid}) {
 }
 
 /* ── MERIT ── */
-function Merit({murid,setMurid}) {
+function Merit({murid,updateMerit}) {
   const [mode,setMode]   = useState("merit");
   const [pilih,setPilih] = useState(null);
   const [sebab,setSebab] = useState("");
   const [markah,setMarkah]= useState(5);
   const [ok,setOk]       = useState(false);
   const [q,setQ]         = useState("");
-  const submit = () => {
+  const submit = async () => {
     if(!pilih||!sebab)return;
-    setMurid(p=>p.map(m=>m.id===pilih?{...m,[mode]:m[mode]+markah}:m));
+    await updateMerit(pilih, mode, markah);
     setOk(true);setTimeout(()=>{setOk(false);setPilih(null);setSebab("");},1800);
   };
   const filtered=[...murid].filter(m=>m.nama.toLowerCase().includes(q.toLowerCase())||m.no.includes(q)).sort((a,b)=>netMerit(b)-netMerit(a));
@@ -725,17 +726,16 @@ function Merit({murid,setMurid}) {
 }
 
 /* ── SENARAI MURID ── */
-function SenaraiMurid({murid,setMurid}) {
+function SenaraiMurid({murid,saveMurid,deleteMurid}) {
   const [q,setQ]       = useState("");
   const [pilih,setPilih]= useState(null);
   const [sort,setSort] = useState("no");
   const [modal,setModal]= useState(null);
-  const save = data => {
-    if(data.id&&murid.find(m=>m.id===data.id)){setMurid(p=>p.map(m=>m.id===data.id?data:m));}
-    else{setMurid(p=>[...p,data]);}
+  const save = async data => {
+    await saveMurid(data);
     setModal(null);setPilih(null);
   };
-  const hapus = id=>{if(!confirm("Padam murid ini?"))return;setMurid(p=>p.filter(m=>m.id!==id));setPilih(null);};
+  const hapus = async id=>{if(!confirm("Padam murid ini?"))return;await deleteMurid(id);setPilih(null);};
   const filtered=[...murid].filter(m=>
     m.nama.toLowerCase().includes(q.toLowerCase())||
     m.wali.toLowerCase().includes(q.toLowerCase())||
@@ -868,7 +868,7 @@ function Jadual() {
 }
 
 /* ── LOG IBU BAPA ── */
-function Log({log,setLog}) {
+function Log({log,addLog,updateLog}) {
   const [filter,setFilter]=useState("semua");
   const [balas,setBalas]  =useState(null);
   const [teks,setTeks]    =useState("");
@@ -896,7 +896,7 @@ function Log({log,setLog}) {
             <select value={form.jenis} onChange={e=>setForm(p=>({...p,jenis:e.target.value}))}><option value="makluman">Makluman</option><option value="pertanyaan">Pertanyaan</option><option value="aduan">Aduan</option></select>
             <textarea rows={3} placeholder="Isi mesej…" value={form.mesej} onChange={e=>setForm(p=>({...p,mesej:e.target.value}))} style={{resize:"none"}}/>
             <div style={{display:"flex",gap:8}}>
-              <button className="cbtn cbtn-blue" style={{padding:"11px"}} onClick={()=>{if(!form.murid||!form.mesej)return;setLog(p=>[{id:Date.now(),...form,tarikh:"4 Mei",status:"diterima",balasan:""},...p]);setBaru(false);setForm({murid:"",wali:"",tel:"",jenis:"makluman",mesej:""});}}>Hantar</button>
+              <button className="cbtn cbtn-blue" style={{padding:"11px"}} onClick={async()=>{if(!form.murid||!form.mesej)return;const d=getDateInfo();await addLog({...form,tarikh:`${d.tarikh}`,status:"diterima",balasan:""});setBaru(false);setForm({murid:"",wali:"",tel:"",jenis:"makluman",mesej:""});}}>Hantar</button>
               <button className="cbtn cbtn-white" style={{padding:"11px"}} onClick={()=>setBaru(false)}>Batal</button>
             </div>
           </div>
@@ -932,7 +932,7 @@ function Log({log,setLog}) {
                   <div style={{flex:1,display:"flex",flexDirection:"column",gap:6}}>
                     <textarea rows={2} placeholder="Tulis balasan…" value={teks} onChange={e=>setTeks(e.target.value)} style={{resize:"none",fontSize:13}}/>
                     <div style={{display:"flex",gap:6}}>
-                      <button className="cbtn cbtn-blue" style={{padding:"9px"}} onClick={()=>{setLog(p=>p.map(x=>x.id===l.id?{...x,status:"dibalas",balasan:teks}:x));setBalas(null);setTeks("");}}>Hantar</button>
+                      <button className="cbtn cbtn-blue" style={{padding:"9px"}} onClick={async()=>{await updateLog(l.id,{status:"dibalas",balasan:teks});setBalas(null);setTeks("");}}>Hantar</button>
                       <button className="cbtn cbtn-white" style={{padding:"9px"}} onClick={()=>setBalas(null)}>Batal</button>
                     </div>
                   </div>
@@ -1047,12 +1047,89 @@ export default function App() {
   const [search,setSearch] = useState(false);
   const [waModal,setWaModal]=useState(false);
   const [dark,setDark]     = useState(false);
-  const [murid,setMurid]   = useState(INIT_MURID);
-  const [log,setLog]       = useState(INIT_LOG);
+  const [murid,setMurid]   = useState([]);
+  const [log,setLog]       = useState([]);
+  const [loading,setLoading]= useState(true);
   const [kh]               = useState(INIT_KH);
+
+  /* ── LOAD FROM SUPABASE ── */
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    const [{ data: mData }, { data: lData }] = await Promise.all([
+      supabase.from("murid").select("*").order("no"),
+      supabase.from("log_ibu_bapa").select("*").order("created_at", { ascending: false }),
+    ]);
+    if (mData?.length) {
+      setMurid(mData);
+    } else {
+      /* seed default data on first run */
+      const { data: seeded } = await supabase.from("murid").insert(
+        INIT_MURID.map(({ id: _id, ...m }) => m)
+      ).select();
+      if (seeded) setMurid(seeded);
+    }
+    if (lData?.length) {
+      setLog(lData);
+    } else {
+      const { data: seeded } = await supabase.from("log_ibu_bapa").insert(
+        INIT_LOG.map(({ id: _id, ...l }) => l)
+      ).select();
+      if (seeded) setLog(seeded);
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { loadData(); }, [loadData]);
+
+  /* ── MURID CRUD ── */
+  const saveMurid = async (data) => {
+    const { id, created_at: _c, ...fields } = data;
+    if (id && murid.find(m => m.id === id)) {
+      await supabase.from("murid").update(fields).eq("id", id);
+      setMurid(p => p.map(m => m.id === id ? { ...m, ...fields } : m));
+    } else {
+      const { data: row } = await supabase.from("murid").insert(fields).select().single();
+      if (row) setMurid(p => [...p, row]);
+    }
+  };
+
+  const deleteMurid = async (id) => {
+    await supabase.from("murid").delete().eq("id", id);
+    setMurid(p => p.filter(m => m.id !== id));
+  };
+
+  const updateMerit = async (id, field, amount) => {
+    const target = murid.find(m => m.id === id);
+    if (!target) return;
+    const newVal = target[field] + amount;
+    await supabase.from("murid").update({ [field]: newVal }).eq("id", id);
+    setMurid(p => p.map(m => m.id === id ? { ...m, [field]: newVal } : m));
+  };
+
+  /* ── LOG CRUD ── */
+  const addLog = async (entry) => {
+    const { data: row } = await supabase.from("log_ibu_bapa").insert(entry).select().single();
+    if (row) setLog(p => [row, ...p]);
+  };
+
+  const updateLog = async (id, fields) => {
+    await supabase.from("log_ibu_bapa").update(fields).eq("id", id);
+    setLog(p => p.map(l => l.id === id ? { ...l, ...fields } : l));
+  };
+
   const notif      = log.filter(l=>l.status==="belum balas").length;
   const hadirCount = murid.filter(m=>(kh[m.id]||"hadir")==="hadir").length;
   const g = getGreeting();
+
+  if (loading) return (
+    <>
+      <style>{makeCSS(dark)}</style>
+      <div style={{minHeight:"100vh",background:"var(--bg)",display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:16}}>
+        <Logo size={56}/>
+        <p style={{fontFamily:"Fredoka,sans-serif",fontSize:18,color:"var(--p)",fontWeight:700}}>Memuatkan Portal Cikgu Anna…</p>
+      </div>
+    </>
+  );
 
   return (
     <>
@@ -1109,10 +1186,10 @@ export default function App() {
           {tab==="dashboard" && <Dashboard murid={murid} log={log} kh={kh} setWA={setWaModal}/>}
           {tab==="objektif"  && <Objektif/>}
           {tab==="kehadiran" && <Kehadiran murid={murid}/>}
-          {tab==="merit"     && <Merit murid={murid} setMurid={setMurid}/>}
-          {tab==="murid"     && <SenaraiMurid murid={murid} setMurid={setMurid}/>}
+          {tab==="merit"     && <Merit murid={murid} updateMerit={updateMerit}/>}
+          {tab==="murid"     && <SenaraiMurid murid={murid} saveMurid={saveMurid} deleteMurid={deleteMurid}/>}
           {tab==="jadual"    && <Jadual/>}
-          {tab==="log"       && <Log log={log} setLog={setLog}/>}
+          {tab==="log"       && <Log log={log} addLog={addLog} updateLog={updateLog}/>}
           {tab==="laporan"   && <Laporan murid={murid}/>}
         </div>
 
