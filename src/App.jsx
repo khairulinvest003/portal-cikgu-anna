@@ -748,6 +748,15 @@ function Kehadiran({murid}) {
   },[todayStr]);
 
   const cycle = id => setKh(p=>({...p,[id]:p[id]==="present"?"absent":p[id]==="absent"?"mc":"present"}));
+  const deleteOne = async (id) => {
+    await supabase.from("kehadiran").delete().eq("murid_id",id).eq("tarikh",todayStr);
+    setKh(p=>{const n={...p};delete n[id];return n;});
+  };
+  const clearAll = async () => {
+    if(!confirm("Delete all attendance records for today?"))return;
+    await supabase.from("kehadiran").delete().eq("tarikh",todayStr);
+    setKh({});
+  };
   const si = s => ({
     present:{label:"✅ Present", bg:"var(--gs)",color:"var(--g)",bc:"var(--g)"},
     absent: {label:"❌ Absent",  bg:"var(--ps)",color:"var(--p)",bc:"var(--p)"},
@@ -773,30 +782,36 @@ function Kehadiran({murid}) {
         {filtered.map(m=>{
           const s=kh[m.id]||"hadir";const info=si(s);
           return (
-            <button key={m.id} onClick={()=>cycle(m.id)} style={{display:"flex",alignItems:"center",gap:12,background:"var(--wh)",border:"3px solid var(--bdc)",borderRadius:18,padding:"12px 14px",cursor:"pointer",textAlign:"left",boxShadow:"3px 3px 0 var(--bdc)"}}>
-              <Ava nama={m.nama} jantina={m.jantina} size={42}/>
-              <div style={{flex:1,minWidth:0}}>
-                <p style={{fontSize:13,fontWeight:800,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",color:"var(--ink)"}}>{m.nama}</p>
-                <p style={{fontSize:11,color:"var(--i3)",fontWeight:600,marginTop:1}}>No.{m.no} · Tap to change</p>
-              </div>
-              <span className="cpill" style={{background:info.bg,color:info.color,borderColor:info.bc,fontSize:10}}>{info.label}</span>
-            </button>
+            <div key={m.id} style={{display:"flex",alignItems:"center",gap:8}}>
+              <button onClick={()=>cycle(m.id)} style={{flex:1,display:"flex",alignItems:"center",gap:12,background:"var(--wh)",border:"3px solid var(--bdc)",borderRadius:18,padding:"12px 14px",cursor:"pointer",textAlign:"left",boxShadow:"3px 3px 0 var(--bdc)"}}>
+                <Ava nama={m.nama} jantina={m.jantina} size={42}/>
+                <div style={{flex:1,minWidth:0}}>
+                  <p style={{fontSize:13,fontWeight:800,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",color:"var(--ink)"}}>{m.nama}</p>
+                  <p style={{fontSize:11,color:"var(--i3)",fontWeight:600,marginTop:1}}>No.{m.no} · Tap to change</p>
+                </div>
+                <span className="cpill" style={{background:info.bg,color:info.color,borderColor:info.bc,fontSize:10}}>{info.label}</span>
+              </button>
+              <button onClick={()=>deleteOne(m.id)} style={{flexShrink:0,width:38,height:38,border:"2px solid var(--p)",borderRadius:12,background:"var(--ps)",cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center"}} title="Delete attendance">🗑️</button>
+            </div>
           );
         })}
       </div>
-      <button className={`cbtn ${saved?"cbtn-green":"cbtn-blue"}`} onClick={async()=>{
-        const rows = murid.map(m=>({murid_id:m.id, tarikh:todayStr, status:kh[m.id]||"present"}));
-        await supabase.from("kehadiran").upsert(rows,{onConflict:"murid_id,tarikh"});
-        setSaved(true); setTimeout(()=>setSaved(false),2200);
-      }}>
-        {saved?"✅ Saved!":"💾 Save Attendance"}
-      </button>
+      <div style={{display:"flex",gap:8}}>
+        <button className={`cbtn ${saved?"cbtn-green":"cbtn-blue"}`} style={{flex:1}} onClick={async()=>{
+          const rows = murid.map(m=>({murid_id:m.id, tarikh:todayStr, status:kh[m.id]||"present"}));
+          await supabase.from("kehadiran").upsert(rows,{onConflict:"murid_id,tarikh"});
+          setSaved(true); setTimeout(()=>setSaved(false),2200);
+        }}>
+          {saved?"✅ Saved!":"💾 Save Attendance"}
+        </button>
+        <button onClick={clearAll} style={{flexShrink:0,padding:"12px 16px",border:"2px solid var(--p)",borderRadius:18,background:"var(--ps)",color:"var(--p)",fontFamily:"Nunito,sans-serif",fontSize:13,fontWeight:900,cursor:"pointer",boxShadow:"3px 3px 0 var(--p)"}}>🗑️ Clear All</button>
+      </div>
     </div>
   );
 }
 
 /* ── MERIT ── */
-function Merit({murid,updateMerit}) {
+function Merit({murid,updateMerit,resetMerit}) {
   const [mode,setMode]   = useState("merit");
   const [pilih,setPilih] = useState(null);
   const [sebab,setSebab] = useState("");
@@ -852,6 +867,7 @@ function Merit({murid,updateMerit}) {
           <button className={`cbtn ${ok?"cbtn-green":mode==="merit"?"cbtn-green":"cbtn-blue"}`} onClick={submit}>
             {ok?"🎉 Done!":`Record +${markah} ${mode==="merit"?"Merit":"Demerit"}`}
           </button>
+          <button onClick={async()=>{if(!confirm("Reset merit & demerit to 0 for this student?"))return;await resetMerit(pilih);setPilih(null);}} style={{marginTop:8,width:"100%",padding:"10px",border:"2px solid var(--bdc)",borderRadius:14,background:"var(--bg)",color:"var(--i2)",fontFamily:"Nunito,sans-serif",fontSize:12,fontWeight:800,cursor:"pointer"}}>🔄 Reset Merit to 0</button>
         </div>
       )}
     </div>
@@ -1358,14 +1374,7 @@ export default function App() {
       ).select();
       if (seeded) setMurid(seeded);
     }
-    if (lData?.length) {
-      setLog(lData);
-    } else {
-      const { data: seeded } = await supabase.from("log_ibu_bapa").insert(
-        INIT_LOG.map(({ id: _id, ...l }) => l)
-      ).select();
-      if (seeded) setLog(seeded);
-    }
+    setLog(lData || []);
     setObjektif(oData || []);
     if (Array.isArray(jData) && jData.length > 0) {
       setJadual(jData);
@@ -1407,6 +1416,11 @@ export default function App() {
     const newVal = target[field] + amount;
     await supabase.from("murid").update({ [field]: newVal }).eq("id", id);
     setMurid(p => p.map(m => m.id === id ? { ...m, [field]: newVal } : m));
+  };
+
+  const resetMerit = async (id) => {
+    await supabase.from("murid").update({ merit: 0, demerit: 0 }).eq("id", id);
+    setMurid(p => p.map(m => m.id === id ? { ...m, merit: 0, demerit: 0 } : m));
   };
 
   /* ── LOG CRUD ── */
@@ -1544,7 +1558,7 @@ export default function App() {
           {tab==="dashboard" && <Dashboard murid={filteredMurid} log={log} kh={kh} setWA={setWaModal} activeKelas={activeKelas}/>}
           {tab==="objektif"  && <Objektif objektif={objektif} addObjektif={addObjektif} updateObjektif={updateObjektif} deleteObjektif={deleteObjektif}/>}
           {tab==="kehadiran" && <Kehadiran murid={filteredMurid}/>}
-          {tab==="merit"     && <Merit murid={filteredMurid} updateMerit={updateMerit}/>}
+          {tab==="merit"     && <Merit murid={filteredMurid} updateMerit={updateMerit} resetMerit={resetMerit}/>}
           {tab==="murid"     && <SenaraiMurid murid={murid} saveMurid={saveMurid} deleteMurid={deleteMurid}/>}
           {tab==="jadual"    && <Jadual jadual={jadual} addJadual={addJadual} updateJadual={updateJadual} deleteJadual={deleteJadual}/>}
           {tab==="log"       && <Log log={log} addLog={addLog} updateLog={updateLog} deleteLog={deleteLog}/>}
