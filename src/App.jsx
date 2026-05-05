@@ -679,7 +679,7 @@ const RANK_BC    = ["#CA8A04","#16A34A","#EA580C","var(--bdc)","var(--bdc)"];
 function Dashboard({murid: allMurid, log, kh, setWA}) {
   const [kelasRank, setKelasRank] = useState("6 Adil");
   const hadir  = allMurid.filter(m=>(kh[m.id]||"hadir")==="hadir").length;
-  const notif  = log.filter(l=>l.status==="belum balas").length;
+  const notif  = log.filter(l=>l.status==="unanswered").length;
   const cem    = allMurid.filter(m=>m.merit>=100).length;
   const pantau = allMurid.filter(m=>m.absen>=7||m.demerit>=15);
   const g = getGreeting();
@@ -1313,7 +1313,7 @@ function Log({log,addLog,updateLog,deleteLog}) {
   const [teks,setTeks]    =useState("");
   const [baru,setBaru]    =useState(false);
   const [form,setForm]    =useState({murid:"",wali:"",tel:"",jenis:"makluman",mesej:""});
-  const jW={enquiry:{bg:"var(--bs)",c:"var(--b)"},notice:{bg:"var(--gs)",c:"var(--g)"},complaint:{bg:"var(--ps)",c:"var(--p)"}};
+  const jW={enquiry:{bg:"var(--bs)",c:"var(--b)"},notice:{bg:"var(--gs)",c:"var(--g)"},complaint:{bg:"var(--ps)",c:"var(--p)"},pertanyaan:{bg:"var(--bs)",c:"var(--b)"},makluman:{bg:"var(--gs)",c:"var(--g)"},aduan:{bg:"var(--ps)",c:"var(--p)"}};
   const sW={unanswered:{bg:"var(--ps)",c:"var(--p)"},received:{bg:"var(--gs)",c:"var(--g)"},replied:{bg:"var(--bs)",c:"var(--b)"}};
   const shown=filter==="all"?log:log.filter(l=>l.status===filter||l.jenis===filter);
   return (
@@ -1367,7 +1367,7 @@ function Log({log,addLog,updateLog,deleteLog}) {
                 </div>
               )}
               <div style={{display:"flex",alignItems:"center",gap:8}}>
-                {l.status==="belum balas"&&(balas===l.id?(
+                {l.status==="unanswered"&&(balas===l.id?(
                   <div style={{flex:1,display:"flex",flexDirection:"column",gap:6}}>
                     <textarea rows={2} placeholder="Write reply…" value={teks} onChange={e=>setTeks(e.target.value)} style={{resize:"none",fontSize:13}}/>
                     <div style={{display:"flex",gap:6}}>
@@ -1567,6 +1567,20 @@ export default function App() {
 
   useEffect(() => { loadData(); }, [loadData]);
 
+  // Real-time: pick up parent messages the moment they're inserted
+  useEffect(() => {
+    const channel = supabase
+      .channel("log_realtime")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "log_ibu_bapa" }, payload => {
+        setLog(prev => {
+          if (prev.some(l => l.id === payload.new.id)) return prev;
+          return [payload.new, ...prev];
+        });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, []);
+
   /* ── MURID CRUD ── */
   const saveMurid = async (data) => {
     const { id, created_at: _c, ...fields } = data;
@@ -1646,7 +1660,7 @@ export default function App() {
   };
 
   const filteredMurid = murid.filter(m => m.kelas === activeKelas);
-  const notif      = log.filter(l=>l.status==="belum balas").length;
+  const notif      = log.filter(l=>l.status==="unanswered").length;
   const hadirCount = filteredMurid.filter(m=>(kh[m.id]||"hadir")==="hadir").length;
   const g = getGreeting();
 
