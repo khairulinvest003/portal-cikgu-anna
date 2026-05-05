@@ -65,18 +65,21 @@ export default function ParentPortal({ studentId, waliName, onLogout }) {
   const [dayTab,     setDayTab]     = useState("Monday");
 
   // Mesej form state
-  const [jenis,    setJenis]    = useState("makluman");
-  const [mesej,    setMesej]    = useState("");
-  const [sending,  setSending]  = useState(false);
-  const [sent,     setSent]     = useState(false);
+  const [jenis,        setJenis]        = useState("makluman");
+  const [mesej,        setMesej]        = useState("");
+  const [sending,      setSending]      = useState(false);
+  const [sent,         setSent]         = useState(false);
+  const [mesejEnabled, setMesejEnabled] = useState(true);
 
   useEffect(() => {
     const load = async () => {
-      const [{ data: m }, { data: obj }, { data: jd }] = await Promise.all([
+      const [{ data: m }, { data: obj }, { data: jd }, { data: st }] = await Promise.all([
         supabase.from("murid").select("*").eq("id", studentId).single(),
         supabase.from("objektif_pp").select("*").order("created_at", { ascending: false }),
         supabase.from("jadual").select("*").order("urutan"),
+        supabase.from("settings").select("value").eq("key","mesej_ibu_bapa").single(),
       ]);
+      if (st) setMesejEnabled(st.value === "on");
       setMurid(m);
       setObjektif(obj || []);
       setJadual(jd || []);
@@ -131,6 +134,19 @@ export default function ParentPortal({ studentId, waliName, onLogout }) {
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [murid?.nama]);
+
+  // Real-time: admin toggles mesej on/off → parent sees instantly
+  useEffect(() => {
+    const channel = supabase
+      .channel("settings_realtime")
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "settings" }, payload => {
+        if (payload.new.key === "mesej_ibu_bapa") {
+          setMesejEnabled(payload.new.value === "on");
+        }
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   if (loading) return (
     <div style={{ minHeight: "100vh", background: "#F0F7FF", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 12, fontFamily: "Nunito,sans-serif" }}>
@@ -563,49 +579,60 @@ export default function ParentPortal({ studentId, waliName, onLogout }) {
 
             {/* Divider */}
             <div style={{ borderTop: "2px dashed #BFDBFE", paddingTop: 14 }}>
-              <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 10, textTransform: "uppercase", letterSpacing: ".4px" }}>📨 Hantar Mesej Baru</p>
+              {mesejEnabled ? (
+                <>
+                  <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 10, textTransform: "uppercase", letterSpacing: ".4px" }}>📨 Hantar Mesej Baru</p>
 
-              {/* Jenis */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 12 }}>
-                {[["makluman","📢","Makluman"],["pertanyaan","❓","Pertanyaan"],["aduan","⚠️","Aduan"]].map(([v,e,l]) => (
-                  <button key={v} onClick={() => setJenis(v)} style={{
-                    padding: "10px 6px", border: `3px solid ${jenis===v?"#1A56DB":"#E2E8F0"}`,
-                    borderRadius: 14, background: jenis===v?"#EFF6FF":"#fff",
-                    cursor: "pointer", textAlign: "center", transition: "all .15s",
-                  }}>
-                    <p style={{ fontSize: 18 }}>{e}</p>
-                    <p style={{ fontSize: 11, fontWeight: 800, color: jenis===v?"#1A56DB":"#475569", marginTop: 2 }}>{l}</p>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 12 }}>
+                    {[["makluman","📢","Makluman"],["pertanyaan","❓","Pertanyaan"],["aduan","⚠️","Aduan"]].map(([v,e,l]) => (
+                      <button key={v} onClick={() => setJenis(v)} style={{
+                        padding: "10px 6px", border: `3px solid ${jenis===v?"#1A56DB":"#E2E8F0"}`,
+                        borderRadius: 14, background: jenis===v?"#EFF6FF":"#fff",
+                        cursor: "pointer", textAlign: "center", transition: "all .15s",
+                      }}>
+                        <p style={{ fontSize: 18 }}>{e}</p>
+                        <p style={{ fontSize: 11, fontWeight: 800, color: jenis===v?"#1A56DB":"#475569", marginTop: 2 }}>{l}</p>
+                      </button>
+                    ))}
+                  </div>
+
+                  <textarea
+                    value={mesej}
+                    onChange={e => setMesej(e.target.value)}
+                    placeholder="Taip mesej anda di sini…"
+                    rows={3}
+                    style={{ width: "100%", padding: "12px 14px", border: "3px solid #0F172A", borderRadius: 14, fontFamily: "Nunito,sans-serif", fontSize: 14, fontWeight: 600, outline: "none", boxShadow: "2px 2px 0 #0F172A", resize: "none", color: "#0F172A", boxSizing: "border-box", marginBottom: 10 }}
+                  />
+
+                  {sent && (
+                    <div style={{ background: "#E6FAF3", border: "2px solid #06B77A", borderRadius: 12, padding: "10px 14px", marginBottom: 10 }}>
+                      <p style={{ fontSize: 13, fontWeight: 800, color: "#06B77A" }}>✅ Mesej berjaya dihantar!</p>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={sendMesej}
+                    disabled={sending || !mesej.trim()}
+                    style={{
+                      width: "100%", padding: "14px", border: "3px solid #0F172A", borderRadius: 14,
+                      background: sending || !mesej.trim() ? "#94A3B8" : "#1A56DB",
+                      color: "#fff", fontFamily: "Nunito,sans-serif", fontWeight: 900,
+                      fontSize: 15, cursor: sending || !mesej.trim() ? "not-allowed" : "pointer",
+                      boxShadow: sending || !mesej.trim() ? "none" : "4px 4px 0 #0F172A",
+                    }}
+                  >
+                    {sending ? "⏳ Menghantar…" : "📨 Hantar Mesej"}
                   </button>
-                ))}
-              </div>
-
-              <textarea
-                value={mesej}
-                onChange={e => setMesej(e.target.value)}
-                placeholder="Taip mesej anda di sini…"
-                rows={3}
-                style={{ width: "100%", padding: "12px 14px", border: "3px solid #0F172A", borderRadius: 14, fontFamily: "Nunito,sans-serif", fontSize: 14, fontWeight: 600, outline: "none", boxShadow: "2px 2px 0 #0F172A", resize: "none", color: "#0F172A", boxSizing: "border-box", marginBottom: 10 }}
-              />
-
-              {sent && (
-                <div style={{ background: "#E6FAF3", border: "2px solid #06B77A", borderRadius: 12, padding: "10px 14px", marginBottom: 10 }}>
-                  <p style={{ fontSize: 13, fontWeight: 800, color: "#06B77A" }}>✅ Mesej berjaya dihantar!</p>
+                </>
+              ) : (
+                <div style={{ textAlign: "center", padding: "24px 16px", background: "#FFF7ED", border: "3px solid #C09010", borderRadius: 18, boxShadow: "3px 3px 0 #9A7008" }}>
+                  <div style={{ fontSize: 40, marginBottom: 10 }}>😴</div>
+                  <p style={{ fontFamily: "Fredoka,sans-serif", fontSize: 17, fontWeight: 700, color: "#92400E", marginBottom: 6 }}>Cikgu Anna sedang berehat</p>
+                  <p style={{ fontSize: 12, fontWeight: 600, color: "#B45309", lineHeight: 1.6 }}>
+                    Fungsi hantar mesej ditutup buat sementara.<br/>Sila cuba lagi kemudian.
+                  </p>
                 </div>
               )}
-
-              <button
-                onClick={sendMesej}
-                disabled={sending || !mesej.trim()}
-                style={{
-                  width: "100%", padding: "14px", border: "3px solid #0F172A", borderRadius: 14,
-                  background: sending || !mesej.trim() ? "#94A3B8" : "#1A56DB",
-                  color: "#fff", fontFamily: "Nunito,sans-serif", fontWeight: 900,
-                  fontSize: 15, cursor: sending || !mesej.trim() ? "not-allowed" : "pointer",
-                  boxShadow: sending || !mesej.trim() ? "none" : "4px 4px 0 #0F172A",
-                }}
-              >
-                {sending ? "⏳ Menghantar…" : "📨 Hantar Mesej"}
-              </button>
             </div>
           </div>
         )}

@@ -1332,7 +1332,7 @@ function Jadual({jadual,addJadual,updateJadual,deleteJadual}) {
 }
 
 /* ── LOG IBU BAPA ── */
-function Log({log,addLog,updateLog,deleteLog}) {
+function Log({log,addLog,updateLog,deleteLog,mesejAktif,toggleMesej}) {
   const [filter,setFilter]=useState("all");
   const [balas,setBalas]  =useState(null);
   const [teks,setTeks]    =useState("");
@@ -1348,7 +1348,16 @@ function Log({log,addLog,updateLog,deleteLog}) {
           <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>📩 Parent <span style={{color:"var(--p)"}}>Log</span></p>
           <p style={{fontSize:12,fontWeight:700,color:"var(--i3)",marginTop:2}}>Communication & guardian notices</p>
         </div>
-        <button onClick={()=>setBaru(true)} style={{background:"var(--p)",color:"#fff",border:"3px solid var(--bdc)",borderRadius:14,padding:"9px 14px",fontSize:13,fontWeight:900,cursor:"pointer",fontFamily:"Nunito,sans-serif",boxShadow:"3px 3px 0 var(--bdc)"}}>+ New</button>
+        <div style={{display:"flex",gap:8,alignItems:"center"}}>
+          {/* Mesej toggle */}
+          <button onClick={toggleMesej} style={{display:"flex",alignItems:"center",gap:8,padding:"9px 14px",border:`3px solid ${mesejAktif?"#06B77A":"#EF4444"}`,borderRadius:14,background:mesejAktif?"#E6FAF3":"#FEF2F2",cursor:"pointer",fontFamily:"Nunito,sans-serif",fontWeight:900,fontSize:12,boxShadow:`3px 3px 0 ${mesejAktif?"#04855A":"#DC2626"}`,transition:"all .2s"}}>
+            <div style={{width:32,height:18,borderRadius:99,background:mesejAktif?"#06B77A":"#94A3B8",position:"relative",transition:"background .2s",border:"2px solid rgba(0,0,0,.15)"}}>
+              <div style={{position:"absolute",top:1,left:mesejAktif?13:1,width:12,height:12,borderRadius:"50%",background:"#fff",transition:"left .2s",boxShadow:"0 1px 3px rgba(0,0,0,.3)"}}/>
+            </div>
+            <span style={{color:mesejAktif?"#065F46":"#DC2626"}}>{mesejAktif?"Mesej: ON":"Mesej: OFF"}</span>
+          </button>
+          <button onClick={()=>setBaru(true)} style={{background:"var(--p)",color:"#fff",border:"3px solid var(--bdc)",borderRadius:14,padding:"9px 14px",fontSize:13,fontWeight:900,cursor:"pointer",fontFamily:"Nunito,sans-serif",boxShadow:"3px 3px 0 var(--bdc)"}}>+ New</button>
+        </div>
       </div>
       {baru&&(
         <div className="ccard ccard-blue bounce-in">
@@ -1569,24 +1578,27 @@ export default function App() {
   const [murid,setMurid]       = useState([]);
   const [log,setLog]           = useState([]);
   const [objektif,setObjektif] = useState([]);
-  const [jadual,setJadual]     = useState([]);
-  const [loading,setLoading]   = useState(true);
-  const [kh]                   = useState(INIT_KH);
+  const [jadual,setJadual]         = useState([]);
+  const [mesejAktif,setMesejAktif] = useState(true);
+  const [loading,setLoading]       = useState(true);
+  const [kh]                       = useState(INIT_KH);
   const [activeKelas,setActiveKelas] = useState("6 Adil");
 
   /* ── LOAD FROM SUPABASE ── */
   const loadData = useCallback(async () => {
     setLoading(true);
-    const [{ data: mData }, { data: lData }, { data: oData }, { data: jData }] = await Promise.all([
+    const [{ data: mData }, { data: lData }, { data: oData }, { data: jData }, { data: sData }] = await Promise.all([
       supabase.from("murid").select("*").order("no"),
       supabase.from("log_ibu_bapa").select("*").order("created_at", { ascending: false }),
       supabase.from("objektif").select("*").order("created_at", { ascending: false }),
       supabase.from("jadual").select("*").order("urutan"),
+      supabase.from("settings").select("value").eq("key","mesej_ibu_bapa").single(),
     ]);
     setMurid(mData || []);
     setLog(lData || []);
     setObjektif(oData || []);
     setJadual(jData || []);
+    if (sData) setMesejAktif(sData.value === "on");
     setLoading(false);
   }, []);
 
@@ -1652,6 +1664,12 @@ export default function App() {
   const deleteLog = async (id) => {
     await supabase.from("log_ibu_bapa").delete().eq("id", id);
     setLog(p => p.filter(l => l.id !== id));
+  };
+
+  const toggleMesej = async () => {
+    const next = mesejAktif ? "off" : "on";
+    await supabase.from("settings").update({ value: next }).eq("key", "mesej_ibu_bapa");
+    setMesejAktif(!mesejAktif);
   };
 
   /* ── OBJEKTIF CRUD ── */
@@ -1785,7 +1803,7 @@ export default function App() {
           {tab==="merit"     && <Merit murid={murid} updateMerit={updateMerit} resetMerit={resetMerit}/>}
           {tab==="murid"     && <SenaraiMurid murid={murid} saveMurid={saveMurid} deleteMurid={deleteMurid}/>}
           {tab==="jadual"    && <Jadual jadual={jadual} addJadual={addJadual} updateJadual={updateJadual} deleteJadual={deleteJadual}/>}
-          {tab==="log"       && <Log log={log} addLog={addLog} updateLog={updateLog} deleteLog={deleteLog}/>}
+          {tab==="log"       && <Log log={log} addLog={addLog} updateLog={updateLog} deleteLog={deleteLog} mesejAktif={mesejAktif} toggleMesej={toggleMesej}/>}
           {tab==="laporan"   && <Laporan murid={filteredMurid}/>}
         </div>
 
