@@ -877,63 +877,141 @@ function Kehadiran({murid: allMurid}) {
 }
 
 /* ── MERIT ── */
-function Merit({murid,updateMerit,resetMerit}) {
-  const [mode,setMode]   = useState("merit");
-  const [pilih,setPilih] = useState(null);
-  const [sebab,setSebab] = useState("");
-  const [markah,setMarkah]= useState(5);
-  const [ok,setOk]       = useState(false);
-  const [q,setQ]         = useState("");
+function Merit({murid: allMurid, updateMerit, resetMerit}) {
+  const [mode,setMode]       = useState("merit");
+  const [pilih,setPilih]     = useState(null);
+  const [sebab,setSebab]     = useState("");
+  const [markah,setMarkah]   = useState(5);
+  const [ok,setOk]           = useState(false);
+  const [q,setQ]             = useState("");
+  const [activeKelas,setActiveKelas] = useState("6 Adil");
+
+  const kelasMurid = allMurid.filter(m => m.kelas === activeKelas);
+  const filtered = [...kelasMurid]
+    .filter(m => m.nama.toLowerCase().includes(q.toLowerCase()) || m.no.includes(q))
+    .sort((a,b) => netMerit(b) - netMerit(a));
+  const pilihMurid = allMurid.find(m => m.id === pilih);
+
   const submit = async () => {
-    if(!pilih||!sebab)return;
+    if(!pilih || !sebab) return;
     await updateMerit(pilih, mode, markah);
-    setOk(true);setTimeout(()=>{setOk(false);setPilih(null);setSebab("");},1800);
+    setOk(true);
+    setTimeout(()=>{ setOk(false); setPilih(null); setSebab(""); }, 1800);
   };
-  const filtered=[...murid].filter(m=>m.nama.toLowerCase().includes(q.toLowerCase())||m.no.includes(q)).sort((a,b)=>netMerit(b)-netMerit(a));
+
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:16}}>
-      <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>🏆 Merit <span style={{color:"var(--p)"}}>System</span></p>
+    <div style={{display:"flex",flexDirection:"column",gap:14}}>
+      <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>🏆 Sistem <span style={{color:"var(--p)"}}>Merit</span></p>
+
+      {/* Class selector */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
+        {KELAS_LIST.map(k=>{
+          const sel = activeKelas===k;
+          const km = allMurid.filter(m=>m.kelas===k);
+          const total = km.reduce((s,m)=>s+netMerit(m),0);
+          return (
+            <button key={k} onClick={()=>{setActiveKelas(k);setPilih(null);setQ("");}} style={{
+              padding:"12px 6px", border:`3px solid ${sel?"var(--p)":"var(--bdc)"}`,
+              borderRadius:16, background:sel?"var(--p)":"var(--wh)",
+              color:sel?"#fff":"var(--ink)", fontFamily:"Nunito,sans-serif",
+              fontWeight:900, fontSize:13, cursor:"pointer",
+              boxShadow:`3px 3px 0 ${sel?"var(--p2)":"var(--bdc)"}`,
+              transition:"all .15s", textAlign:"center",
+            }}>
+              <p style={{fontSize:11,fontWeight:800,opacity:.85,marginBottom:2}}>{k}</p>
+              <p style={{fontFamily:"JetBrains Mono,monospace",fontSize:17,fontWeight:700,lineHeight:1,
+                color:sel?"#fff":total>=0?"var(--g)":"var(--p)"}}>
+                {total>=0?"+":""}{total}
+              </p>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Merit / Demerit toggle */}
       <div style={{display:"flex",background:"var(--bg)",border:"3px solid var(--bdc)",borderRadius:18,padding:4,boxShadow:"3px 3px 0 var(--bdc)"}}>
         {[["merit","✅ Merit","var(--g)","#04855A"],["demerit","⚠️ Demerit","var(--p)","var(--p2)"]].map(([t,l,bg,sh])=>(
-          <button key={t} onClick={()=>setMode(t)} style={{flex:1,padding:"10px",border:mode===t?"3px solid var(--bdc)":"3px solid transparent",borderRadius:14,cursor:"pointer",fontFamily:"Nunito,sans-serif",fontSize:13,fontWeight:900,background:mode===t?bg:"transparent",color:mode===t?"#fff":"var(--i2)",boxShadow:mode===t?`2px 2px 0 ${sh}`:"none",transition:"all .18s"}}>{l}</button>
+          <button key={t} onClick={()=>{setMode(t);setPilih(null);setSebab("");}} style={{
+            flex:1, padding:"11px", borderRadius:14, cursor:"pointer",
+            fontFamily:"Nunito,sans-serif", fontSize:14, fontWeight:900,
+            border: mode===t?"3px solid var(--bdc)":"3px solid transparent",
+            background: mode===t?bg:"transparent",
+            color: mode===t?"#fff":"var(--i2)",
+            boxShadow: mode===t?`2px 2px 0 ${sh}`:"none",
+            transition:"all .18s",
+          }}>{l}</button>
         ))}
       </div>
-      <input placeholder="🔍 Search student…" value={q} onChange={e=>setQ(e.target.value)}/>
-      <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:240,overflowY:"auto"}}>
+
+      {/* Search */}
+      <input placeholder="🔍 Cari nama murid…" value={q} onChange={e=>setQ(e.target.value)}/>
+
+      {/* Student list — natural scroll, no inner overflow */}
+      <div style={{display:"flex",flexDirection:"column",gap:8}}>
         {filtered.map(m=>{
-          const st=muridStatus(m);const sel=pilih===m.id;
+          const st=muridStatus(m); const sel=pilih===m.id;
+          const selColor = mode==="merit"?"var(--g)":"var(--p)";
+          const selBg    = mode==="merit"?"var(--gs)":"var(--ps)";
           return (
-            <button key={m.id} onClick={()=>setPilih(m.id)} style={{display:"flex",alignItems:"center",gap:12,padding:"11px 14px",background:sel?"var(--ps)":"var(--wh)",border:`3px solid ${sel?"var(--p)":"var(--bdc)"}`,borderRadius:18,cursor:"pointer",textAlign:"left",boxShadow:sel?"3px 3px 0 var(--p)":"3px 3px 0 var(--bdc)"}}>
-              <Ava nama={m.nama} jantina={m.jantina} size={38}/>
+            <button key={m.id} onClick={()=>{setPilih(sel?null:m.id);setSebab("");}} style={{
+              display:"flex", alignItems:"center", gap:12,
+              padding:"12px 14px",
+              background: sel?selBg:"var(--wh)",
+              border:`3px solid ${sel?selColor:"var(--bdc)"}`,
+              borderRadius:16, cursor:"pointer", textAlign:"left",
+              boxShadow:`3px 3px 0 ${sel?selColor:"var(--bdc)"}`,
+              transition:"all .15s",
+            }}>
+              <Ava nama={m.nama} jantina={m.jantina} size={40}/>
               <div style={{flex:1,minWidth:0}}>
                 <p style={{fontSize:13,fontWeight:800,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",color:"var(--ink)"}}>{m.nama.split(" ").slice(0,3).join(" ")}</p>
                 <span className="cpill" style={{color:st.color,borderColor:st.bc||st.color,background:st.bg,fontSize:10}}>{st.label}</span>
               </div>
-              <div style={{textAlign:"right"}}>
-                <p style={{fontFamily:"JetBrains Mono,monospace",fontSize:13,fontWeight:700,color:"var(--g)"}}>+{m.merit}</p>
+              <div style={{textAlign:"right",flexShrink:0}}>
+                <p style={{fontFamily:"JetBrains Mono,monospace",fontSize:14,fontWeight:700,color:"var(--g)"}}>+{m.merit}</p>
                 <p style={{fontFamily:"JetBrains Mono,monospace",fontSize:11,color:"var(--p)"}}>-{m.demerit}</p>
               </div>
             </button>
           );
         })}
+        {filtered.length===0&&(
+          <div style={{textAlign:"center",padding:"32px 16px",color:"var(--i3)",fontWeight:700,fontSize:13}}>
+            Tiada murid dalam {activeKelas}
+          </div>
+        )}
       </div>
-      {pilih&&(
+
+      {/* Action panel — inline below list, no overlay */}
+      {pilih&&pilihMurid&&(
         <div className={`ccard ${mode==="merit"?"ccard-green":"ccard-blue"} bounce-in`}>
-          <p style={{fontSize:11,fontWeight:900,color:mode==="merit"?"var(--g)":"var(--p)",textTransform:"uppercase",letterSpacing:".6px",marginBottom:4}}>{mode==="merit"?"✅ Merit":"⚠️ Demerit"} for:</p>
-          <p style={{fontSize:15,fontWeight:900,marginBottom:12,color:"var(--ink)"}}>{murid.find(m=>m.id===pilih)?.nama}</p>
-          <select value={sebab} onChange={e=>setSebab(e.target.value)} style={{marginBottom:12}}>
-            <option value="">-- Select reason --</option>
+          <p style={{fontSize:11,fontWeight:900,color:mode==="merit"?"var(--g)":"var(--p)",textTransform:"uppercase",letterSpacing:".6px",marginBottom:4}}>
+            {mode==="merit"?"✅ Merit":"⚠️ Demerit"} untuk:
+          </p>
+          <p style={{fontSize:15,fontWeight:900,marginBottom:14,color:"var(--ink)"}}>{pilihMurid.nama.split(" ").slice(0,4).join(" ")}</p>
+          <select value={sebab} onChange={e=>setSebab(e.target.value)} style={{marginBottom:14}}>
+            <option value="">-- Pilih sebab --</option>
             {(mode==="merit"?MERIT_SEBAB:DEMERIT_SEBAB).map(s=><option key={s}>{s}</option>)}
           </select>
-          <div style={{display:"flex",gap:8,marginBottom:14}}>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:8,marginBottom:14}}>
             {[1,3,5,10].map(n=>(
-              <button key={n} onClick={()=>setMarkah(n)} style={{flex:1,height:46,border:`3px solid ${markah===n?(mode==="merit"?"var(--g)":"var(--p)"):"var(--bdc)"}`,borderRadius:14,background:markah===n?(mode==="merit"?"var(--g)":"var(--p)"):"var(--wh)",color:markah===n?"#fff":"var(--ink)",fontFamily:"JetBrains Mono,monospace",fontSize:18,fontWeight:700,cursor:"pointer",boxShadow:`3px 3px 0 ${markah===n?(mode==="merit"?"#04855A":"var(--p2)"):"var(--bdc)"}`,transition:"all .15s"}}>{n}</button>
+              <button key={n} onClick={()=>setMarkah(n)} style={{
+                height:52, border:`3px solid ${markah===n?(mode==="merit"?"var(--g)":"var(--p)"):"var(--bdc)"}`,
+                borderRadius:14, cursor:"pointer",
+                fontFamily:"JetBrains Mono,monospace", fontSize:20, fontWeight:700,
+                background: markah===n?(mode==="merit"?"var(--g)":"var(--p)"):"var(--wh)",
+                color: markah===n?"#fff":"var(--ink)",
+                boxShadow:`3px 3px 0 ${markah===n?(mode==="merit"?"#04855A":"var(--p2)"):"var(--bdc)"}`,
+                transition:"all .15s",
+              }}>{n}</button>
             ))}
           </div>
           <button className={`cbtn ${ok?"cbtn-green":mode==="merit"?"cbtn-green":"cbtn-blue"}`} onClick={submit}>
-            {ok?"🎉 Done!":`Record +${markah} ${mode==="merit"?"Merit":"Demerit"}`}
+            {ok?"🎉 Berjaya!":`Rekod +${markah} ${mode==="merit"?"Merit":"Demerit"}`}
           </button>
-          <button onClick={async()=>{if(!confirm("Reset merit & demerit to 0 for this student?"))return;await resetMerit(pilih);setPilih(null);}} style={{marginTop:8,width:"100%",padding:"10px",border:"2px solid var(--bdc)",borderRadius:14,background:"var(--bg)",color:"var(--i2)",fontFamily:"Nunito,sans-serif",fontSize:12,fontWeight:800,cursor:"pointer"}}>🔄 Reset Merit to 0</button>
+          <button onClick={async()=>{if(!confirm("Reset merit & demerit ke 0 untuk murid ini?"))return;await resetMerit(pilih);setPilih(null);}}
+            style={{marginTop:8,width:"100%",padding:"11px",border:"2px solid var(--bdc)",borderRadius:14,background:"var(--bg)",color:"var(--i2)",fontFamily:"Nunito,sans-serif",fontSize:12,fontWeight:800,cursor:"pointer"}}>
+            🔄 Reset Merit ke 0
+          </button>
         </div>
       )}
     </div>
@@ -1624,7 +1702,7 @@ export default function App() {
           {tab==="dashboard" && <Dashboard murid={filteredMurid} log={log} kh={kh} setWA={setWaModal} activeKelas={activeKelas}/>}
           {tab==="objektif"  && <Objektif objektif={objektif} addObjektif={addObjektif} updateObjektif={updateObjektif} deleteObjektif={deleteObjektif}/>}
           {tab==="kehadiran" && <Kehadiran murid={murid}/>}
-          {tab==="merit"     && <Merit murid={filteredMurid} updateMerit={updateMerit} resetMerit={resetMerit}/>}
+          {tab==="merit"     && <Merit murid={murid} updateMerit={updateMerit} resetMerit={resetMerit}/>}
           {tab==="murid"     && <SenaraiMurid murid={murid} saveMurid={saveMurid} deleteMurid={deleteMurid}/>}
           {tab==="jadual"    && <Jadual jadual={jadual} addJadual={addJadual} updateJadual={updateJadual} deleteJadual={deleteJadual}/>}
           {tab==="log"       && <Log log={log} addLog={addLog} updateLog={updateLog} deleteLog={deleteLog}/>}
