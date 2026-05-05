@@ -248,44 +248,134 @@ export default function ParentPortal({ studentId, waliName, onLogout }) {
                   : "💪 Masih ada ruang untuk berkembang. Semangat!"}
               </p>
             </div>
-            {/* Class leaderboard */}
-            <div style={{ background: "#fff", border: "3px solid #0F172A", borderRadius: 16, boxShadow: "3px 3px 0 #0F172A", overflow: "hidden" }}>
-              <div style={{ background: "linear-gradient(135deg,#F59E0B,#FBBF24)", padding: "12px 16px", borderBottom: "3px solid #0F172A", display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontSize: 20 }}>🏆</span>
-                <p style={{ fontFamily: "Fredoka,sans-serif", fontSize: 15, fontWeight: 700, color: "#78350F" }}>Ranking Kelas {murid.kelas}</p>
+            {/* Class leaderboard — full list */}
+            <div style={{ border: "3px solid #0F172A", borderRadius: 20, boxShadow: "4px 4px 0 #0F172A", overflow: "hidden" }}>
+              {/* Header */}
+              <div style={{ background: "linear-gradient(135deg,#F59E0B 0%,#FBBF24 60%,#FDE68A 100%)", padding: "14px 16px", borderBottom: "3px solid #0F172A" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{ fontSize: 26 }}>🏆</span>
+                  <div>
+                    <p style={{ fontFamily: "Fredoka,sans-serif", fontSize: 17, fontWeight: 700, color: "#78350F", lineHeight: 1.1 }}>Ranking Kelas {murid.kelas}</p>
+                    <p style={{ fontSize: 10, fontWeight: 800, color: "#92400E", marginTop: 2 }}>{ranked.length} MURID · SCROLL UNTUK LIHAT SEMUA</p>
+                  </div>
+                  {myRank >= 0 && (
+                    <div style={{ marginLeft: "auto", background: "#fff", border: "2px solid #B45309", borderRadius: 12, padding: "4px 10px", textAlign: "center" }}>
+                      <p style={{ fontSize: 9, fontWeight: 800, color: "#92400E", textTransform: "uppercase" }}>Kedudukan anda</p>
+                      <p style={{ fontFamily: "Fredoka,sans-serif", fontSize: 18, fontWeight: 700, color: "#B45309", lineHeight: 1 }}>#{myRank + 1}</p>
+                    </div>
+                  )}
+                </div>
               </div>
-              {ranked.slice(0, 5).map((m, i) => {
-                const isMe = m.id === murid.id;
-                return (
-                  <div key={m.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", background: isMe ? "#EFF6FF" : RANK_BG[i], borderBottom: i < 4 ? "2px solid #E2E8F0" : "none", borderLeft: `4px solid ${isMe ? "#1A56DB" : RANK_BC[i]}` }}>
-                    <span style={{ fontSize: 22, width: 28, flexShrink: 0 }}>{i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i+1}`}</span>
-                    <Ava nama={m.nama} jantina={m.jantina} size={36}/>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontSize: 13, fontWeight: 800, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: isMe ? "#1A56DB" : "#0F172A" }}>
-                        {m.nama.split(" ").slice(0,2).join(" ")} {isMe ? "← Anda" : ""}
-                      </p>
-                      <span style={{ fontSize: 10, fontWeight: 800, color: isMe ? "#1A56DB" : (RANK_BC[i] !== "#CBD5E1" ? RANK_BC[i] : "#94A3B8") }}>{RANK_TITLE[i]}</span>
+
+              {/* Top 3 podium */}
+              {ranked.length >= 3 && (
+                <div style={{ background: "linear-gradient(180deg,#FFFBEB,#fff)", borderBottom: "2px solid #E2E8F0", padding: "16px 12px 12px", display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 8 }}>
+                  {/* 2nd */}
+                  {(() => { const m2 = ranked[1]; const isMe2 = m2?.id === murid.id; return m2 ? (
+                    <div style={{ textAlign: "center", flex: 1 }}>
+                      <div style={{ position: "relative", display: "inline-block", marginBottom: 6 }}>
+                        <Ava nama={m2.nama} jantina={m2.jantina} size={44}/>
+                        {isMe2 && <div style={{ position: "absolute", top: -6, right: -6, background: "#1A56DB", borderRadius: "50%", width: 16, height: 16, border: "2px solid #fff", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 8, color: "#fff", fontWeight: 900 }}>★</span></div>}
+                      </div>
+                      <p style={{ fontSize: 22 }}>🥈</p>
+                      <p style={{ fontSize: 10, fontWeight: 900, color: isMe2 ? "#1A56DB" : "#0F172A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 80, margin: "0 auto" }}>{m2.nama.split(" ")[0]}</p>
+                      <div style={{ background: isMe2 ? "#1A56DB" : "#94A3B8", borderRadius: 8, marginTop: 4, padding: "2px 6px" }}>
+                        <p style={{ fontFamily: "JetBrains Mono,monospace", fontSize: 11, fontWeight: 700, color: "#fff" }}>{netMerit(m2)}</p>
+                      </div>
+                      <div style={{ height: 36, background: isMe2 ? "#1A56DB" : "#94A3B8", borderRadius: "8px 8px 0 0", marginTop: 4, border: "2px solid #0F172A", borderBottom: "none" }}/>
                     </div>
-                    <div style={{ textAlign: "right", flexShrink: 0 }}>
-                      <p style={{ fontFamily: "JetBrains Mono,monospace", fontSize: 14, fontWeight: 700, color: "#06B77A" }}>+{m.merit}</p>
-                      <p style={{ fontFamily: "JetBrains Mono,monospace", fontSize: 12, fontWeight: 900, color: "#0F172A" }}>{netMerit(m)}</p>
+                  ) : null; })()}
+                  {/* 1st */}
+                  {(() => { const m1 = ranked[0]; const isMe1 = m1?.id === murid.id; return m1 ? (
+                    <div style={{ textAlign: "center", flex: 1 }}>
+                      <div style={{ position: "relative", display: "inline-block", marginBottom: 6 }}>
+                        <Ava nama={m1.nama} jantina={m1.jantina} size={52}/>
+                        {isMe1 && <div style={{ position: "absolute", top: -6, right: -6, background: "#1A56DB", borderRadius: "50%", width: 18, height: 18, border: "2px solid #fff", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 9, color: "#fff", fontWeight: 900 }}>★</span></div>}
+                      </div>
+                      <p style={{ fontSize: 28 }}>🥇</p>
+                      <p style={{ fontSize: 11, fontWeight: 900, color: isMe1 ? "#1A56DB" : "#0F172A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 90, margin: "0 auto" }}>{m1.nama.split(" ")[0]}</p>
+                      <div style={{ background: isMe1 ? "#1A56DB" : "#CA8A04", borderRadius: 8, marginTop: 4, padding: "2px 8px" }}>
+                        <p style={{ fontFamily: "JetBrains Mono,monospace", fontSize: 12, fontWeight: 700, color: "#fff" }}>{netMerit(m1)}</p>
+                      </div>
+                      <div style={{ height: 56, background: isMe1 ? "#1A56DB" : "#CA8A04", borderRadius: "8px 8px 0 0", marginTop: 4, border: "2px solid #0F172A", borderBottom: "none" }}/>
                     </div>
-                  </div>
-                );
-              })}
-              {myRank >= 5 && (
-                <div style={{ background: "#EFF6FF", borderTop: "2px dashed #BFDBFE", padding: "10px 14px", display: "flex", alignItems: "center", gap: 12, borderLeft: "4px solid #1A56DB" }}>
-                  <span style={{ fontSize: 18, width: 28, flexShrink: 0 }}>#{myRank+1}</span>
-                  <Ava nama={murid.nama} jantina={murid.jantina} size={34}/>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 13, fontWeight: 800, color: "#1A56DB", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {murid.nama.split(" ").slice(0,2).join(" ")} ← Anda
-                    </p>
-                    <p style={{ fontSize: 10, color: "#475569", fontWeight: 700 }}>Kedudukan #{myRank+1} dalam kelas</p>
-                  </div>
-                  <p style={{ fontFamily: "JetBrains Mono,monospace", fontSize: 14, fontWeight: 700, color: "#1A56DB" }}>{net}</p>
+                  ) : null; })()}
+                  {/* 3rd */}
+                  {(() => { const m3 = ranked[2]; const isMe3 = m3?.id === murid.id; return m3 ? (
+                    <div style={{ textAlign: "center", flex: 1 }}>
+                      <div style={{ position: "relative", display: "inline-block", marginBottom: 6 }}>
+                        <Ava nama={m3.nama} jantina={m3.jantina} size={40}/>
+                        {isMe3 && <div style={{ position: "absolute", top: -6, right: -6, background: "#1A56DB", borderRadius: "50%", width: 16, height: 16, border: "2px solid #fff", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 8, color: "#fff", fontWeight: 900 }}>★</span></div>}
+                      </div>
+                      <p style={{ fontSize: 20 }}>🥉</p>
+                      <p style={{ fontSize: 10, fontWeight: 900, color: isMe3 ? "#1A56DB" : "#0F172A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 80, margin: "0 auto" }}>{m3.nama.split(" ")[0]}</p>
+                      <div style={{ background: isMe3 ? "#1A56DB" : "#EA580C", borderRadius: 8, marginTop: 4, padding: "2px 6px" }}>
+                        <p style={{ fontFamily: "JetBrains Mono,monospace", fontSize: 11, fontWeight: 700, color: "#fff" }}>{netMerit(m3)}</p>
+                      </div>
+                      <div style={{ height: 24, background: isMe3 ? "#1A56DB" : "#EA580C", borderRadius: "8px 8px 0 0", marginTop: 4, border: "2px solid #0F172A", borderBottom: "none" }}/>
+                    </div>
+                  ) : null; })()}
                 </div>
               )}
+
+              {/* Full ranked list */}
+              <div style={{ background: "#fff" }}>
+                {ranked.map((m, i) => {
+                  const isMe = m.id === murid.id;
+                  const medalEmoji = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : null;
+                  const rankBadgeBg = i === 0 ? "#FEF9C3" : i === 1 ? "#F1F5F9" : i === 2 ? "#FFF7ED" : isMe ? "#EFF6FF" : "#F8FAFC";
+                  const rankBadgeColor = i === 0 ? "#B45309" : i === 1 ? "#475569" : i === 2 ? "#C2410C" : isMe ? "#1A56DB" : "#64748B";
+                  const leftBorder = isMe ? "#1A56DB" : i === 0 ? "#CA8A04" : i === 1 ? "#94A3B8" : i === 2 ? "#EA580C" : "#E2E8F0";
+                  const nm = netMerit(m);
+                  return (
+                    <div key={m.id} style={{
+                      display: "flex", alignItems: "center", gap: 10, padding: "11px 14px",
+                      background: isMe ? "#EFF6FF" : rankBadgeBg,
+                      borderBottom: i < ranked.length - 1 ? `2px solid ${isMe ? "#BFDBFE" : "#F1F5F9"}` : "none",
+                      borderLeft: `4px solid ${leftBorder}`,
+                      transition: "background .15s",
+                    }}>
+                      {/* Rank badge */}
+                      <div style={{ width: 32, height: 32, borderRadius: 10, background: rankBadgeBg, border: `2px solid ${rankBadgeColor}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        {medalEmoji
+                          ? <span style={{ fontSize: 16 }}>{medalEmoji}</span>
+                          : <span style={{ fontFamily: "Fredoka,sans-serif", fontSize: 13, fontWeight: 700, color: rankBadgeColor }}>{i + 1}</span>
+                        }
+                      </div>
+                      <Ava nama={m.nama} jantina={m.jantina} size={34}/>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                          <p style={{ fontSize: 13, fontWeight: 900, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: isMe ? "#1A56DB" : "#0F172A" }}>
+                            {m.nama.split(" ").slice(0, 2).join(" ")}
+                          </p>
+                          {isMe && <span style={{ background: "#1A56DB", color: "#fff", fontSize: 9, fontWeight: 900, padding: "1px 5px", borderRadius: 6, flexShrink: 0 }}>ANDA</span>}
+                        </div>
+                        <p style={{ fontSize: 10, fontWeight: 700, color: rankBadgeColor, marginTop: 1 }}>
+                          {RANK_TITLE[Math.min(i, 4)]}
+                        </p>
+                      </div>
+                      {/* Merit/demerit pills */}
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 3, flexShrink: 0 }}>
+                        <div style={{ display: "flex", gap: 4 }}>
+                          <span style={{ background: "#E6FAF3", border: "1.5px solid #06B77A", borderRadius: 6, padding: "1px 5px", fontFamily: "JetBrains Mono,monospace", fontSize: 10, fontWeight: 700, color: "#06B77A" }}>+{m.merit}</span>
+                          {m.demerit > 0 && <span style={{ background: "#FEF2F2", border: "1.5px solid #EF4444", borderRadius: 6, padding: "1px 5px", fontFamily: "JetBrains Mono,monospace", fontSize: 10, fontWeight: 700, color: "#DC2626" }}>-{m.demerit}</span>}
+                        </div>
+                        <span style={{ fontFamily: "JetBrains Mono,monospace", fontSize: 14, fontWeight: 900, color: nm >= 0 ? "#0F172A" : "#DC2626" }}>{nm}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Footer legend */}
+              <div style={{ background: "#F8FAFC", borderTop: "2px solid #E2E8F0", padding: "8px 14px", display: "flex", gap: 14, flexWrap: "wrap" }}>
+                {[["#06B77A","+ = Merit"],["#DC2626","- = Demerit"],["#0F172A","Jumlah Net"]].map(([c,l]) => (
+                  <div key={l} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: c }}/>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "#475569" }}>{l}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
