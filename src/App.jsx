@@ -528,21 +528,25 @@ function MuridModal({data,onSave,onClose,count,activeKelas}) {
   const isEdit = !!data?.id;
   const [f,setF] = useState(data||{nama:"",delima:"",jantina:"L",ic:"",wali:"",tel:"",hadir:0,absen:0,merit:0,demerit:0,catatan:"",kelas:activeKelas||"6 Adil"});
   const set = (k,v) => setF(p=>({...p,[k]:v}));
+  const doSave = () => {
+    if(!f.nama.trim()||!f.wali.trim()||!f.tel.trim()){alert("Sila isi Nama, Nama Wali, dan No. Telefon.");return;}
+    onSave({...f,id:data?.id||Date.now(),no:data?.no||String(count+1).padStart(2,"0")});
+  };
   return (
-    <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:400,background:"rgba(10,22,40,.65)",backdropFilter:"blur(8px)",display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
-      <div className="slide-up" onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:430,background:"var(--wh)",border:"3px solid var(--bdc)",borderRadius:"24px 24px 0 0",boxShadow:"0 -6px 0 var(--bdc)",maxHeight:"90vh",display:"flex",flexDirection:"column"}}>
-        {/* Header — fixed */}
-        <div style={{flexShrink:0}}>
-          <div style={{padding:"12px 16px 0",display:"flex",justifyContent:"center"}}><div style={{width:40,height:5,borderRadius:99,background:"var(--pm)"}}/></div>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 16px 8px",borderBottom:"3px solid var(--bdc)"}}>
-            <p style={{fontFamily:"Fredoka,sans-serif",fontSize:18,fontWeight:700,color:"var(--ink)"}}>{isEdit?"✏️ Edit Student":"➕ Add New Student"}</p>
-            <button onClick={onClose} style={{background:"var(--ps)",border:"2px solid var(--p)",borderRadius:10,width:32,height:32,cursor:"pointer",fontSize:14,color:"var(--p)",fontWeight:800,fontFamily:"Nunito,sans-serif"}}>✕</button>
-          </div>
+    <div onClick={onClose} style={{position:"fixed",inset:0,zIndex:400,background:"rgba(10,22,40,.65)",backdropFilter:"blur(4px)",display:"flex",alignItems:"center",justifyContent:"center",padding:"16px"}}>
+      <div className="bounce-in" onClick={e=>e.stopPropagation()} style={{width:"100%",maxWidth:460,background:"var(--wh)",border:"3px solid var(--bdc)",borderRadius:24,boxShadow:"6px 6px 0 var(--bdc)",maxHeight:"calc(100vh - 32px)",display:"flex",flexDirection:"column"}}>
+
+        {/* Header */}
+        <div style={{flexShrink:0,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 18px 14px",borderBottom:"3px solid var(--bdc)"}}>
+          <p style={{fontFamily:"Fredoka,sans-serif",fontSize:19,fontWeight:700,color:"var(--ink)"}}>{isEdit?"✏️ Edit Student":"➕ Add New Student"}</p>
+          <button onClick={onClose} style={{background:"var(--ps)",border:"2px solid var(--p)",borderRadius:10,width:34,height:34,cursor:"pointer",fontSize:15,color:"var(--p)",fontWeight:900,fontFamily:"Nunito,sans-serif",display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
         </div>
-        {/* Scrollable content */}
-        <div style={{flex:1,overflowY:"auto",padding:"16px",display:"flex",flexDirection:"column",gap:12}}>
+
+        {/* Scrollable form */}
+        <div style={{flex:1,overflowY:"auto",padding:"16px 18px",display:"flex",flexDirection:"column",gap:13}}>
+
           <div>
-            <p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Class / Kelas *</p>
+            <p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Kelas *</p>
             <div style={{display:"flex",gap:6}}>
               {KELAS_LIST.map(k=>(
                 <button key={k} onClick={()=>set("kelas",k)} style={{flex:1,padding:"9px 4px",border:`3px solid ${f.kelas===k?"var(--p)":"var(--bdc)"}`,borderRadius:12,background:f.kelas===k?"var(--p)":"var(--wh)",color:f.kelas===k?"#fff":"var(--ink)",fontFamily:"Nunito,sans-serif",fontWeight:800,fontSize:12,cursor:"pointer",boxShadow:f.kelas===k?"3px 3px 0 var(--p2)":"3px 3px 0 var(--bdc)"}}>
@@ -551,42 +555,44 @@ function MuridModal({data,onSave,onClose,count,activeKelas}) {
               ))}
             </div>
           </div>
-          <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Full Name *</p><input value={f.nama} onChange={e=>set("nama",e.target.value)} placeholder="Student's full name…"/></div>
+
+          <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Nama Penuh *</p><input value={f.nama} onChange={e=>set("nama",e.target.value)} placeholder="Nama penuh murid…"/></div>
+
+          <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>ID Delima</p><input value={f.delima} onChange={e=>set("delima",e.target.value)} placeholder="m-XXXXXXXX@moe-dl.edu.my" style={{fontFamily:"JetBrains Mono,monospace"}}/></div>
+
           <div>
-            <p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Delima ID</p>
-            <input value={f.delima} onChange={e=>set("delima",e.target.value)} placeholder="m-XXXXXXXX@moe-dl.edu.my" style={{fontFamily:"JetBrains Mono,monospace"}}/>
-          </div>
-          <div>
-            <p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Gender *</p>
+            <p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Jantina *</p>
             <div style={{display:"flex",gap:8}}>
               {["L","P"].map(j=>(
                 <button key={j} onClick={()=>set("jantina",j)} style={{flex:1,padding:"10px",border:`3px solid ${f.jantina===j?"var(--p)":"var(--bdc)"}`,borderRadius:14,background:f.jantina===j?"var(--p)":"var(--wh)",color:f.jantina===j?"#fff":"var(--ink)",fontFamily:"Nunito,sans-serif",fontWeight:800,fontSize:14,cursor:"pointer",boxShadow:f.jantina===j?"3px 3px 0 var(--p2)":"3px 3px 0 var(--bdc)"}}>
-                  {j==="L"?"👦 Male":"👧 Female"}
+                  {j==="L"?"👦 Lelaki":"👧 Perempuan"}
                 </button>
               ))}
             </div>
           </div>
-          <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>IC No.</p><input value={f.ic} onChange={e=>set("ic",e.target.value)} placeholder="XXXXXX-XX-XXXX"/></div>
+
+          <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>No. IC</p><input value={f.ic} onChange={e=>set("ic",e.target.value)} placeholder="XXXXXX-XX-XXXX"/></div>
+
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-            <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Guardian Name *</p><input value={f.wali} onChange={e=>set("wali",e.target.value)} placeholder="Guardian name…"/></div>
-            <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Guardian Tel *</p><input value={f.tel} onChange={e=>set("tel",e.target.value)} placeholder="01XXXXXXXX"/></div>
+            <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Nama Wali *</p><input value={f.wali} onChange={e=>set("wali",e.target.value)} placeholder="Nama wali…"/></div>
+            <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Tel Wali *</p><input value={f.tel} onChange={e=>set("tel",e.target.value)} placeholder="01XXXXXXXX"/></div>
           </div>
+
           {isEdit && (
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-              {[["hadir","Days Present"],["absen","Days Absent"],["merit","Merit"],["demerit","Demerit"]].map(([k,l])=>(
+              {[["hadir","Hari Hadir"],["absen","Hari Absen"],["merit","Merit"],["demerit","Demerit"]].map(([k,l])=>(
                 <div key={k}><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>{l}</p><input type="number" value={f[k]} onChange={e=>set(k,+e.target.value)} min="0"/></div>
               ))}
             </div>
           )}
-          <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Teacher's Note</p><textarea rows={2} value={f.catatan} onChange={e=>set("catatan",e.target.value)} placeholder="Notes…" style={{resize:"none"}}/></div>
-        </div>
-        {/* Buttons — always visible at bottom */}
-        <div style={{flexShrink:0,borderTop:"3px solid var(--bdc)",padding:"12px 16px",display:"flex",gap:10,background:"var(--wh)"}}>
-          <button className="cbtn cbtn-blue" onClick={()=>{
-            if(!f.nama||!f.wali||!f.tel){alert("Please fill in name, guardian, and phone number.");return;}
-            onSave({...f,id:data?.id||Date.now(),no:data?.no||String(count+1).padStart(2,"0")});
-          }}>{isEdit?"💾 Save":"➕ Add Student"}</button>
-          <button className="cbtn cbtn-white" style={{width:"auto",padding:"13px 18px"}} onClick={onClose}>Cancel</button>
+
+          <div><p style={{fontSize:12,fontWeight:800,color:"var(--i2)",marginBottom:6}}>Nota Guru</p><textarea rows={2} value={f.catatan} onChange={e=>set("catatan",e.target.value)} placeholder="Nota…" style={{resize:"none"}}/></div>
+
+          {/* Buttons inside scroll so always reachable */}
+          <div style={{display:"flex",gap:10,paddingTop:4,paddingBottom:8}}>
+            <button className="cbtn cbtn-blue" onClick={doSave}>{isEdit?"💾 Simpan":"➕ Tambah Murid"}</button>
+            <button className="cbtn cbtn-white" style={{width:"auto",padding:"13px 18px"}} onClick={onClose}>Batal</button>
+          </div>
         </div>
       </div>
     </div>
