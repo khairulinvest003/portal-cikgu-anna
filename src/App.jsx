@@ -735,8 +735,6 @@ function Dashboard({murid,log,kh,setWA,activeKelas}) {
 }
 
 /* ── KEHADIRAN ── */
-const KELAS_LIST = ["6 Adil","6 Amanah","6 Arif"];
-
 function Kehadiran({murid: allMurid}) {
   const [kh,setKh]         = useState({});
   const [q,setQ]           = useState("");
