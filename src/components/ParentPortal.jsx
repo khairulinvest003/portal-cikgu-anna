@@ -59,6 +59,7 @@ export default function ParentPortal({ studentId, waliName, onLogout }) {
   const [classmates, setClassmates] = useState([]);
   const [objektif,   setObjektif]   = useState([]);
   const [jadual,     setJadual]     = useState([]);
+  const [myMesej,    setMyMesej]    = useState([]);
   const [tab,        setTab]        = useState("profil");
   const [loading,    setLoading]    = useState(true);
   const [dayTab,     setDayTab]     = useState("Monday");
@@ -83,6 +84,15 @@ export default function ParentPortal({ studentId, waliName, onLogout }) {
         const { data: mates } = await supabase.from("murid").select("*").eq("kelas", m.kelas).order("no");
         setClassmates(mates || []);
       }
+      // Load this parent's messages
+      if (m?.nama) {
+        const { data: msgs } = await supabase
+          .from("log_ibu_bapa")
+          .select("*")
+          .eq("murid", m.nama)
+          .order("created_at", { ascending: true });
+        setMyMesej(msgs || []);
+      }
       setLoading(false);
     };
     load();
@@ -104,6 +114,23 @@ export default function ParentPortal({ studentId, waliName, onLogout }) {
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, []);
+
+  // Real-time: pick up admin replies to this parent's messages instantly
+  useEffect(() => {
+    const channel = supabase
+      .channel("log_parent_realtime")
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "log_ibu_bapa" }, payload => {
+        setMyMesej(prev => prev.map(m => m.id === payload.new.id ? payload.new : m));
+      })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "log_ibu_bapa" }, payload => {
+        // only add if it belongs to this student (admin-created notices)
+        if (payload.new.murid === murid?.nama) {
+          setMyMesej(prev => [...prev, payload.new]);
+        }
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [murid?.nama]);
 
   if (loading) return (
     <div style={{ minHeight: "100vh", background: "#F0F7FF", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 12, fontFamily: "Nunito,sans-serif" }}>
@@ -135,7 +162,7 @@ export default function ParentPortal({ studentId, waliName, onLogout }) {
   const sendMesej = async () => {
     if (!mesej.trim()) return;
     setSending(true);
-    await supabase.from("log_ibu_bapa").insert({
+    const { data: row } = await supabase.from("log_ibu_bapa").insert({
       murid: murid.nama,
       wali:  murid.wali || waliName,
       tel:   murid.tel  || "",
@@ -144,7 +171,8 @@ export default function ParentPortal({ studentId, waliName, onLogout }) {
       tarikh: todayStr,
       status: "unanswered",
       balasan: "",
-    });
+    }).select().single();
+    if (row) setMyMesej(prev => [...prev, row]);
     setSent(true);
     setMesej("");
     setSending(false);
@@ -481,32 +509,64 @@ export default function ParentPortal({ studentId, waliName, onLogout }) {
           </div>
         )}
 
-        {/* Mesej — parent sends log to admin */}
+        {/* Mesej — conversation thread + send form */}
         {tab === "mesej" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <div style={{ background: "#EFF6FF", border: "2px solid #BFDBFE", borderRadius: 14, padding: "12px 14px" }}>
-              <p style={{ fontSize: 12, fontWeight: 800, color: "#1E40AF", marginBottom: 4 }}>📨 Hantar Mesej kepada Guru</p>
-              <p style={{ fontSize: 11, color: "#475569", fontWeight: 600, lineHeight: 1.6 }}>
-                Mesej anda akan dihantar terus kepada Cikgu Anna. Guru akan membalas secepat mungkin.
-              </p>
-            </div>
 
-            {/* Info auto-filled */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <div style={{ background: "#F8FAFC", border: "2px solid #E2E8F0", borderRadius: 14, padding: "10px 12px" }}>
-                <p style={{ fontSize: 10, fontWeight: 800, color: "#94A3B8", textTransform: "uppercase" }}>Nama Murid</p>
-                <p style={{ fontSize: 12, fontWeight: 800, color: "#0F172A", marginTop: 4 }}>{murid.nama.split(" ").slice(0,2).join(" ")}</p>
+            {/* Thread history */}
+            {myMesej.length > 0 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <p style={{ fontSize: 11, fontWeight: 800, color: "#475569", textTransform: "uppercase", letterSpacing: ".4px" }}>📬 Sejarah Mesej</p>
+                {myMesej.map(m => {
+                  const jenisInfo = {makluman:{e:"📢",c:"#06B77A",bg:"#E6FAF3",bc:"#06B77A"},pertanyaan:{e:"❓",c:"#1A56DB",bg:"#EFF6FF",bc:"#1A56DB"},aduan:{e:"⚠️",c:"#DC2626",bg:"#FEF2F2",bc:"#DC2626"},notice:{e:"📋",c:"#06B77A",bg:"#E6FAF3",bc:"#06B77A"},enquiry:{e:"❓",c:"#1A56DB",bg:"#EFF6FF",bc:"#1A56DB"},complaint:{e:"⚠️",c:"#DC2626",bg:"#FEF2F2",bc:"#DC2626"}}[m.jenis] || {e:"📨",c:"#475569",bg:"#F8FAFC",bc:"#CBD5E1"};
+                  const replied = m.status === "replied" && m.balasan;
+                  return (
+                    <div key={m.id} style={{ border: `3px solid ${replied ? "#1A56DB" : "#0F172A"}`, borderRadius: 18, overflow: "hidden", boxShadow: `3px 3px 0 ${replied ? "#1E40AF" : "#0F172A"}` }}>
+                      {/* Parent message */}
+                      <div style={{ background: jenisInfo.bg, padding: "12px 14px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                          <span style={{ fontSize: 16 }}>{jenisInfo.e}</span>
+                          <span style={{ fontSize: 10, fontWeight: 900, color: jenisInfo.c, textTransform: "uppercase", background: "#fff", border: `1.5px solid ${jenisInfo.bc}`, borderRadius: 6, padding: "1px 6px" }}>{m.jenis}</span>
+                          <span style={{ fontSize: 10, color: "#94A3B8", fontWeight: 600, marginLeft: "auto" }}>{m.tarikh}</span>
+                        </div>
+                        <p style={{ fontSize: 13, fontWeight: 600, color: "#0F172A", lineHeight: 1.6 }}>{m.mesej}</p>
+                        {!replied && (
+                          <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 6 }}>
+                            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#F59E0B" }}/>
+                            <span style={{ fontSize: 10, fontWeight: 700, color: "#92400E" }}>Menunggu balasan guru…</span>
+                          </div>
+                        )}
+                      </div>
+                      {/* Admin reply */}
+                      {replied && (
+                        <div style={{ background: "#EFF6FF", borderTop: "2px solid #BFDBFE", padding: "12px 14px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                            <img src="/cikgu-anna.jpg" alt="" style={{ width: 24, height: 24, borderRadius: "50%", objectFit: "cover", objectPosition: "top", border: "2px solid #1A56DB" }}/>
+                            <span style={{ fontSize: 11, fontWeight: 900, color: "#1A56DB" }}>Cikgu Anna</span>
+                            <span style={{ fontSize: 10, color: "#94A3B8", fontWeight: 600, marginLeft: "auto" }}>Dibalas ✓</span>
+                          </div>
+                          <p style={{ fontSize: 13, fontWeight: 600, color: "#0F172A", lineHeight: 1.6 }}>{m.balasan}</p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
-              <div style={{ background: "#F8FAFC", border: "2px solid #E2E8F0", borderRadius: 14, padding: "10px 12px" }}>
-                <p style={{ fontSize: 10, fontWeight: 800, color: "#94A3B8", textTransform: "uppercase" }}>Nama Wali</p>
-                <p style={{ fontSize: 12, fontWeight: 800, color: "#0F172A", marginTop: 4 }}>{murid.wali || waliName || "-"}</p>
-              </div>
-            </div>
+            )}
 
-            {/* Jenis */}
-            <div>
-              <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 6, textTransform: "uppercase", letterSpacing: ".4px" }}>Jenis Mesej</p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+            {myMesej.length === 0 && (
+              <div style={{ textAlign: "center", padding: "24px 0", color: "#94A3B8" }}>
+                <div style={{ fontSize: 36, marginBottom: 8 }}>📭</div>
+                <p style={{ fontSize: 13, fontWeight: 700 }}>Tiada mesej lagi. Hantar mesej pertama anda!</p>
+              </div>
+            )}
+
+            {/* Divider */}
+            <div style={{ borderTop: "2px dashed #BFDBFE", paddingTop: 14 }}>
+              <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 10, textTransform: "uppercase", letterSpacing: ".4px" }}>📨 Hantar Mesej Baru</p>
+
+              {/* Jenis */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 12 }}>
                 {[["makluman","📢","Makluman"],["pertanyaan","❓","Pertanyaan"],["aduan","⚠️","Aduan"]].map(([v,e,l]) => (
                   <button key={v} onClick={() => setJenis(v)} style={{
                     padding: "10px 6px", border: `3px solid ${jenis===v?"#1A56DB":"#E2E8F0"}`,
@@ -518,40 +578,35 @@ export default function ParentPortal({ studentId, waliName, onLogout }) {
                   </button>
                 ))}
               </div>
-            </div>
 
-            {/* Mesej */}
-            <div>
-              <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 6, textTransform: "uppercase", letterSpacing: ".4px" }}>Mesej</p>
               <textarea
                 value={mesej}
                 onChange={e => setMesej(e.target.value)}
                 placeholder="Taip mesej anda di sini…"
-                rows={4}
-                style={{ width: "100%", padding: "12px 14px", border: "3px solid #0F172A", borderRadius: 14, fontFamily: "Nunito,sans-serif", fontSize: 14, fontWeight: 600, outline: "none", boxShadow: "2px 2px 0 #0F172A", resize: "vertical", color: "#0F172A", boxSizing: "border-box" }}
+                rows={3}
+                style={{ width: "100%", padding: "12px 14px", border: "3px solid #0F172A", borderRadius: 14, fontFamily: "Nunito,sans-serif", fontSize: 14, fontWeight: 600, outline: "none", boxShadow: "2px 2px 0 #0F172A", resize: "none", color: "#0F172A", boxSizing: "border-box", marginBottom: 10 }}
               />
+
+              {sent && (
+                <div style={{ background: "#E6FAF3", border: "2px solid #06B77A", borderRadius: 12, padding: "10px 14px", marginBottom: 10 }}>
+                  <p style={{ fontSize: 13, fontWeight: 800, color: "#06B77A" }}>✅ Mesej berjaya dihantar!</p>
+                </div>
+              )}
+
+              <button
+                onClick={sendMesej}
+                disabled={sending || !mesej.trim()}
+                style={{
+                  width: "100%", padding: "14px", border: "3px solid #0F172A", borderRadius: 14,
+                  background: sending || !mesej.trim() ? "#94A3B8" : "#1A56DB",
+                  color: "#fff", fontFamily: "Nunito,sans-serif", fontWeight: 900,
+                  fontSize: 15, cursor: sending || !mesej.trim() ? "not-allowed" : "pointer",
+                  boxShadow: sending || !mesej.trim() ? "none" : "4px 4px 0 #0F172A",
+                }}
+              >
+                {sending ? "⏳ Menghantar…" : "📨 Hantar Mesej"}
+              </button>
             </div>
-
-            {sent && (
-              <div style={{ background: "#E6FAF3", border: "2px solid #06B77A", borderRadius: 12, padding: "10px 14px" }}>
-                <p style={{ fontSize: 13, fontWeight: 800, color: "#06B77A" }}>✅ Mesej berjaya dihantar! Guru akan membalas tidak lama lagi.</p>
-              </div>
-            )}
-
-            <button
-              onClick={sendMesej}
-              disabled={sending || !mesej.trim()}
-              style={{
-                padding: "14px", border: "3px solid #0F172A", borderRadius: 14,
-                background: sending || !mesej.trim() ? "#94A3B8" : "#1A56DB",
-                color: "#fff", fontFamily: "Nunito,sans-serif", fontWeight: 900,
-                fontSize: 15, cursor: sending || !mesej.trim() ? "not-allowed" : "pointer",
-                boxShadow: sending || !mesej.trim() ? "none" : "4px 4px 0 #0F172A",
-                transition: "all .15s",
-              }}
-            >
-              {sending ? "⏳ Menghantar…" : "📨 Hantar Mesej"}
-            </button>
           </div>
         )}
       </div>
