@@ -1535,7 +1535,7 @@ function DesktopSidebar({active,nav,notif,dark,setDark,logout,nama}) {
 
 /* ── ROOT APP ── */
 export default function App() {
-  const { session, login, logout, authLoading, authError } = useAuth();
+  const { session, sessionChecking, login, logout, authLoading, authError } = useAuth();
   const [tab,setTab]           = useState("dashboard");
   const [drawer,setDrawer]     = useState(false);
   const [search,setSearch]     = useState(false);
@@ -1558,26 +1558,10 @@ export default function App() {
       supabase.from("objektif").select("*").order("created_at", { ascending: false }),
       supabase.from("jadual").select("*").order("urutan"),
     ]);
-    if (mData?.length) {
-      setMurid(mData);
-    } else {
-      const { data: seeded } = await supabase.from("murid").insert(
-        INIT_MURID.map(({ id: _id, ...m }) => m)
-      ).select();
-      if (seeded) setMurid(seeded);
-    }
+    setMurid(mData || []);
     setLog(lData || []);
     setObjektif(oData || []);
-    if (Array.isArray(jData) && jData.length > 0) {
-      setJadual(jData);
-    } else if (Array.isArray(jData)) {
-      const hariList = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
-      const masaList = ["7:30","8:10","8:50","9:30","10:10","11:10","11:50"];
-      const rows = [];
-      hariList.forEach(h => JADUAL[h].forEach((subj,i) => rows.push({hari:h,urutan:i,masa:masaList[i],subjek:subj})));
-      const { data: seeded } = await supabase.from("jadual").insert(rows).select();
-      if (seeded) setJadual(seeded);
-    }
+    setJadual(jData || []);
     setLoading(false);
   }, []);
 
@@ -1665,6 +1649,15 @@ export default function App() {
   const notif      = log.filter(l=>l.status==="belum balas").length;
   const hadirCount = filteredMurid.filter(m=>(kh[m.id]||"hadir")==="hadir").length;
   const g = getGreeting();
+
+  if (sessionChecking) return (
+    <>
+      <style>{makeCSS(false)}</style>
+      <div style={{minHeight:"100vh",background:"#F0F7FF",display:"flex",alignItems:"center",justifyContent:"center"}}>
+        <p style={{fontFamily:"Fredoka,sans-serif",fontSize:18,color:"#1A56DB",fontWeight:700}}>⏳ Mengesahkan sesi…</p>
+      </div>
+    </>
+  );
 
   if (!session) return (
     <>
