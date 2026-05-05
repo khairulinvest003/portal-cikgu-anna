@@ -1187,17 +1187,22 @@ function SenaraiMurid({murid,saveMurid,deleteMurid}) {
 /* ── JADUAL ── */
 function Jadual({jadual,addJadual,updateJadual,deleteJadual}) {
   const HARI=["Monday","Tuesday","Wednesday","Thursday","Friday"];
+  const MASA_LIST=[
+    "7:30 - 8:10","8:10 - 8:50","8:50 - 9:30","9:30 - 10:10",
+    "10:10 - 10:30","10:30 - 11:10","11:10 - 11:50","11:50 - 12:30",
+    "12:30 - 1:10","1:10 - 1:50",
+  ];
   const [aktif,setAktif]=useState("Monday");
   const [editId,setEditId]=useState(null);
   const [showAdd,setShowAdd]=useState(false);
-  const [form,setForm]=useState({masa:"7:30",subjek:""});
+  const [form,setForm]=useState({masa:MASA_LIST[0],subjek:""});
   const setF=(k,v)=>setForm(p=>({...p,[k]:v}));
 
   const slots=[...jadual].filter(s=>s.hari===aktif).sort((a,b)=>a.urutan-b.urutan);
 
   const openEdit=(s)=>{setEditId(s.id);setForm({masa:s.masa,subjek:s.subjek});setShowAdd(false);};
-  const openAdd=()=>{setShowAdd(true);setEditId(null);setForm({masa:"7:30",subjek:""}); };
-  const cancel=()=>{setEditId(null);setShowAdd(false);setForm({masa:"7:30",subjek:""});};
+  const openAdd=()=>{setShowAdd(true);setEditId(null);setForm({masa:MASA_LIST[0],subjek:""}); };
+  const cancel=()=>{setEditId(null);setShowAdd(false);setForm({masa:MASA_LIST[0],subjek:""});};
 
   const save=async()=>{
     if(!form.subjek.trim())return;
@@ -1231,8 +1236,10 @@ function Jadual({jadual,addJadual,updateJadual,deleteJadual}) {
           <p style={{fontSize:12,fontWeight:900,color:"var(--p)",textTransform:"uppercase"}}>➕ Add Slot — {aktif}</p>
           <div style={{display:"flex",gap:8}}>
             <div style={{flex:1}}>
-              <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:4}}>Time</p>
-              <input value={form.masa} onChange={e=>setF("masa",e.target.value)} placeholder="7:30"/>
+              <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:4}}>Masa</p>
+              <select value={form.masa} onChange={e=>setF("masa",e.target.value)}>
+                {MASA_LIST.map(m=><option key={m} value={m}>{m}</option>)}
+              </select>
             </div>
             <div style={{flex:2}}>
               <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:4}}>Subject</p>
@@ -1265,8 +1272,10 @@ function Jadual({jadual,addJadual,updateJadual,deleteJadual}) {
                   <p style={{fontSize:12,fontWeight:900,color:"var(--p)",textTransform:"uppercase"}}>✏️ Edit Slot</p>
                   <div style={{display:"flex",gap:8}}>
                     <div style={{flex:1}}>
-                      <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:4}}>Time</p>
-                      <input value={form.masa} onChange={e=>setF("masa",e.target.value)}/>
+                      <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:4}}>Masa</p>
+                      <select value={form.masa} onChange={e=>setF("masa",e.target.value)}>
+                        {MASA_LIST.map(m=><option key={m} value={m}>{m}</option>)}
+                      </select>
                     </div>
                     <div style={{flex:2}}>
                       <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:4}}>Subject</p>
