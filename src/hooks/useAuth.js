@@ -26,16 +26,16 @@ export function useAuth() {
       return true;
     }
 
-    // Parent check — no = username, tel = password
+    // Parent check — delima = username, tel = password
     const { data, error } = await supabase
       .from("murid")
       .select("*")
-      .eq("no", username.trim().padStart(2, "0"))
+      .eq("delima", username.trim())
       .eq("tel", password.trim())
       .single();
 
     if (error || !data) {
-      setAuthError("Login failed. Check the student number and guardian's phone number.");
+      setAuthError("Login gagal. Semak ID Delima dan nombor telefon wali.");
       setAuthLoading(false);
       return false;
     }

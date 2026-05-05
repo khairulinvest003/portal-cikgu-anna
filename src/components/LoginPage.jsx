@@ -95,17 +95,17 @@ export default function LoginPage({ login, authLoading, authError }) {
               <div style={{ background: "#EFF6FF", border: "2px solid #BFDBFE", borderRadius: 12, padding: "10px 14px" }}>
                 <p style={{ fontSize: 12, fontWeight: 700, color: "#1E40AF", margin: 0 }}>📋 How to log in:</p>
                 <p style={{ fontSize: 11, color: "#475569", fontWeight: 600, marginTop: 4, lineHeight: 1.6, margin: "4px 0 0" }}>
-                  • <b>Student Number:</b> Child's student number (e.g. 01, 02)<br/>
-                  • <b>Password:</b> Guardian's phone number (e.g. 0128881234)
+                  • <b>ID Delima:</b> ID Delima murid (cth: m-13915981@moe-dl.edu.my)<br/>
+                  • <b>Kata Laluan:</b> Nombor telefon wali (cth: 0128881234)
                 </p>
               </div>
               <div>
-                <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 6, textTransform: "uppercase", letterSpacing: ".4px" }}>Student Number</p>
-                <input value={user} onChange={e => setUser(e.target.value)} placeholder="e.g. 01"
+                <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 6, textTransform: "uppercase", letterSpacing: ".4px" }}>ID Delima</p>
+                <input value={user} onChange={e => setUser(e.target.value)} placeholder="m-XXXXXXXX@moe-dl.edu.my"
                   style={{ width: "100%", padding: "12px 14px", border: "3px solid #0F172A", borderRadius: 14, fontFamily: "'JetBrains Mono',monospace", fontSize: 16, fontWeight: 700, outline: "none", boxShadow: "2px 2px 0 #0F172A", background: "#fff", color: "#0F172A" }}/>
               </div>
               <div>
-                <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 6, textTransform: "uppercase", letterSpacing: ".4px" }}>Guardian's Phone No.</p>
+                <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 6, textTransform: "uppercase", letterSpacing: ".4px" }}>Nombor Telefon Wali</p>
                 <div style={{ position: "relative" }}>
                   <input value={pass} onChange={e => setPass(e.target.value)} placeholder="e.g. 0128881234"
                     type={show ? "text" : "password"}
