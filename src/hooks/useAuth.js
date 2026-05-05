@@ -2,8 +2,6 @@ import { useState } from "react";
 import { supabase } from "../supabase";
 
 const KEY = "portal_cikgu_anna_session";
-const ADMIN_USER = "teacheranna";
-const ADMIN_PASS = "anna1993";
 
 export function useAuth() {
   const [session, setSession] = useState(() => {
@@ -13,12 +11,21 @@ export function useAuth() {
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError]     = useState("");
 
-  const login = async (username, password) => {
+  const login = async (username, password, role) => {
     setAuthLoading(true);
     setAuthError("");
 
-    // Admin check
-    if (username.trim() === ADMIN_USER && password === ADMIN_PASS) {
+    if (role === "admin") {
+      // Admin via Supabase Auth — no credentials in bundle
+      const { error } = await supabase.auth.signInWithPassword({
+        email: username.trim(),
+        password,
+      });
+      if (error) {
+        setAuthError("Login gagal. Semak emel dan kata laluan.");
+        setAuthLoading(false);
+        return false;
+      }
       const sess = { role: "admin", studentId: null, nama: "Cikgu Anna" };
       localStorage.setItem(KEY, JSON.stringify(sess));
       setSession(sess);
@@ -26,7 +33,7 @@ export function useAuth() {
       return true;
     }
 
-    // Parent check — delima = username, tel = password
+    // Parent — delima + tel query
     const { data, error } = await supabase
       .from("murid")
       .select("*")
@@ -47,7 +54,8 @@ export function useAuth() {
     return true;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
     localStorage.removeItem(KEY);
     setSession(null);
     setAuthError("");

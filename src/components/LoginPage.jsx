@@ -26,7 +26,7 @@ export default function LoginPage({ login, authLoading, authError }) {
 
   const submit = async (e) => {
     e.preventDefault();
-    await login(user, pass);
+    await login(user, pass, tab);
   };
 
   return (
@@ -74,10 +74,11 @@ export default function LoginPage({ login, authLoading, authError }) {
           {tab === "admin" ? (
             <>
               <div>
-                <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 6, textTransform: "uppercase", letterSpacing: ".4px" }}>Username</p>
-                <input value={user} onChange={e => setUser(e.target.value)} placeholder="teacheranna"
+                <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 6, textTransform: "uppercase", letterSpacing: ".4px" }}>Emel</p>
+                <input value={user} onChange={e => setUser(e.target.value)} placeholder="cikguanna@email.com"
+                  type="email"
                   style={{ width: "100%", padding: "12px 14px", border: "3px solid #0F172A", borderRadius: 14, fontFamily: "'Nunito',sans-serif", fontSize: 14, fontWeight: 600, outline: "none", boxShadow: "2px 2px 0 #0F172A", background: "#fff", color: "#0F172A" }}
-                  autoComplete="username"/>
+                  autoComplete="email"/>
               </div>
               <div>
                 <p style={{ fontSize: 11, fontWeight: 800, color: "#1E40AF", marginBottom: 6, textTransform: "uppercase", letterSpacing: ".4px" }}>Password</p>
