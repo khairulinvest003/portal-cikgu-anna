@@ -672,60 +672,108 @@ function WAModal({murid,onClose}) {
 }
 
 /* ── DASHBOARD ── */
-function Dashboard({murid,log,kh,setWA,activeKelas}) {
-  const hadir  = murid.filter(m=>(kh[m.id]||"hadir")==="hadir").length;
+const RANK_TITLE = ["👑 Merit Master","⭐ Champion","🌟 Star Scholar","💪 Rising Star","🎯 Achiever"];
+const RANK_BG    = ["#FEF9C3","#F0FDF4","#FFF7ED","var(--wh)","var(--wh)"];
+const RANK_BC    = ["#CA8A04","#16A34A","#EA580C","var(--bdc)","var(--bdc)"];
+
+function Dashboard({murid: allMurid, log, kh, setWA}) {
+  const [kelasRank, setKelasRank] = useState("6 Adil");
+  const hadir  = allMurid.filter(m=>(kh[m.id]||"hadir")==="hadir").length;
   const notif  = log.filter(l=>l.status==="belum balas").length;
-  const cem    = murid.filter(m=>m.merit>=100).length;
-  const pantau = murid.filter(m=>m.absen>=7||m.demerit>=15);
+  const cem    = allMurid.filter(m=>m.merit>=100).length;
+  const pantau = allMurid.filter(m=>m.absen>=7||m.demerit>=15);
   const g = getGreeting();
   const d = getDateInfo();
+  const rankMurid = [...allMurid.filter(m=>m.kelas===kelasRank)].sort((a,b)=>netMerit(b)-netMerit(a));
   return (
     <div style={{display:"flex",flexDirection:"column",gap:18}}>
+      {/* Banner */}
       <div style={{background:"var(--p)",border:"3px solid var(--bdc)",borderRadius:24,boxShadow:"5px 5px 0 var(--bdc)",padding:"18px 18px 0",overflow:"hidden",position:"relative"}}>
         <img src="/cikgu-anna.jpg" style={{position:"absolute",top:-10,right:-8,width:110,height:110,borderRadius:"50%",objectFit:"cover",objectPosition:"top",border:"3px solid rgba(255,255,255,.3)",opacity:.9,pointerEvents:"none"}} alt="Cikgu Anna"/>
         <p style={{color:"rgba(255,255,255,.8)",fontSize:12,fontWeight:700}}>📅 {d.hari}, {d.tarikh}</p>
         <p style={{fontFamily:"Fredoka,sans-serif",fontSize:24,fontWeight:700,color:"#fff",marginTop:2,lineHeight:1.2}}>{g.e} {g.t}, Teacher Anna!</p>
-        <p style={{color:"rgba(255,255,255,.8)",fontSize:12,fontWeight:600,marginTop:2,marginBottom:14}}>Tahun {activeKelas} · SK Bukit Lalang, Semporna</p>
+        <p style={{color:"rgba(255,255,255,.8)",fontSize:12,fontWeight:600,marginTop:2,marginBottom:14}}>SK Bukit Lalang, Semporna · {allMurid.length} Murid</p>
         <svg style={{display:"block",width:"100%",height:18,marginBottom:-1}} viewBox="0 0 300 18" preserveAspectRatio="none">
           <path d="M0,8 C60,0 120,18 180,8 C240,0 280,14 300,8 L300,18 L0,18 Z" fill="var(--bg)"/>
         </svg>
       </div>
+
+      {/* Stats */}
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
-        <Blob icon="👥" val={murid.length} label="Total Students"       bg="var(--wh)"  color="var(--ink)"/>
-        <Blob icon="✅" val={hadir}         label={`Present · ${murid.length-hadir} absent`} bg="var(--gs)" color="var(--g)"  border="var(--g)"/>
-        <Blob icon="🏆" val={cem}           label="Excellent Students"  bg="var(--ys)"  color="#B45309"    border="#B45309"/>
-        <Blob icon="📩" val={notif}         label="Unanswered Messages" bg="var(--ps)"  color="var(--p)"   border="var(--p)"/>
+        <Blob icon="👥" val={allMurid.length} label="Jumlah Murid"      bg="var(--wh)"  color="var(--ink)"/>
+        <Blob icon="✅" val={hadir}            label={`Hadir · ${allMurid.length-hadir} absen`} bg="var(--gs)" color="var(--g)" border="var(--g)"/>
+        <Blob icon="🏆" val={cem}              label="Murid Cemerlang"  bg="var(--ys)"  color="#B45309" border="#B45309"/>
+        <Blob icon="📩" val={notif}            label="Mesej Belum Balas" bg="var(--ps)" color="var(--p)" border="var(--p)"/>
       </div>
-      <button className="cbtn" onClick={()=>setWA(true)} style={{background:"#25D366",border:"3px solid #1DA851",color:"#fff",boxShadow:"4px 4px 0 #1DA851"}}>📬 Send WhatsApp Notification to Guardians</button>
-      {/* Ranking */}
+
+      <button className="cbtn" onClick={()=>setWA(true)} style={{background:"#25D366",border:"3px solid #1DA851",color:"#fff",boxShadow:"4px 4px 0 #1DA851"}}>📬 Hantar Notifikasi WhatsApp kepada Wali</button>
+
+      {/* Merit Ranking */}
       <div className="ccard" style={{padding:0,overflow:"hidden"}}>
-        <div style={{background:"var(--y)",padding:"10px 16px",borderBottom:"3px solid var(--bdc)",display:"flex",gap:8,alignItems:"center"}}>
-          <span style={{fontSize:18}}>🏆</span>
-          <p style={{fontFamily:"Fredoka,sans-serif",fontSize:15,fontWeight:700,color:"var(--ink)"}}>Class Merit Ranking</p>
+        {/* Header */}
+        <div style={{background:"linear-gradient(135deg,#F59E0B,#FBBF24)",padding:"12px 16px",borderBottom:"3px solid var(--bdc)",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+          <div style={{display:"flex",gap:8,alignItems:"center"}}>
+            <span style={{fontSize:22}}>🏆</span>
+            <p style={{fontFamily:"Fredoka,sans-serif",fontSize:16,fontWeight:700,color:"#78350F"}}>Ranking Merit Kelas</p>
+          </div>
         </div>
-        {[...murid].sort((a,b)=>netMerit(b)-netMerit(a)).slice(0,5).map((m,i)=>{
-          const medals=["🥇","🥈","🥉","4️⃣","5️⃣"];
-          return (
-            <div key={m.id} style={{display:"flex",alignItems:"center",gap:12,padding:"11px 16px",background:i===0?"var(--ys)":"var(--wh)",borderBottom:i<4?"2px solid var(--pm)":"none"}}>
-              <span style={{fontSize:22,width:28}}>{medals[i]}</span>
-              <Ava nama={m.nama} jantina={m.jantina} size={36}/>
-              <p style={{flex:1,fontSize:13,fontWeight:800,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",color:"var(--ink)"}}>{m.nama.split(" ").slice(0,2).join(" ")}</p>
-              <div style={{textAlign:"right"}}>
-                <span style={{fontFamily:"JetBrains Mono,monospace",fontSize:14,fontWeight:700,color:"var(--g)"}}>+{m.merit}</span>
-                {m.demerit>0&&<span style={{fontFamily:"JetBrains Mono,monospace",fontSize:11,color:"var(--p)",marginLeft:4}}>-{m.demerit}</span>}
-                <br/><span style={{fontFamily:"JetBrains Mono,monospace",fontSize:12,fontWeight:700,color:"var(--ink)"}}>{netMerit(m)}</span>
-              </div>
+        {/* Class tabs */}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",borderBottom:"3px solid var(--bdc)"}}>
+          {KELAS_LIST.map(k=>{
+            const sel=kelasRank===k;
+            const km=allMurid.filter(m=>m.kelas===k);
+            const top=km.length?[...km].sort((a,b)=>netMerit(b)-netMerit(a))[0]:null;
+            return (
+              <button key={k} onClick={()=>setKelasRank(k)} style={{
+                padding:"10px 6px",border:"none",borderRight:k!=="6 Arif"?"2px solid var(--bdc)":"none",
+                background:sel?"var(--ys)":"var(--wh)",cursor:"pointer",
+                borderBottom:sel?"3px solid #CA8A04":"none",
+              }}>
+                <p style={{fontFamily:"Nunito,sans-serif",fontSize:12,fontWeight:900,color:sel?"#78350F":"var(--i2)"}}>{k}</p>
+                <p style={{fontFamily:"JetBrains Mono,monospace",fontSize:11,color:"var(--g)",fontWeight:700}}>{top?`+${top.merit}`:"-"}</p>
+              </button>
+            );
+          })}
+        </div>
+        {/* Rank rows */}
+        {rankMurid.slice(0,5).map((m,i)=>(
+          <div key={m.id} style={{
+            display:"flex",alignItems:"center",gap:12,padding:"12px 16px",
+            background:RANK_BG[i],
+            borderBottom:i<4?"2px solid var(--pm)":"none",
+            borderLeft:`4px solid ${RANK_BC[i]}`,
+          }}>
+            <span style={{fontSize:24,width:30,flexShrink:0}}>
+              {i===0?"🥇":i===1?"🥈":i===2?"🥉":`${i+1}`}
+            </span>
+            <Ava nama={m.nama} jantina={m.jantina} size={38}/>
+            <div style={{flex:1,minWidth:0}}>
+              <p style={{fontSize:13,fontWeight:800,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",color:"var(--ink)"}}>{m.nama.split(" ").slice(0,2).join(" ")}</p>
+              <span style={{fontSize:10,fontWeight:800,color:RANK_BC[i]!=="var(--bdc)"?RANK_BC[i]:"var(--i3)"}}>{RANK_TITLE[i]}</span>
             </div>
-          );
-        })}
+            <div style={{textAlign:"right",flexShrink:0}}>
+              <p style={{fontFamily:"JetBrains Mono,monospace",fontSize:15,fontWeight:700,color:"var(--g)"}}>+{m.merit}</p>
+              {m.demerit>0&&<p style={{fontFamily:"JetBrains Mono,monospace",fontSize:11,color:"var(--p)"}}>-{m.demerit}</p>}
+              <p style={{fontFamily:"JetBrains Mono,monospace",fontSize:13,fontWeight:900,color:"var(--ink)"}}>{netMerit(m)}</p>
+            </div>
+          </div>
+        ))}
+        {rankMurid.length===0&&(
+          <div style={{textAlign:"center",padding:"24px",color:"var(--i3)",fontSize:13,fontWeight:700}}>Tiada murid dalam {kelasRank}</div>
+        )}
       </div>
+
+      {/* Pantau */}
       {pantau.length>0&&(
         <div className="ccard ccard-blue">
-          <p style={{fontSize:13,fontWeight:900,color:"var(--p)",marginBottom:12}}>🚨 STUDENTS NEEDING ATTENTION</p>
+          <p style={{fontSize:13,fontWeight:900,color:"var(--p)",marginBottom:12}}>🚨 MURID PERLU PERHATIAN</p>
           {pantau.map(m=>(
             <div key={m.id} style={{display:"flex",alignItems:"center",gap:10,marginBottom:8}}>
               <Ava nama={m.nama} jantina={m.jantina} size={36}/>
-              <div><p style={{fontSize:13,fontWeight:800,color:"var(--ink)"}}>{m.nama.split(" ").slice(0,2).join(" ")}</p><p style={{fontSize:11,color:"var(--p)",fontWeight:700}}>Absent {m.absen} days · Demerit {m.demerit}</p></div>
+              <div>
+                <p style={{fontSize:13,fontWeight:800,color:"var(--ink)"}}>{m.nama.split(" ").slice(0,2).join(" ")}</p>
+                <p style={{fontSize:11,color:"var(--p)",fontWeight:700}}>Absen {m.absen} hari · Demerit {m.demerit}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -1699,7 +1747,7 @@ export default function App() {
 
         {/* ── CONTENT ── */}
         <div style={{flex:1,padding:"14px 14px 40px",overflowY:"auto"}} key={tab} className="fade-up">
-          {tab==="dashboard" && <Dashboard murid={filteredMurid} log={log} kh={kh} setWA={setWaModal} activeKelas={activeKelas}/>}
+          {tab==="dashboard" && <Dashboard murid={murid} log={log} kh={kh} setWA={setWaModal}/>}
           {tab==="objektif"  && <Objektif objektif={objektif} addObjektif={addObjektif} updateObjektif={updateObjektif} deleteObjektif={deleteObjektif}/>}
           {tab==="kehadiran" && <Kehadiran murid={murid}/>}
           {tab==="merit"     && <Merit murid={murid} updateMerit={updateMerit} resetMerit={resetMerit}/>}
