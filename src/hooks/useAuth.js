@@ -9,29 +9,29 @@ export function useAuth() {
   const [authLoading,     setAuthLoading]     = useState(false);
   const [authError,       setAuthError]       = useState("");
 
-  // Verify stored session is legitimate on every load
+  // Verify stored session on every load
   useEffect(() => {
     const verify = async () => {
-      try {
-        const stored = JSON.parse(localStorage.getItem(KEY) || "null");
-        if (!stored) { setSessionChecking(false); return; }
+      let stored = null;
+      try { stored = JSON.parse(localStorage.getItem(KEY) || "null"); } catch { /* ignore */ }
+      if (!stored) { setSessionChecking(false); return; }
 
-        if (stored.role === "admin") {
-          // Must have a real Supabase Auth session — can't be faked in DevTools
-          const { data: { user } } = await supabase.auth.getUser();
-          if (!user) { localStorage.removeItem(KEY); setSessionChecking(false); return; }
-          setSession(stored);
-        } else if (stored.role === "parent" && stored.studentId) {
-          // Verify studentId still exists in DB
-          const { data } = await supabase.from("murid").select("id").eq("id", stored.studentId).single();
-          if (!data) { localStorage.removeItem(KEY); setSessionChecking(false); return; }
-          setSession(stored);
-        } else {
-          localStorage.removeItem(KEY);
-        }
-      } catch {
+      if (stored.role === "admin") {
+        // getSession() reads from localStorage — no network call, reliable on refresh
+        const { data: { session: authSession } } = await supabase.auth.getSession();
+        if (!authSession) { localStorage.removeItem(KEY); setSessionChecking(false); return; }
+        setSession(stored);
+      } else if (stored.role === "parent" && stored.studentId) {
+        // Verify student still exists — if network fails, trust stored session
+        try {
+          const { data, error } = await supabase.from("murid").select("id").eq("id", stored.studentId).single();
+          if (!error && !data) { localStorage.removeItem(KEY); setSessionChecking(false); return; }
+        } catch { /* network error — keep session, try again next time */ }
+        setSession(stored);
+      } else {
         localStorage.removeItem(KEY);
       }
+
       setSessionChecking(false);
     };
     verify();
