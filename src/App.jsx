@@ -1521,7 +1521,6 @@ function DesktopSidebar({active,nav,notif,dark,setDark,logout,nama}) {
       <div style={{background:"var(--p)",padding:"28px 20px 20px",borderBottom:"3px solid var(--bdc)",position:"relative",overflow:"hidden"}}>
         <div style={{position:"absolute",top:-20,right:-20,width:80,height:80,borderRadius:"50%",background:"rgba(255,255,255,.1)",pointerEvents:"none"}}/>
         <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
-          <div style={{background:"rgba(255,255,255,.2)",border:"2.5px solid rgba(255,255,255,.4)",borderRadius:12,padding:6}}><Logo size={32}/></div>
           <div>
             <p style={{color:"#fff",fontSize:15,fontWeight:900,fontFamily:"Fredoka,sans-serif",lineHeight:1.1}}>Portal Cikgu Anna</p>
             <p style={{color:"rgba(255,255,255,.7)",fontSize:10,fontWeight:600,lineHeight:1.2}}>SK Bukit Lalang, Semporna</p>
@@ -1734,7 +1733,7 @@ export default function App() {
     <>
       <style>{makeCSS(dark)}</style>
       <div style={{minHeight:"100vh",background:"var(--bg)",display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:16}}>
-        <Logo size={56}/>
+
         <p style={{fontFamily:"Fredoka,sans-serif",fontSize:18,color:"var(--p)",fontWeight:700}}>Loading Teacher Anna's Portal…</p>
       </div>
     </>
@@ -1758,9 +1757,7 @@ export default function App() {
           <div style={{position:"absolute",inset:0,backgroundImage:"radial-gradient(circle,rgba(255,255,255,.1) 1px,transparent 1px)",backgroundSize:"16px 16px",pointerEvents:"none"}}/>
           <div style={{position:"absolute",top:-28,right:-28,width:100,height:100,borderRadius:"50%",background:"rgba(255,255,255,.08)",border:"2px solid rgba(255,255,255,.1)",pointerEvents:"none"}}/>
           <div style={{display:"flex",alignItems:"center",gap:10,padding:"36px 12px 8px",position:"relative"}}>
-            <div style={{flexShrink:0,background:"rgba(255,255,255,.18)",border:"2.5px solid rgba(255,255,255,.45)",borderRadius:14,padding:5,boxShadow:"2px 2px 0 rgba(0,0,0,.18)"}}>
-              <Logo size={38}/>
-            </div>
+
             <div style={{flex:1,minWidth:0}}>
               <p style={{fontFamily:"Fredoka,sans-serif",fontSize:16,fontWeight:700,color:"#fff",lineHeight:1.1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>Teacher Anna's Portal</p>
               <p style={{fontSize:10,fontWeight:700,color:"rgba(255,255,255,.72)",marginTop:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{g.e} {g.t} · SK Bukit Lalang, Semporna</p>
