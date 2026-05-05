@@ -88,6 +88,23 @@ export default function ParentPortal({ studentId, waliName, onLogout }) {
     load();
   }, [studentId]);
 
+  // Real-time: sync timetable changes from admin instantly
+  useEffect(() => {
+    const channel = supabase
+      .channel("jadual_realtime")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "jadual" }, payload => {
+        setJadual(prev => [...prev, payload.new].sort((a, b) => a.urutan - b.urutan));
+      })
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "jadual" }, payload => {
+        setJadual(prev => prev.map(s => s.id === payload.new.id ? payload.new : s).sort((a, b) => a.urutan - b.urutan));
+      })
+      .on("postgres_changes", { event: "DELETE", schema: "public", table: "jadual" }, payload => {
+        setJadual(prev => prev.filter(s => s.id !== payload.old.id));
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, []);
+
   if (loading) return (
     <div style={{ minHeight: "100vh", background: "#F0F7FF", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 12, fontFamily: "Nunito,sans-serif" }}>
       <div style={{ fontSize: 40 }}>⏳</div>
