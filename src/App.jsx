@@ -1191,38 +1191,101 @@ function SenaraiMurid({murid,saveMurid,deleteMurid}) {
 }
 
 /* ── JADUAL ── */
+function TimePicker({label, h, m, onH, onM}) {
+  const HOURS=["6","7","8","9","10","11","12","1","2","3"];
+  const MINS=["00","05","10","15","20","25","30","35","40","45","50","55"];
+  const selStyle={border:"3px solid var(--bdc)",borderRadius:12,background:"var(--wh)",color:"var(--ink)",fontFamily:"JetBrains Mono,monospace",fontWeight:700,fontSize:15,padding:"10px 6px",textAlign:"center",outline:"none",boxShadow:"2px 2px 0 var(--bdc)",cursor:"pointer",width:"100%"};
+  return (
+    <div style={{flex:1}}>
+      <p style={{fontSize:10,fontWeight:800,color:"var(--i2)",marginBottom:6,textTransform:"uppercase",letterSpacing:".4px"}}>{label}</p>
+      <div style={{display:"flex",alignItems:"center",gap:4}}>
+        <select value={h} onChange={e=>onH(e.target.value)} style={selStyle}>
+          {HOURS.map(x=><option key={x} value={x}>{x}</option>)}
+        </select>
+        <span style={{fontFamily:"JetBrains Mono,monospace",fontWeight:900,fontSize:18,color:"var(--ink)",flexShrink:0}}>:</span>
+        <select value={m} onChange={e=>onM(e.target.value)} style={selStyle}>
+          {MINS.map(x=><option key={x} value={x}>{x}</option>)}
+        </select>
+      </div>
+    </div>
+  );
+}
+
 function Jadual({jadual,addJadual,updateJadual,deleteJadual}) {
   const HARI=["Monday","Tuesday","Wednesday","Thursday","Friday"];
-  const MASA_LIST=[
-    "7:30 - 8:10","8:10 - 8:50","8:50 - 9:30","9:30 - 10:10",
-    "10:10 - 10:30","10:30 - 11:10","11:10 - 11:50","11:50 - 12:30",
-    "12:30 - 1:10","1:10 - 1:50",
-  ];
+  const EMPTY_FORM={sH:"7",sM:"30",eH:"8",eM:"10",subjek:""};
+
+  const parseMasa=(masa="")=>{
+    const parts=masa.split("-").map(s=>s.trim());
+    const [sh,sm]=(parts[0]||"7:30").split(":").map(s=>s.trim());
+    const [eh,em]=(parts[1]||"8:10").split(":").map(s=>s.trim());
+    return {sH:sh||"7",sM:sm||"30",eH:eh||"8",eM:em||"10"};
+  };
+  const buildMasa=(f)=>`${f.sH}:${f.sM} - ${f.eH}:${f.eM}`;
+
   const [aktif,setAktif]=useState("Monday");
   const [editId,setEditId]=useState(null);
   const [showAdd,setShowAdd]=useState(false);
-  const [form,setForm]=useState({masa:MASA_LIST[0],subjek:""});
+  const [form,setForm]=useState(EMPTY_FORM);
   const setF=(k,v)=>setForm(p=>({...p,[k]:v}));
 
   const slots=[...jadual].filter(s=>s.hari===aktif).sort((a,b)=>a.urutan-b.urutan);
 
-  const openEdit=(s)=>{setEditId(s.id);setForm({masa:s.masa,subjek:s.subjek});setShowAdd(false);};
-  const openAdd=()=>{setShowAdd(true);setEditId(null);setForm({masa:MASA_LIST[0],subjek:""}); };
-  const cancel=()=>{setEditId(null);setShowAdd(false);setForm({masa:MASA_LIST[0],subjek:""});};
+  const openEdit=(s)=>{setEditId(s.id);setForm({...parseMasa(s.masa),subjek:s.subjek});setShowAdd(false);};
+  const openAdd=()=>{setShowAdd(true);setEditId(null);setForm(EMPTY_FORM);};
+  const cancel=()=>{setEditId(null);setShowAdd(false);setForm(EMPTY_FORM);};
 
   const save=async()=>{
     if(!form.subjek.trim())return;
+    const masa=buildMasa(form);
     if(editId){
-      await updateJadual(editId,{masa:form.masa,subjek:form.subjek.trim()});
+      await updateJadual(editId,{masa,subjek:form.subjek.trim()});
     } else {
-      await addJadual({hari:aktif,urutan:slots.length,masa:form.masa,subjek:form.subjek.trim()});
+      await addJadual({hari:aktif,urutan:slots.length,masa,subjek:form.subjek.trim()});
     }
     cancel();
   };
 
   const hapus=async(id)=>{if(!confirm("Delete this slot?"))return;await deleteJadual(id);};
-
   const SUBJEK_LIST=Object.keys(SUBJ_META).filter(s=>s!=="BREAK");
+
+  const SlotForm=({label,saveLabel})=>(
+    <div className="ccard ccard-blue bounce-in" style={{display:"flex",flexDirection:"column",gap:12}}>
+      <p style={{fontSize:12,fontWeight:900,color:"var(--p)",textTransform:"uppercase"}}>{label}</p>
+
+      {/* Time pickers */}
+      <div style={{background:"var(--wh)",border:"3px solid var(--bdc)",borderRadius:16,padding:"14px",boxShadow:"3px 3px 0 var(--bdc)"}}>
+        <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:10,textTransform:"uppercase",letterSpacing:".4px"}}>⏰ Masa</p>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <TimePicker label="Mula" h={form.sH} m={form.sM} onH={v=>setF("sH",v)} onM={v=>setF("sM",v)}/>
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center",paddingTop:22}}>
+            <div style={{width:2,height:8,background:"var(--pm)",borderRadius:99}}/>
+            <div style={{width:2,height:8,background:"var(--pm)",borderRadius:99,marginTop:3}}/>
+          </div>
+          <TimePicker label="Tamat" h={form.eH} m={form.eM} onH={v=>setF("eH",v)} onM={v=>setF("eM",v)}/>
+        </div>
+        <div style={{marginTop:10,background:"var(--ps)",borderRadius:10,padding:"6px 12px",textAlign:"center"}}>
+          <span style={{fontFamily:"JetBrains Mono,monospace",fontSize:14,fontWeight:700,color:"var(--p)"}}>{buildMasa(form)}</span>
+        </div>
+      </div>
+
+      {/* Subject */}
+      <div>
+        <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:6,textTransform:"uppercase",letterSpacing:".4px"}}>Subjek</p>
+        <input value={form.subjek} onChange={e=>setF("subjek",e.target.value)} placeholder="Nama subjek…"/>
+      </div>
+      <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+        {SUBJEK_LIST.map(s=>(
+          <button key={s} onClick={()=>setF("subjek",s)} style={{padding:"5px 10px",border:"2px solid var(--bdc)",borderRadius:99,background:form.subjek===s?"var(--p)":"var(--wh)",color:form.subjek===s?"#fff":"var(--ink)",fontSize:11,fontWeight:700,cursor:"pointer"}}>{s}</button>
+        ))}
+        <button onClick={()=>setF("subjek","BREAK")} style={{padding:"5px 10px",border:"2px solid var(--bdc)",borderRadius:99,background:form.subjek==="BREAK"?"#94A3B8":"var(--wh)",color:form.subjek==="BREAK"?"#fff":"var(--ink)",fontSize:11,fontWeight:700,cursor:"pointer"}}>🍱 BREAK</button>
+      </div>
+      <div style={{display:"flex",gap:8}}>
+        <button className="cbtn cbtn-blue" style={{padding:"10px"}} onClick={save}>{saveLabel}</button>
+        <button className="cbtn cbtn-white" style={{width:"auto",padding:"10px 16px"}} onClick={cancel}>Cancel</button>
+      </div>
+    </div>
+  );
 
   return (
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
@@ -1236,34 +1299,7 @@ function Jadual({jadual,addJadual,updateJadual,deleteJadual}) {
         ))}
       </div>
 
-      {/* Add form */}
-      {showAdd&&(
-        <div className="ccard ccard-blue bounce-in" style={{display:"flex",flexDirection:"column",gap:10}}>
-          <p style={{fontSize:12,fontWeight:900,color:"var(--p)",textTransform:"uppercase"}}>➕ Add Slot — {aktif}</p>
-          <div style={{display:"flex",gap:8}}>
-            <div style={{flex:1}}>
-              <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:4}}>Masa</p>
-              <select value={form.masa} onChange={e=>setF("masa",e.target.value)}>
-                {MASA_LIST.map(m=><option key={m} value={m}>{m}</option>)}
-              </select>
-            </div>
-            <div style={{flex:2}}>
-              <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:4}}>Subject</p>
-              <input value={form.subjek} onChange={e=>setF("subjek",e.target.value)} placeholder="Subject name…"/>
-            </div>
-          </div>
-          <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-            {SUBJEK_LIST.map(s=>(
-              <button key={s} onClick={()=>setF("subjek",s)} style={{padding:"5px 10px",border:"2px solid var(--bdc)",borderRadius:99,background:form.subjek===s?"var(--p)":"var(--wh)",color:form.subjek===s?"#fff":"var(--ink)",fontSize:11,fontWeight:700,cursor:"pointer"}}>{s}</button>
-            ))}
-            <button onClick={()=>setF("subjek","BREAK")} style={{padding:"5px 10px",border:"2px solid var(--bdc)",borderRadius:99,background:form.subjek==="BREAK"?"#94A3B8":"var(--wh)",color:form.subjek==="BREAK"?"#fff":"var(--ink)",fontSize:11,fontWeight:700,cursor:"pointer"}}>🍱 BREAK</button>
-          </div>
-          <div style={{display:"flex",gap:8}}>
-            <button className="cbtn cbtn-blue" style={{padding:"10px"}} onClick={save}>➕ Add</button>
-            <button className="cbtn cbtn-white" style={{width:"auto",padding:"10px 16px"}} onClick={cancel}>Cancel</button>
-          </div>
-        </div>
-      )}
+      {showAdd&&<SlotForm label={`➕ Add Slot — ${aktif}`} saveLabel="➕ Add"/>}
 
       <div style={{display:"flex",flexDirection:"column",gap:10}}>
         {slots.length===0&&<p style={{textAlign:"center",color:"var(--i3)",fontWeight:700,padding:"24px 0"}}>No slots for {aktif}. Add one above.</p>}
@@ -1273,38 +1309,12 @@ function Jadual({jadual,addJadual,updateJadual,deleteJadual}) {
           const isEdit=editId===s.id;
           return (
             <div key={s.id}>
-              {isEdit?(
-                <div className="ccard bounce-in" style={{display:"flex",flexDirection:"column",gap:10}}>
-                  <p style={{fontSize:12,fontWeight:900,color:"var(--p)",textTransform:"uppercase"}}>✏️ Edit Slot</p>
-                  <div style={{display:"flex",gap:8}}>
-                    <div style={{flex:1}}>
-                      <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:4}}>Masa</p>
-                      <select value={form.masa} onChange={e=>setF("masa",e.target.value)}>
-                        {MASA_LIST.map(m=><option key={m} value={m}>{m}</option>)}
-                      </select>
-                    </div>
-                    <div style={{flex:2}}>
-                      <p style={{fontSize:11,fontWeight:800,color:"var(--i2)",marginBottom:4}}>Subject</p>
-                      <input value={form.subjek} onChange={e=>setF("subjek",e.target.value)}/>
-                    </div>
-                  </div>
-                  <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-                    {SUBJEK_LIST.map(sub=>(
-                      <button key={sub} onClick={()=>setF("subjek",sub)} style={{padding:"5px 10px",border:"2px solid var(--bdc)",borderRadius:99,background:form.subjek===sub?"var(--p)":"var(--wh)",color:form.subjek===sub?"#fff":"var(--ink)",fontSize:11,fontWeight:700,cursor:"pointer"}}>{sub}</button>
-                    ))}
-                    <button onClick={()=>setF("subjek","BREAK")} style={{padding:"5px 10px",border:"2px solid var(--bdc)",borderRadius:99,background:form.subjek==="BREAK"?"#94A3B8":"var(--wh)",color:form.subjek==="BREAK"?"#fff":"var(--ink)",fontSize:11,fontWeight:700,cursor:"pointer"}}>🍱 BREAK</button>
-                  </div>
-                  <div style={{display:"flex",gap:8}}>
-                    <button className="cbtn cbtn-blue" style={{padding:"10px"}} onClick={save}>💾 Save</button>
-                    <button className="cbtn cbtn-white" style={{width:"auto",padding:"10px 16px"}} onClick={cancel}>Cancel</button>
-                  </div>
-                </div>
-              ):(
+              {isEdit?<SlotForm label="✏️ Edit Slot" saveLabel="💾 Save"/>:(
                 <div style={{display:"flex",alignItems:"center",gap:12,background:isR?"var(--bg)":meta.bg,border:`3px solid ${isR?"var(--pm)":"var(--bdc)"}`,borderRadius:18,padding:"12px 14px",boxShadow:isR?"none":"3px 3px 0 var(--bdc)",opacity:isR?.6:1}}>
                   <div style={{width:44,height:44,borderRadius:14,background:isR?"var(--pm)":meta.color,border:isR?"2px dashed var(--i3)":"3px solid var(--bdc)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,boxShadow:isR?"none":"2px 2px 0 var(--bdc)",flexShrink:0}}>{meta.emoji}</div>
                   <div style={{flex:1}}>
                     <p style={{fontSize:14,fontWeight:isR?600:900,color:isR?"var(--i3)":"var(--ink)",fontStyle:isR?"italic":"normal"}}>{isR?"— Break Time —":s.subjek}</p>
-                    {!isR&&<p style={{fontSize:11,color:"var(--i3)",fontWeight:600,marginTop:1}}>40 mins</p>}
+                    {!isR&&<p style={{fontSize:11,color:"var(--i3)",fontWeight:600,marginTop:1}}>{s.masa}</p>}
                   </div>
                   <p style={{fontFamily:"JetBrains Mono,monospace",fontSize:12,fontWeight:700,color:isR?"var(--i3)":meta.color,flexShrink:0}}>{s.masa}</p>
                   <div style={{display:"flex",gap:6,flexShrink:0}}>
