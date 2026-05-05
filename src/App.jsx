@@ -735,11 +735,20 @@ function Dashboard({murid,log,kh,setWA,activeKelas}) {
 }
 
 /* ── KEHADIRAN ── */
-function Kehadiran({murid}) {
-  const [kh,setKh]     = useState({});
-  const [q,setQ]       = useState("");
-  const [saved,setSaved]= useState(false);
-  const todayStr = (() => { const d=new Date(); return `${d.getDate()} ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()]} ${d.getFullYear()}`; })();
+const KELAS_LIST = ["6 Adil","6 Amanah","6 Arif"];
+
+function Kehadiran({murid: allMurid}) {
+  const [kh,setKh]         = useState({});
+  const [q,setQ]           = useState("");
+  const [saved,setSaved]   = useState(false);
+  const [activeKelas,setActiveKelas] = useState("6 Adil");
+
+  const todayStr = (() => {
+    const d=new Date();
+    return `${d.getDate()} ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()]} ${d.getFullYear()}`;
+  })();
+
+  const kelasMurid = allMurid.filter(m=>m.kelas===activeKelas);
 
   useEffect(()=>{
     supabase.from("kehadiran").select("*").eq("tarikh",todayStr).then(({data})=>{
@@ -753,58 +762,117 @@ function Kehadiran({murid}) {
     setKh(p=>{const n={...p};delete n[id];return n;});
   };
   const clearAll = async () => {
-    if(!confirm("Delete all attendance records for today?"))return;
-    await supabase.from("kehadiran").delete().eq("tarikh",todayStr);
-    setKh({});
+    if(!confirm("Padam semua rekod kehadiran untuk kelas ini hari ini?"))return;
+    const ids = kelasMurid.map(m=>m.id);
+    await supabase.from("kehadiran").delete().eq("tarikh",todayStr).in("murid_id",ids);
+    setKh(p=>{const n={...p};ids.forEach(id=>delete n[id]);return n;});
   };
+
   const si = s => ({
-    present:{label:"✅ Present", bg:"var(--gs)",color:"var(--g)",bc:"var(--g)"},
+    present:{label:"✅ Hadir",   bg:"var(--gs)",color:"var(--g)",bc:"var(--g)"},
     absent: {label:"❌ Absent",  bg:"var(--ps)",color:"var(--p)",bc:"var(--p)"},
-    mc:     {label:"🏥 MC/Leave",bg:"var(--ys)",color:"#B45309",bc:"#B45309"},
-  }[s]||{label:"✅ Present",bg:"var(--gs)",color:"var(--g)",bc:"var(--g)"});
-  const filtered = murid.filter(m=>m.nama.toLowerCase().includes(q.toLowerCase())||m.no.includes(q));
+    mc:     {label:"🏥 MC/Cuti", bg:"var(--ys)",color:"#B45309",bc:"#B45309"},
+  }[s]||{label:"✅ Hadir",bg:"var(--gs)",color:"var(--g)",bc:"var(--g)"});
+
+  const filtered = kelasMurid.filter(m=>
+    m.nama.toLowerCase().includes(q.toLowerCase())||m.no.includes(q)
+  );
   const c={present:0,absent:0,mc:0};
-  murid.forEach(m=>{const s=kh[m.id]||"present";c[s]=(c[s]||0)+1;});
+  kelasMurid.forEach(m=>{const s=kh[m.id]||"present";c[s]=(c[s]||0)+1;});
+
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:16}}>
-      <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>📋 Daily <span style={{color:"var(--p)"}}>Attendance</span></p>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
-        {[{k:"present",icon:"✅",label:"Present",color:"var(--g)",bg:"var(--gs)",bc:"var(--g)"},{k:"absent",icon:"❌",label:"Absent",color:"var(--p)",bg:"var(--ps)",bc:"var(--p)"},{k:"mc",icon:"🏥",label:"MC",color:"#B45309",bg:"var(--ys)",bc:"#B45309"}].map(ct=>(
-          <div key={ct.k} style={{background:ct.bg,border:`3px solid ${ct.bc}`,borderRadius:18,boxShadow:`3px 3px 0 ${ct.bc}`,padding:"12px 8px",textAlign:"center"}}>
-            <p style={{fontSize:20}}>{ct.icon}</p>
-            <p style={{fontFamily:"JetBrains Mono,monospace",fontSize:22,fontWeight:700,color:ct.color}}>{c[ct.k]||0}</p>
+    <div style={{display:"flex",flexDirection:"column",gap:14}}>
+      <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>📋 Kehadiran <span style={{color:"var(--p)"}}>Harian</span></p>
+
+      {/* Class selector */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
+        {KELAS_LIST.map(k=>{
+          const sel=activeKelas===k;
+          const km=allMurid.filter(m=>m.kelas===k);
+          const hadir=km.filter(m=>(kh[m.id]||"present")==="present").length;
+          return (
+            <button key={k} onClick={()=>{setActiveKelas(k);setQ("");}} style={{
+              padding:"12px 6px",border:`3px solid ${sel?"var(--p)":"var(--bdc)"}`,
+              borderRadius:16,background:sel?"var(--p)":"var(--wh)",
+              color:sel?"#fff":"var(--ink)",fontFamily:"Nunito,sans-serif",
+              fontWeight:900,fontSize:13,cursor:"pointer",
+              boxShadow:`3px 3px 0 ${sel?"var(--p2)":"var(--bdc)"}`,
+              transition:"all .15s",textAlign:"center",
+            }}>
+              <p style={{fontSize:11,fontWeight:800,opacity:.8,marginBottom:2}}>{k}</p>
+              <p style={{fontFamily:"JetBrains Mono,monospace",fontSize:18,fontWeight:700,lineHeight:1}}>{hadir}/{km.length}</p>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Summary stats */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
+        {[
+          {k:"present",icon:"✅",label:"Hadir",   color:"var(--g)",bg:"var(--gs)",bc:"var(--g)"},
+          {k:"absent", icon:"❌",label:"Absent",  color:"var(--p)",bg:"var(--ps)",bc:"var(--p)"},
+          {k:"mc",     icon:"🏥",label:"MC/Cuti", color:"#B45309",bg:"var(--ys)",bc:"#B45309"},
+        ].map(ct=>(
+          <div key={ct.k} style={{background:ct.bg,border:`3px solid ${ct.bc}`,borderRadius:14,boxShadow:`3px 3px 0 ${ct.bc}`,padding:"10px 6px",textAlign:"center"}}>
+            <p style={{fontSize:18}}>{ct.icon}</p>
+            <p style={{fontFamily:"JetBrains Mono,monospace",fontSize:20,fontWeight:700,color:ct.color}}>{c[ct.k]||0}</p>
             <p style={{fontSize:10,fontWeight:800,color:"var(--i2)"}}>{ct.label}</p>
           </div>
         ))}
       </div>
-      <input placeholder="🔍 Search name or number…" value={q} onChange={e=>setQ(e.target.value)}/>
-      <div style={{display:"flex",flexDirection:"column",gap:10}}>
+
+      {/* Search */}
+      <input placeholder="🔍 Cari nama atau nombor…" value={q} onChange={e=>setQ(e.target.value)}/>
+
+      {/* Student list */}
+      <div style={{display:"flex",flexDirection:"column",gap:8}}>
         {filtered.map(m=>{
-          const s=kh[m.id]||"hadir";const info=si(s);
+          const s=kh[m.id]||"present"; const info=si(s);
           return (
             <div key={m.id} style={{display:"flex",alignItems:"center",gap:8}}>
-              <button onClick={()=>cycle(m.id)} style={{flex:1,display:"flex",alignItems:"center",gap:12,background:"var(--wh)",border:"3px solid var(--bdc)",borderRadius:18,padding:"12px 14px",cursor:"pointer",textAlign:"left",boxShadow:"3px 3px 0 var(--bdc)"}}>
-                <Ava nama={m.nama} jantina={m.jantina} size={42}/>
+              <button onClick={()=>cycle(m.id)} style={{
+                flex:1,display:"flex",alignItems:"center",gap:10,
+                background:"var(--wh)",border:"3px solid var(--bdc)",
+                borderRadius:16,padding:"10px 12px",cursor:"pointer",
+                textAlign:"left",boxShadow:"3px 3px 0 var(--bdc)",
+              }}>
+                <Ava nama={m.nama} jantina={m.jantina} size={40}/>
                 <div style={{flex:1,minWidth:0}}>
                   <p style={{fontSize:13,fontWeight:800,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",color:"var(--ink)"}}>{m.nama}</p>
-                  <p style={{fontSize:11,color:"var(--i3)",fontWeight:600,marginTop:1}}>No.{m.no} · Tap to change</p>
+                  <p style={{fontSize:10,color:"var(--i3)",fontWeight:600,marginTop:2}}>No.{m.no} · Ketuk untuk tukar</p>
                 </div>
-                <span className="cpill" style={{background:info.bg,color:info.color,borderColor:info.bc,fontSize:10}}>{info.label}</span>
+                <span className="cpill" style={{background:info.bg,color:info.color,borderColor:info.bc,fontSize:10,flexShrink:0}}>{info.label}</span>
               </button>
-              <button onClick={()=>deleteOne(m.id)} style={{flexShrink:0,width:38,height:38,border:"2px solid var(--p)",borderRadius:12,background:"var(--ps)",cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center"}} title="Delete attendance">🗑️</button>
+              <button onClick={()=>deleteOne(m.id)} style={{
+                flexShrink:0,width:38,height:38,border:"2px solid var(--p)",
+                borderRadius:12,background:"var(--ps)",cursor:"pointer",
+                fontSize:15,display:"flex",alignItems:"center",justifyContent:"center",
+              }}>🗑️</button>
             </div>
           );
         })}
+        {filtered.length===0&&(
+          <div style={{textAlign:"center",padding:"32px 16px",color:"var(--i3)",fontWeight:700,fontSize:13}}>
+            Tiada murid dalam {activeKelas}
+          </div>
+        )}
       </div>
-      <div style={{display:"flex",gap:8}}>
+
+      {/* Action buttons */}
+      <div style={{display:"flex",gap:8,paddingBottom:8}}>
         <button className={`cbtn ${saved?"cbtn-green":"cbtn-blue"}`} style={{flex:1}} onClick={async()=>{
-          const rows = murid.map(m=>({murid_id:m.id, tarikh:todayStr, status:kh[m.id]||"present"}));
+          const rows = kelasMurid.map(m=>({murid_id:m.id, tarikh:todayStr, status:kh[m.id]||"present"}));
           await supabase.from("kehadiran").upsert(rows,{onConflict:"murid_id,tarikh"});
           setSaved(true); setTimeout(()=>setSaved(false),2200);
         }}>
-          {saved?"✅ Saved!":"💾 Save Attendance"}
+          {saved?"✅ Tersimpan!":"💾 Simpan Kehadiran"}
         </button>
-        <button onClick={clearAll} style={{flexShrink:0,padding:"12px 16px",border:"2px solid var(--p)",borderRadius:18,background:"var(--ps)",color:"var(--p)",fontFamily:"Nunito,sans-serif",fontSize:13,fontWeight:900,cursor:"pointer",boxShadow:"3px 3px 0 var(--p)"}}>🗑️ Clear All</button>
+        <button onClick={clearAll} style={{
+          flexShrink:0,padding:"12px 14px",border:"2px solid var(--p)",
+          borderRadius:16,background:"var(--ps)",color:"var(--p)",
+          fontFamily:"Nunito,sans-serif",fontSize:13,fontWeight:900,
+          cursor:"pointer",boxShadow:"3px 3px 0 var(--p)",
+        }}>🗑️</button>
       </div>
     </div>
   );
@@ -1557,7 +1625,7 @@ export default function App() {
         <div style={{flex:1,padding:"14px 14px 40px",overflowY:"auto"}} key={tab} className="fade-up">
           {tab==="dashboard" && <Dashboard murid={filteredMurid} log={log} kh={kh} setWA={setWaModal} activeKelas={activeKelas}/>}
           {tab==="objektif"  && <Objektif objektif={objektif} addObjektif={addObjektif} updateObjektif={updateObjektif} deleteObjektif={deleteObjektif}/>}
-          {tab==="kehadiran" && <Kehadiran murid={filteredMurid}/>}
+          {tab==="kehadiran" && <Kehadiran murid={murid}/>}
           {tab==="merit"     && <Merit murid={filteredMurid} updateMerit={updateMerit} resetMerit={resetMerit}/>}
           {tab==="murid"     && <SenaraiMurid murid={murid} saveMurid={saveMurid} deleteMurid={deleteMurid}/>}
           {tab==="jadual"    && <Jadual jadual={jadual} addJadual={addJadual} updateJadual={updateJadual} deleteJadual={deleteJadual}/>}
