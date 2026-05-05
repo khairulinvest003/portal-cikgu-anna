@@ -48,12 +48,10 @@ export default function LoginPage({ login, authLoading, authError }) {
         <div style={{ background: "linear-gradient(135deg,#1A56DB,#1E40AF)", padding: "32px 28px 24px", textAlign: "center", position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -20, right: -20, width: 100, height: 100, borderRadius: "50%", background: "rgba(255,255,255,.1)" }}/>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
-            <div style={{ background: "rgba(255,255,255,.2)", border: "3px solid rgba(255,255,255,.4)", borderRadius: 20, padding: 10 }}>
-              <Logo size={48}/>
-            </div>
+            <img src="/cikgu-anna.jpg" alt="Cikgu Anna" style={{ width: 72, height: 72, borderRadius: "50%", objectFit: "cover", objectPosition: "top", border: "3px solid rgba(255,255,255,.6)", boxShadow: "4px 4px 0 rgba(0,0,0,.2)" }}/>
           </div>
           <p style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 24, fontWeight: 700, color: "#fff", margin: 0 }}>Teacher Anna's Portal</p>
-          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, marginTop: 4 }}>Year 4 Bestari · SK Darau, Kota Kinabalu</p>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, marginTop: 4 }}>SK Bukit Lalang, Semporna</p>
         </div>
 
         {/* Tab switcher */}
