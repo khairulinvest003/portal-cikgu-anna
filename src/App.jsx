@@ -712,7 +712,7 @@ function Dashboard({murid: allMurid, log, kh, setWA}) {
         <Blob icon="📩" val={notif}            label="Mesej Belum Balas" bg="var(--ps)" color="var(--p)" border="var(--p)"/>
       </div>
 
-      <button className="cbtn" onClick={()=>setWA(true)} style={{background:"#25D366",border:"3px solid #1DA851",color:"#fff",boxShadow:"4px 4px 0 #1DA851"}}>📬 Hantar Notifikasi WhatsApp kepada Wali</button>
+      <button className="cbtn" onClick={()=>setWA(true)} style={{background:"#25D366",border:"3px solid #1DA851",color:"#fff",boxShadow:"4px 4px 0 #1DA851"}}>📬 Send WhatsApp Notification to Guardian</button>
 
       {/* Merit Ranking */}
       <div className="ccard" style={{padding:0,overflow:"hidden"}}>
@@ -795,14 +795,19 @@ function Kehadiran({murid: allMurid}) {
   const [saved,setSaved]   = useState(false);
   const [activeKelas,setActiveKelas] = useState("6 Adil");
 
+  const todayISO = new Date().toISOString().split("T")[0];
+  const [selDate, setSelDate] = useState(todayISO);
+
+  const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   const todayStr = (() => {
-    const d=new Date();
-    return `${d.getDate()} ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()]} ${d.getFullYear()}`;
+    const d = new Date(selDate + "T00:00:00");
+    return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
   })();
 
   const kelasMurid = allMurid.filter(m=>m.kelas===activeKelas);
 
   useEffect(()=>{
+    setKh({});
     supabase.from("kehadiran").select("*").eq("tarikh",todayStr).then(({data})=>{
       if(data?.length){ const m={}; data.forEach(r=>{m[r.murid_id]=r.status;}); setKh(m); }
     });
@@ -834,7 +839,10 @@ function Kehadiran({murid: allMurid}) {
 
   return (
     <div style={{display:"flex",flexDirection:"column",gap:14}}>
-      <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>📋 Kehadiran <span style={{color:"var(--p)"}}>Harian</span></p>
+      <div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+        <p style={{fontFamily:"Fredoka,sans-serif",fontSize:22,fontWeight:700,color:"var(--ink)"}}>📋 Kehadiran <span style={{color:"var(--p)"}}>Harian</span></p>
+        <input type="date" value={selDate} max={todayISO} onChange={e=>setSelDate(e.target.value)} style={{marginLeft:"auto",padding:"6px 10px",border:"3px solid var(--bdc)",borderRadius:12,fontFamily:"Nunito,sans-serif",fontWeight:700,fontSize:13,background:"var(--wh)",color:"var(--ink)",cursor:"pointer",boxShadow:"3px 3px 0 var(--bdc)"}}/>
+      </div>
 
       {/* Class selector */}
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
